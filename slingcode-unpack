@@ -1,4 +1,4 @@
 #!/bin/sh
 
 mv ~/Downloads/roguelike-browser-boilerplate.zip .
-unzip -j roguelike-browser-boilerplate.zip
+unzip -fj roguelike-browser-boilerplate.zip
