@@ -1,5 +1,7 @@
 $ = document.querySelector.bind(document);
 
+/*** sound effects ***/
+
 // sound effects from sfxr.me
 var sfx = {
   "rubber": "5EoyNVSymuxD8s7HP1ixqdaCn5uVGEgwQ3kJBR7bSoApFQzm7E4zZPW2EcXm3jmNdTtTPeDuvwjY8z4exqaXz3NGBHRKBx3igYfBBMRBxDALhBSvzkF6VE2Pv"
@@ -8,6 +10,11 @@ var sfx = {
 for (var s in sfx) {
   sfx[s] = (new SoundEffect(sfx[s])).generate().getAudio();
 }
+
+/*** game code ***/
+
+// original source code by Ondřej Žára
+// www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_1
 
 var Game = {
     display: null,
@@ -18,10 +25,11 @@ var Game = {
     ananas: null,
     
     init: function() {
-        this.display = new ROT.Display({spacing:1.1});
+        this.display = new ROT.Display({spacing: 1.1});
         
-      	$("#game").innerHTML = "";
-        $("#game").appendChild(this.display.getContainer());
+        show("#game");
+      	$("#canvas").innerHTML = "";
+        $("#canvas").appendChild(this.display.getContainer());
         
         this._generateMap();
         
@@ -32,9 +40,17 @@ var Game = {
         this.engine = new ROT.Engine(scheduler);
         this.engine.start();
     },
+  
+    destroy: function() {
+      if (this.engine) {
+        this.engine.lock();
+        delete this.engine;
+        delete window.Game;
+      }
+    },
     
     _generateMap: function() {
-        var digger = new ROT.Map.Digger();
+        var digger = new ROT.Map.Digger(80, 25);
         var freeCells = [];
         
         var digCallback = function(x, y, value) {
@@ -189,10 +205,32 @@ Pedro.prototype._draw = function() {
     Game.display.draw(this._x, this._y, "P", "red");
 }    
 
+/*** user interface handlers ***/
+
 $("#title").classList.add("fade-in");
-$("#title").onclick = function(ev) {
+function start() {
+  $("#title").classList.add("hide");
   sfx["rubber"].play();
   Game.init();
 }
 
-$("#game").innerHTML = "";
+function handlemenuchange(which) {
+  var choice = which.getAttribute("value");
+  if (choice == "settings") {
+    show("#settings");
+  } else if (choice == "credits") {
+    show("#credits");
+  }
+}
+
+function show(which) {
+  $(which).classList.remove("hide");  
+  $(which).classList.add("fade-in");
+}
+
+function hide(which) {
+  $(which).classList.remove("fade-in");
+  $(which).classList.add("hide");
+}
+
+$("#canvas").innerHTML = "";

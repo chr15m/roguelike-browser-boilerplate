@@ -7,19 +7,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Your game description goes here!">
     <link rel="icon" href="icon.png">
-    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/chr15m/jsfxr@42a643f/riffwave.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/chr15m/jsfxr@42a643f/sfxr.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/nes.css@2.3.0/css/nes.min.css"  rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <div id="title" class="screen">
-      <img src="icon.png" id="logo">
-      Roguelike<br/>Browser Boilerplate
+    <div id="title" class="screen modal">
+      <div id="plate">
+        <img src="icon.png" id="logo">
+        <p>Roguelike<br/>Browser<br/>Boilerplate</p>
+      </div>
+
+      <div id="options">
+        <div id="menu" class="nes-container is-rounded is-dark">
+          <label>
+            <input type="radio"
+                   value="settings"
+                   class="nes-radio is-dark"
+                   name="menu-items"
+                   onclick="handlemenuchange(this)"
+                   onchange="handlemenuchange(this)" checked />
+            <span>Settings</span>
+          </label>
+		  <br/>
+          <label>
+            <input type="radio"
+                   value="credits"
+                   class="nes-radio is-dark"
+                   name="menu-items"
+                   onclick="handlemenuchange(this)"
+                   onchange="handlemenuchange(this)"/>
+            <span>Credits</span>
+          </label>
+        </div>
+      </div>
+      
+      <button class="nes-btn is-success" onclick="start();">Play</button>
     </div>
     
-    <div id="game"></div>
+    <div id="settings" class="screen modal">
+      <p>Settings</p>
+      <div class="nes-container is-rounded is-dark">
+        <p>Put your settings menu here.</p>
+      </div>
+      <button class="nes-btn is-success" onclick="hide('#settings');">Ok</button>
+    </div>
+    
+    <div id="credits" class="screen modal">
+      <p>Credits</p>
+      <ul class="nes-container is-rounded is-dark">
+        <p>Made with:</p>
+        <li><a href="https://chr15m.itch.io/roguelike-browser-boilerplate">
+          Roguelike Browser Boilerplate</a></li>
+        <li>Engine =
+          <a href="https://ondras.github.io/rot.js/hp/">ROT.js</a></li>
+        <li>Tiles by
+          <a href="https://kenney.nl/assets/bit-pack">kenney.nl</a></li>
+        <li>Styles from
+          <a href="https://nostalgic-css.github.io/NES.css/">NESS.css</a></li>
+        <li>SFX from <a href="https://sfxr.me/">sfxr.me</a></li>
+      </ul>
+      <button class="nes-btn is-success" onclick="hide('#credits');">Ok</button>
+    </div>    
+    
+    <div id="game" class="screen">
+      <div id="canvas"></div>
+    </div>
 
     <div id="instructions" class="screen">
       <p>You must find the banana and avoid getting captured by <span class="P">P</span>edro.</p>
