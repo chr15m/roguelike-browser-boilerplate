@@ -231,7 +231,7 @@ Monster.prototype.act = function() {
     astar.compute(this._x, this._y, pathCallback);
 
     path.shift();
-    if (path.length == 1) {
+    if (path.length <= 1) {
         Game.engine.lock();
         console.log("Game over - you were captured by The Monster!");
         sfx["lose"].play();
