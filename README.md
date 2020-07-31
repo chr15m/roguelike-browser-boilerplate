@@ -1,3 +1,5 @@
+![Main character](./icon.png)
+
 Welcome to the Roguelike Browser Boilerplate! Let's get started making your roguelike.
 
 If you're reading this you have already figured out how to unpack the zip file. Congratulations, acheivement unlocked!
