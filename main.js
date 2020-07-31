@@ -50,8 +50,8 @@ var Game = {
     engine: null,
     scheduler: null,
     player: null,
-    pedro: null,
-    ananas: null,
+    monster: null,
+    amulet: null,
     
     init: function() {
         this.display = new ROT.Display(tileOptions);
@@ -61,7 +61,7 @@ var Game = {
 
         this.scheduler = new ROT.Scheduler.Simple();
         this.scheduler.add(this.player, true);
-        this.scheduler.add(this.pedro, true);
+        this.scheduler.add(this.monster, true);
 
         this.engine = new ROT.Engine(this.scheduler);
         this.engine.start();
@@ -74,11 +74,11 @@ var Game = {
         this.map = {};
         this.engine = null;
         this.scheduler.add(this.player, true);
-        this.scheduler.add(this.pedro, true);
+        this.scheduler.add(this.monster, true);
         this.scheduler = null;
         this.player = null;
-        this.pedro = null;
-        this.ananas = null;
+        this.monster = null;
+        this.amulet = null;
       }
       window.removeEventListener("keydown", this.player);
       resetcanvas();
@@ -104,7 +104,7 @@ var Game = {
         
         this.player = this._createBeing(Player, freeCells);
         rescale(this.player._x, this.player._y);
-        this.pedro = this._createBeing(Pedro, freeCells);
+        this.monster = this._createBeing(Monster, freeCells);
     },
     
     _createBeing: function(what, freeCells) {
@@ -121,7 +121,7 @@ var Game = {
             var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
             var key = freeCells.splice(index, 1)[0];
             this.map[key] = "*";
-            if (!i) { this.ananas = key; } /* first box contains an ananas */
+            if (!i) { this.amulet = key; } /* first box contains the amulet */
         }
     },
     
@@ -193,7 +193,7 @@ Player.prototype._checkBox = function() {
     if (Game.map[key] != "*") {
         //sfx["miss"].play();
         //console.log("There is no box here!");
-    } else if (key == Game.ananas) {
+    } else if (key == Game.amulet) {
         console.log("Hooray! You found a banana and won this game.");
         for (var i=0; i<5; i++) {
           setTimeout(function() {
@@ -207,15 +207,15 @@ Player.prototype._checkBox = function() {
     }
 }
     
-var Pedro = function(x, y) {
+var Monster = function(x, y) {
     this._x = x;
     this._y = y;
     this._draw();
 }
     
-Pedro.prototype.getSpeed = function() { return 75; }
+Monster.prototype.getSpeed = function() { return 75; }
     
-Pedro.prototype.act = function() {
+Monster.prototype.act = function() {
     var x = Game.player.getX();
     var y = Game.player.getY();
 
@@ -233,7 +233,7 @@ Pedro.prototype.act = function() {
     path.shift();
     if (path.length == 1) {
         Game.engine.lock();
-        console.log("Game over - you were captured by Pedro!");
+        console.log("Game over - you were captured by The Monster!");
         sfx["lose"].play();
         Game.destroy();
     } else {
@@ -246,7 +246,7 @@ Pedro.prototype.act = function() {
     }
 }
     
-Pedro.prototype._draw = function() {
+Monster.prototype._draw = function() {
     Game.display.draw(this._x, this._y, "P", "red");
 }    
 
@@ -293,6 +293,3 @@ function hide(which) {
   $(which).classList.remove("show");
   $(which).classList.add("hide");
 }
-
-// $("#canvas").innerHTML = "";
-// Game.init();
