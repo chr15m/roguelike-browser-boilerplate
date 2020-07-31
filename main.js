@@ -295,7 +295,10 @@ function hide(which) {
 }
 
 function toast(message) {
-  //show("#message");
-  console.log("Toast:", message);
+  var m = $("#message");
+  m.classList.remove("hide");
+  m.classList.remove("fade-out");
+  m.textContent = message;
+  void m.offsetWidth; // trigger CSS reflow
+  m.classList.add("fade-out");
 }
-

@@ -59,7 +59,7 @@
           </label>
         </div>
       </div>
-      <button class="nes-btn is-success" onclick="start();">Play</button>
+      <button id="play" class="nes-btn is-success" onclick="start();">Play</button>
     </div>
 
     <!-- settings screen -->
@@ -78,7 +78,7 @@
         <p>Made with:</p>
         <li><a href="https://chr15m.itch.io/roguelike-browser-boilerplate">
           Roguelike Browser Boilerplate</a></li>
-        <li>Engine =
+        <li>Engine is
           <a href="https://ondras.github.io/rot.js/hp/">ROT.js</a></li>
         <li>Tiles by
           <a href="https://kenney.nl/assets/micro-roguelike">kenney.nl</a></li>
@@ -94,7 +94,7 @@
       <p>Instructions</p>
       <div class="nes-container is-rounded is-dark">
         <p>You must find The Amulet and avoid getting captured by The Monster</p>
-        <p>Use the arrow keys to move around. Chests will open when you move over them.</p>
+        <p>Use the arrow keys to move around. To look in a chest move over it.</p>
       </div>
       <button class="nes-btn is-success" onclick="hide('#instructions');sfx['hide'].play();">Ok</button>
     </div>
@@ -123,6 +123,7 @@
     <!-- game screen -->
     <div id="game" class="screen">
       <div id="canvas"></div>
+      <div id="message" class="nes-container is-rounded is-dark hide"></div>
       <div id="hud">
         <span id="hp">HP: 5</span>
         <span id="xp">XP: 2</span>

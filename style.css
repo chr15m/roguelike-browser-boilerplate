@@ -27,25 +27,6 @@ canvas {
   image-rendering: crisp-edges;
 }
 
-.sprite {
-  width: 8px;
-  height: 8px;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-  transform: scale(8);
-  background-image: url("colored_tilemap_packed.png");
-  margin: 80px auto;
-}
-
-.amulet {
-  background-position: 0px -64px;  
-}
-
-.ghost {
-  background-position: -72px -56px;
-}
-
 /*** NES.css overrides ***/
 
 .nes-container.is-dark {
@@ -84,7 +65,8 @@ canvas {
 }
 
 #plate > * + * {
-  margin: 0px 32px;
+  margin-left: 32px;
+  margin-right: 0px;
 }
 
 @media (max-width: 600px) {
@@ -137,9 +119,28 @@ canvas {
   margin: 0.5em 0px;
 }
 
-#lose img {
-  transform: scale(4);
-  /* 72 8 */
+.sprite {
+  width: 8px;
+  height: 8px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  transform: scale(8);
+  background-image: url("colored_tilemap_packed.png");
+  margin: 80px auto;
+}
+
+.amulet {
+  background-position: 0px -64px;  
+}
+
+.ghost {
+  background-position: -72px -56px;
+}
+
+#play {
+  width: 400px;
+  max-width: 90%;
 }
 
 /*** HUD ***/
@@ -153,6 +154,11 @@ canvas {
   padding: 24px;
 }
 
+#message {
+  position: absolute;
+  top: 24px;
+}
+
 /*** CSS animations ***/
 
 .fade-in {
@@ -160,7 +166,7 @@ canvas {
   display: flex;
 }
 
-@keyframes fade-in{
+@keyframes fade-in {
   from{opacity:0} to{opacity:1}
 }
 
@@ -170,4 +176,14 @@ canvas {
 
 .show {
   display: flex;
+}
+
+.fade-out {
+  display: flex;
+  opacity: 1;
+  animation: fade-out 3s forwards;
+}
+
+@keyframes fade-out {
+  from{opacity:1; display: flex;} 50%{opacity:1; display: flex;} to{opacity:0; display: none;}
 }
