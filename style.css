@@ -21,9 +21,11 @@ body {
  }
 }
 
-.P { color: red; }
-
-canvas { }
+canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
 
 /*** NES.css overrides ***/
 

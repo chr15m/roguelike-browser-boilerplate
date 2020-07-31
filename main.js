@@ -1,6 +1,6 @@
 $ = document.querySelector.bind(document);
 
-/*** sound effects ***/
+/*** resources ***/
 
 // sound effects from sfxr.me
 var sfx = {
@@ -11,9 +11,30 @@ for (var s in sfx) {
   sfx[s] = (new SoundEffect(sfx[s])).generate().getAudio();
 }
 
+// tileset from kenney.nl
+
+var tileSet = document.createElement("img");
+tileSet.src = "colored_tilemap_packed.png";
+
+var tileOptions = {
+    layout: "tile",
+    bg: "transparent",
+    tileWidth: 8,
+    tileHeight: 8,
+    tileSet: tileSet,
+    tileMap: {
+        "@": [40, 0],
+        ".": [32, 32],
+        "P": [88, 0],
+        "*": [72, 24]
+    },
+    width: 25,
+    height: 40
+}
+
 /*** game code ***/
 
-// original source code by Ondřej Žára
+// based on a tutorial by Ondřej Žára
 // www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_1
 
 var Game = {
@@ -25,11 +46,9 @@ var Game = {
     ananas: null,
     
     init: function() {
-        this.display = new ROT.Display({spacing: 1.1});
+        this.display = new ROT.Display(tileOptions);
         
-        show("#game");
-      	$("#canvas").innerHTML = "";
-        $("#canvas").appendChild(this.display.getContainer());
+        resetcanvas(this.display.getContainer());
         
         this._generateMap();
         
@@ -50,7 +69,7 @@ var Game = {
     },
     
     _generateMap: function() {
-        var digger = new ROT.Map.Digger(80, 25);
+        var digger = new ROT.Map.Digger(tileOptions.width, tileOptions.height);
         var freeCells = [];
         
         var digCallback = function(x, y, value) {
@@ -66,6 +85,7 @@ var Game = {
         this._drawWholeMap();
         
         this.player = this._createBeing(Player, freeCells);
+        rescale(this.player._x, this.player._y);
         this.pedro = this._createBeing(Pedro, freeCells);
     },
     
@@ -143,6 +163,7 @@ Player.prototype.handleEvent = function(e) {
     this._x = newX;
     this._y = newY;
     this._draw();
+    rescale(newX, newY);
     window.removeEventListener("keydown", this);
     Game.engine.unlock();
 }
@@ -204,6 +225,21 @@ Pedro.prototype.act = function() {
 Pedro.prototype._draw = function() {
     Game.display.draw(this._x, this._y, "P", "red");
 }    
+
+/*** graphics ***/
+
+function resetcanvas(el) {
+  show("#game");
+  $("#canvas").innerHTML = "";
+  $("#canvas").appendChild(el);
+}
+
+function rescale(x, y) {
+  $("canvas").style.transform =
+    "scale(8) " +
+    "translate(" + ((x * -8) + (tileOptions.width * 8 / 2)) +
+    "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
+}
 
 /*** user interface handlers ***/
 
