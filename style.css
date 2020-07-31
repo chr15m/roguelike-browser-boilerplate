@@ -14,10 +14,25 @@ body {
 
 canvas { max-width: 100%; }
 
+.screen {
+  display: none;
+}
+
 #title {
   
 }
 
 #logo {
   width: 100px;
+}
+
+/*** CSS animations ***/
+
+.fade-in {
+  animation: fade-in 0.8s;
+  display: block;
+}
+
+@keyframes fade-in{
+  from{opacity:0} to{opacity:1}
 }

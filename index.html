@@ -9,6 +9,8 @@
     <link rel="icon" href="icon.png">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/chr15m/jsfxr@42a643f/riffwave.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/chr15m/jsfxr@42a643f/sfxr.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   </head>
   <body>
@@ -19,10 +21,14 @@
     
     <div id="game"></div>
 
-    <div id="instructions">
+    <div id="instructions" class="screen">
       <p>You must find the banana and avoid getting captured by <span class="P">P</span>edro.</p>
       <p>Use the arrow keys to move around and open the <code>"*"</code> boxes by pressing space bar, or enter key.</p>
-      <p>Built with <a href="https://ondras.github.io/rot.js/hp/">rot.js</a> by Ondřej Žára.</p>
+    </div>
+    
+    <div id="about" class="screen">
+      <p>Built with <a href="https://ondras.github.io/rot.js/hp/">rot.js</a></p>
+      <p>Original source code by Ondřej Žára.</p>
     </div>
   </body>
   <script src="main.js"></script>

@@ -1,3 +1,14 @@
+$ = document.querySelector.bind(document);
+
+// sound effects from sfxr.me
+var sfx = {
+  "rubber": "5EoyNVSymuxD8s7HP1ixqdaCn5uVGEgwQ3kJBR7bSoApFQzm7E4zZPW2EcXm3jmNdTtTPeDuvwjY8z4exqaXz3NGBHRKBx3igYfBBMRBxDALhBSvzkF6VE2Pv"
+}
+
+for (var s in sfx) {
+  sfx[s] = (new SoundEffect(sfx[s])).generate().getAudio();
+}
+
 var Game = {
     display: null,
     map: {},
@@ -8,7 +19,9 @@ var Game = {
     
     init: function() {
         this.display = new ROT.Display({spacing:1.1});
-        document.getElementById("game").appendChild(this.display.getContainer());
+        
+      	$("#game").innerHTML = "";
+        $("#game").appendChild(this.display.getContainer());
         
         this._generateMap();
         
@@ -176,4 +189,10 @@ Pedro.prototype._draw = function() {
     Game.display.draw(this._x, this._y, "P", "red");
 }    
 
-Game.init();
+$("#title").classList.add("fade-in");
+$("#title").onclick = function(ev) {
+  sfx["rubber"].play();
+  Game.init();
+}
+
+$("#game").innerHTML = "";
