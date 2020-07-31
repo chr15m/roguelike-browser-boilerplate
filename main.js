@@ -48,31 +48,42 @@ var Game = {
     display: null,
     map: {},
     engine: null,
+    scheduler: null,
     player: null,
     pedro: null,
     ananas: null,
     
     init: function() {
-        if (!this.display) {
-          this.display = new ROT.Display(tileOptions);
-          resetcanvas(this.display.getContainer());
-        }
-        
-        this._generateMap();
-        
-        var scheduler = new ROT.Scheduler.Simple();
-        scheduler.add(this.player, true);
-        scheduler.add(this.pedro, true);
+        this.display = new ROT.Display(tileOptions);
+        resetcanvas(this.display.getContainer());
 
-        this.engine = new ROT.Engine(scheduler);
+        this._generateMap();
+
+        this.scheduler = new ROT.Scheduler.Simple();
+        this.scheduler.add(this.player, true);
+        this.scheduler.add(this.pedro, true);
+
+        this.engine = new ROT.Engine(this.scheduler);
         this.engine.start();
     },
   
     destroy: function() {
       if (this.engine) {
         this.engine.lock();
+        this.display = null;
+        this.map = {};
+        this.engine = null;
+        this.scheduler.add(this.player, true);
+        this.scheduler.add(this.pedro, true);
+        this.scheduler = null;
+        this.player = null;
+        this.pedro = null;
+        this.ananas = null;
       }
-      window.removeEventListener("keydown", this);
+      window.removeEventListener("keydown", this.player);
+      resetcanvas();
+      $("#title").classList.remove("hide");
+      $("#game").classList.remove("show");
     },
     
     _generateMap: function() {
@@ -224,6 +235,7 @@ Pedro.prototype.act = function() {
         Game.engine.lock();
         console.log("Game over - you were captured by Pedro!");
         sfx["lose"].play();
+        Game.destroy();
     } else {
         x = path[0][0];
         y = path[0][1];
@@ -243,14 +255,19 @@ Pedro.prototype._draw = function() {
 function resetcanvas(el) {
   show("#game");
   $("#canvas").innerHTML = "";
-  $("#canvas").appendChild(el);
+  if (el) {
+    $("#canvas").appendChild(el);
+  }
 }
 
 function rescale(x, y) {
-  $("canvas").style.transform =
-    "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
-    "translate(" + ((x * -8) + (tileOptions.width * 8 / 2)) +
-    "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
+  var c = $("canvas");
+  if (canvas) {
+    canvas.style.transform =
+      "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
+      "translate(" + ((x * -8) + (tileOptions.width * 8 / 2)) +
+      "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
+  }
 }
 
 /*** user interface handlers ***/
@@ -278,4 +295,4 @@ function hide(which) {
 }
 
 // $("#canvas").innerHTML = "";
-Game.init();
+// Game.init();
