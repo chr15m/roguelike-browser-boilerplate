@@ -10,11 +10,16 @@
     <script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/chr15m/jsfxr@42a643f/riffwave.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/chr15m/jsfxr@42a643f/sfxr.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/nes.css@2.3.0/css/nes.min.css"  rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/nes.css@2.3.0/css/nes.min.css"
+          rel="stylesheet">
+    <link href="style.css"
+          rel="stylesheet">
   </head>
   <body>
+
+    <!-- title screen -->
     <div id="title" class="screen modal">
       <div id="plate">
         <img src="icon.png" id="logo">
@@ -25,11 +30,22 @@
         <div id="menu" class="nes-container is-rounded is-dark">
           <label>
             <input type="radio"
+                   value="instructions"
+                   class="nes-radio is-dark"
+                   name="menu-items"
+                   onclick="handlemenuchange(this)"
+                   onchange="handlemenuchange(this)"
+                   checked/>
+            <span>Instructions</span>
+          </label>
+		  <br/>
+          <label>
+            <input type="radio"
                    value="settings"
                    class="nes-radio is-dark"
                    name="menu-items"
                    onclick="handlemenuchange(this)"
-                   onchange="handlemenuchange(this)" checked />
+                   onchange="handlemenuchange(this)"/>
             <span>Settings</span>
           </label>
 		  <br/>
@@ -44,10 +60,10 @@
           </label>
         </div>
       </div>
-      
       <button class="nes-btn is-success" onclick="start();">Play</button>
     </div>
-    
+
+    <!-- settings screen -->
     <div id="settings" class="screen modal">
       <p>Settings</p>
       <div class="nes-container is-rounded is-dark">
@@ -55,7 +71,8 @@
       </div>
       <button class="nes-btn is-success" onclick="hide('#settings');">Ok</button>
     </div>
-    
+
+    <!-- credits screen -->
     <div id="credits" class="screen modal">
       <p>Credits</p>
       <ul class="nes-container is-rounded is-dark">
@@ -72,20 +89,22 @@
       </ul>
       <button class="nes-btn is-success" onclick="hide('#credits');">Ok</button>
     </div>    
-    
+
+    <!-- instructions screen -->
+    <div id="instructions" class="screen modal">
+      <p>Instructions</p>
+      <div class="nes-container is-rounded is-dark">
+        <p>You must find The Amulet and avoid getting captured by The Monster</p>
+        <p>Use the arrow keys to move around. Chests will open when you move over them.</p>
+      </div>
+      <button class="nes-btn is-success" onclick="hide('#instructions');">Ok</button>
+    </div>
+
+    <!-- game screen -->
     <div id="game" class="screen">
       <div id="canvas"></div>
     </div>
 
-    <div id="instructions" class="screen">
-      <p>You must find the banana and avoid getting captured by <span class="P">P</span>edro.</p>
-      <p>Use the arrow keys to move around and open the <code>"*"</code> boxes by pressing space bar, or enter key.</p>
-    </div>
-    
-    <div id="about" class="screen">
-      <p>Built with <a href="https://ondras.github.io/rot.js/hp/">rot.js</a></p>
-      <p>Original source code by Ondřej Žára.</p>
-    </div>
   </body>
   <script src="main.js"></script>
 </html>

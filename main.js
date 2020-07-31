@@ -191,7 +191,7 @@ var Pedro = function(x, y) {
     this._draw();
 }
     
-Pedro.prototype.getSpeed = function() { return 100; }
+Pedro.prototype.getSpeed = function() { return 75; }
     
 Pedro.prototype.act = function() {
     var x = Game.player.getX();
@@ -236,7 +236,7 @@ function resetcanvas(el) {
 
 function rescale(x, y) {
   $("canvas").style.transform =
-    "scale(8) " +
+    "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
     "translate(" + ((x * -8) + (tileOptions.width * 8 / 2)) +
     "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
 }
@@ -252,11 +252,7 @@ function start() {
 
 function handlemenuchange(which) {
   var choice = which.getAttribute("value");
-  if (choice == "settings") {
-    show("#settings");
-  } else if (choice == "credits") {
-    show("#credits");
-  }
+  show("#" + choice);
 }
 
 function show(which) {

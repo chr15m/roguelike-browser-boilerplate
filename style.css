@@ -22,6 +22,7 @@ body {
 }
 
 canvas {
+  /*transform: scale(4);*/
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
@@ -92,11 +93,15 @@ canvas {
   padding: 32px;
 }
 
-#settings > *, #credits > * {
+#settings > *, #credits > *, #instructions > * {
   max-width: 90%;
   width: 400px;
   margin: 50px;
   text-align: center;
+}
+
+#instructions div > p {
+  text-align: left;
 }
 
 #settings div > p {
