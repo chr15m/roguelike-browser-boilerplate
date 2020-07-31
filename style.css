@@ -118,6 +118,17 @@ canvas {
   margin: 0.5em 0px;
 }
 
+/*** HUD ***/
+
+#hud {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  padding: 24px;
+}
+
 /*** CSS animations ***/
 
 .fade-in {
