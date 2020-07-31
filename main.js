@@ -4,7 +4,14 @@ $ = document.querySelector.bind(document);
 
 // sound effects from sfxr.me
 var sfx = {
-  "rubber": "5EoyNVSymuxD8s7HP1ixqdaCn5uVGEgwQ3kJBR7bSoApFQzm7E4zZPW2EcXm3jmNdTtTPeDuvwjY8z4exqaXz3NGBHRKBx3igYfBBMRBxDALhBSvzkF6VE2Pv"
+  "rubber": "5EoyNVaezhPnpFZjpkcJkF8FNCioPncLoztbSHU4u9wDQ8W3P7puffRWvGMnrLRdHa61kGcwhZK3RdoDRitmtwn4JjrQsZCZBmDQgkP5uGUGk863wbpRi1xdA",
+  "step1": "34T6PkwiBPcxMGrK7aegATo5WTMWoP17BTc6pwXbwqRvndwRjGYXx6rG758rLSU5suu35ZTkRCs1K2NAqyrTZbiJUHQmra9qvbBrSdbBbJ7JvmyBFVDo6eiVD",
+  "option": "34T6PkzXyyB6jHiwFztCFWCTX5oxdNq2D1HnxL9evKJV5eYK2ESUG8QUB2QvmqTdMmFHVjKLwJRYZR4QgenUUmG2AfG3rrieQTXbsM6ZYz52LHRu74TuRpnQX",
+  "choice": "34T6PkzXyyB6jHiwFztCFWEWsogkzrhzAH3FH2d97BCuFhqmZgfuXG3xtz8YYSKMzn95yyX8xZXJyesKmpcjpEL3dPP5h2e8mt5MmhExAksyqZyqgavBgsWMd",
+  "hide": "34T6PkzXyyB6jHiwFztCFWEniygA1GJtjsQuGxcd38JLDquhRqTB28dQgigseMjQSjSY14Z3aBmAtzz9KWcJZ2o9S1oCcgqQY4dxTAXikS7qCs3QJ3KuWJUyD",
+  "miss": "111112RrwhZ2Q7NGcdAP21KUHHKNQa3AhmK4Xea8mbiXfzkxr9aX41M8XYt5xYaaLeo9iZdUKUVL3u2N6XASue2wPv2wCCDy6W6TeFiUjk3dXSzFcBY7kTAM",
+  "win": "34T6Pkv34QJsqDqEa8aV4iwF2LnASMc3683oFUPKZic6kVUHvwjUQi6rz8qNRUHRs34cu37P5iQzz2AzipW3DHMoG5h4BZgDmZnyLhsXgPKsq2r4Fb2eBFVuR",
+  "lose": "7BMHBGHKKnn7bgcmGprqiBmpuRaTytcd4JS9eRNDzUTRuQy8BTBzs5g8XzS7rrp4C9cNeSaqAtWR9qdvXvtnWVTmTC8GXgDuCXD2KyHJNXzfUahbZrce8ibuy",
 }
 
 for (var s in sfx) {
@@ -46,9 +53,10 @@ var Game = {
     ananas: null,
     
     init: function() {
-        this.display = new ROT.Display(tileOptions);
-        
-        resetcanvas(this.display.getContainer());
+        if (!this.display) {
+          this.display = new ROT.Display(tileOptions);
+          resetcanvas(this.display.getContainer());
+        }
         
         this._generateMap();
         
@@ -63,9 +71,8 @@ var Game = {
     destroy: function() {
       if (this.engine) {
         this.engine.lock();
-        delete this.engine;
-        delete window.Game;
       }
+      window.removeEventListener("keydown", this);
     },
     
     _generateMap: function() {
@@ -134,10 +141,6 @@ Player.prototype.act = function() {
 
 Player.prototype.handleEvent = function(e) {
     var code = e.keyCode;
-    if (code == 13 || code == 32) {
-        this._checkBox();
-        return;
-    }
 
     var keyMap = {};
     keyMap[38] = 0;
@@ -166,22 +169,30 @@ Player.prototype.handleEvent = function(e) {
     rescale(newX, newY);
     window.removeEventListener("keydown", this);
     Game.engine.unlock();
+    sfx["step1"].play();
+    this._checkBox();
 }
 
 Player.prototype._draw = function() {
     Game.display.draw(this._x, this._y, "@", "#ff0");
 }
-    
+
 Player.prototype._checkBox = function() {
     var key = this._x + "," + this._y;
     if (Game.map[key] != "*") {
-        alert("There is no box here!");
+        //sfx["miss"].play();
+        //console.log("There is no box here!");
     } else if (key == Game.ananas) {
-        alert("Hooray! You found a banana and won this game.");
-        Game.engine.lock();
-        window.removeEventListener("keydown", this);
+        console.log("Hooray! You found a banana and won this game.");
+        for (var i=0; i<5; i++) {
+          setTimeout(function() {
+            sfx["win"].play();
+          }, 100 * i);
+        }
+        Game.destroy();
     } else {
-        alert("This box is empty :-(");
+        console.log("This box is empty :-(");
+        sfx["miss"].play();
     }
 }
     
@@ -211,7 +222,8 @@ Pedro.prototype.act = function() {
     path.shift();
     if (path.length == 1) {
         Game.engine.lock();
-        alert("Game over - you were captured by Pedro!");
+        console.log("Game over - you were captured by Pedro!");
+        sfx["lose"].play();
     } else {
         x = path[0][0];
         y = path[0][1];
@@ -243,7 +255,6 @@ function rescale(x, y) {
 
 /*** user interface handlers ***/
 
-$("#title").classList.add("fade-in");
 function start() {
   $("#title").classList.add("hide");
   sfx["rubber"].play();
@@ -253,16 +264,18 @@ function start() {
 function handlemenuchange(which) {
   var choice = which.getAttribute("value");
   show("#" + choice);
+  sfx["choice"].play();
 }
 
 function show(which) {
   $(which).classList.remove("hide");  
-  $(which).classList.add("fade-in");
+  $(which).classList.add("show");
 }
 
 function hide(which) {
-  $(which).classList.remove("fade-in");
+  $(which).classList.remove("show");
   $(which).classList.add("hide");
 }
 
-$("#canvas").innerHTML = "";
+// $("#canvas").innerHTML = "";
+Game.init();

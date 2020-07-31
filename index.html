@@ -20,12 +20,11 @@
   <body>
 
     <!-- title screen -->
-    <div id="title" class="screen modal">
+    <div id="title" class="screen modal fade-in">
       <div id="plate">
         <img src="icon.png" id="logo">
         <p>Roguelike<br/>Browser<br/>Boilerplate</p>
       </div>
-
       <div id="options">
         <div id="menu" class="nes-container is-rounded is-dark">
           <label>
@@ -36,7 +35,7 @@
                    onclick="handlemenuchange(this)"
                    onchange="handlemenuchange(this)"
                    checked/>
-            <span>Instructions</span>
+            <span>How to play</span>
           </label>
 		  <br/>
           <label>
@@ -69,7 +68,7 @@
       <div class="nes-container is-rounded is-dark">
         <p>Put your settings menu here.</p>
       </div>
-      <button class="nes-btn is-success" onclick="hide('#settings');">Ok</button>
+      <button class="nes-btn is-success" onclick="hide('#settings');sfx['hide'].play();">Ok</button>
     </div>
 
     <!-- credits screen -->
@@ -82,12 +81,12 @@
         <li>Engine =
           <a href="https://ondras.github.io/rot.js/hp/">ROT.js</a></li>
         <li>Tiles by
-          <a href="https://kenney.nl/assets/bit-pack">kenney.nl</a></li>
+          <a href="https://kenney.nl/assets/micro-roguelike">kenney.nl</a></li>
         <li>Styles from
           <a href="https://nostalgic-css.github.io/NES.css/">NESS.css</a></li>
         <li>SFX from <a href="https://sfxr.me/">sfxr.me</a></li>
       </ul>
-      <button class="nes-btn is-success" onclick="hide('#credits');">Ok</button>
+      <button class="nes-btn is-success" onclick="hide('#credits');sfx['hide'].play();">Ok</button>
     </div>    
 
     <!-- instructions screen -->
@@ -97,7 +96,7 @@
         <p>You must find The Amulet and avoid getting captured by The Monster</p>
         <p>Use the arrow keys to move around. Chests will open when you move over them.</p>
       </div>
-      <button class="nes-btn is-success" onclick="hide('#instructions');">Ok</button>
+      <button class="nes-btn is-success" onclick="hide('#instructions');sfx['hide'].play();">Ok</button>
     </div>
 
     <!-- game screen -->
