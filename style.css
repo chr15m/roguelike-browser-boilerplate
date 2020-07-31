@@ -1,0 +1,23 @@
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Press Start 2P', cursive;
+  max-width: 800px;
+  width: 100%;
+  margin: 1em auto;
+  font-size: 1.5em;
+  background-color: #222323;
+  color: #eee;
+}
+
+.P { color: red; }
+
+canvas { max-width: 100%; }
+
+#title {
+  
+}
+
+#logo {
+  width: 100px;
+}
