@@ -22,10 +22,28 @@ body {
 }
 
 canvas {
-  /*transform: scale(4);*/
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+}
+
+.sprite {
+  width: 8px;
+  height: 8px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  transform: scale(8);
+  background-image: url("colored_tilemap_packed.png");
+  margin: 80px auto;
+}
+
+.amulet {
+  background-position: 0px -64px;  
+}
+
+.ghost {
+  background-position: -72px -56px;
 }
 
 /*** NES.css overrides ***/
@@ -93,7 +111,7 @@ canvas {
   padding: 32px;
 }
 
-#settings > *, #credits > *, #instructions > * {
+.modal > * {
   max-width: 90%;
   width: 400px;
   margin: 50px;

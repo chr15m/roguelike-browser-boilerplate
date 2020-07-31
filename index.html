@@ -99,6 +99,27 @@
       <button class="nes-btn is-success" onclick="hide('#instructions');sfx['hide'].play();">Ok</button>
     </div>
 
+    <!-- win screen -->
+    <div id="win" class="screen modal">
+      <p>Win!</p>
+      <div class="nes-container is-rounded is-dark">
+        <p>You found The Amulet and won the game!</p>
+        <p><div class="sprite amulet"></div></p>
+      </div>
+      <button class="nes-btn is-success" onclick="hide('#win');sfx['hide'].play();">Ok</button>
+    </div>
+
+    <!-- win screen -->
+    <div id="lose" class="screen modal">
+      <p>Lose!</p>
+      <div class="nes-container is-rounded is-dark">
+        <div class="sprite ghost"></div>
+        <p>Oh no, The Monster got you.</p>
+        <p>You're dead.</p>
+      </div>
+      <button class="nes-btn is-success" onclick="hide('#lose');sfx['hide'].play();">Ok</button>
+    </div>
+
     <!-- game screen -->
     <div id="game" class="screen">
       <div id="canvas"></div>

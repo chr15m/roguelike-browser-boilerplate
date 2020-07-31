@@ -73,8 +73,8 @@ var Game = {
         this.display = null;
         this.map = {};
         this.engine = null;
-        this.scheduler.add(this.player, true);
-        this.scheduler.add(this.monster, true);
+        this.scheduler.remove(this.player);
+        this.scheduler.remove(this.monster);
         this.scheduler = null;
         this.player = null;
         this.monster = null;
@@ -103,8 +103,8 @@ var Game = {
         this._drawWholeMap();
         
         this.player = this._createBeing(Player, freeCells);
-        rescale(this.player._x, this.player._y);
         this.monster = this._createBeing(Monster, freeCells);
+        rescale(this.player._x, this.player._y);
     },
     
     _createBeing: function(what, freeCells) {
@@ -194,7 +194,7 @@ Player.prototype._checkBox = function() {
         //sfx["miss"].play();
         //console.log("There is no box here!");
     } else if (key == Game.amulet) {
-        console.log("Hooray! You found a banana and won this game.");
+        show("#win");
         for (var i=0; i<5; i++) {
           setTimeout(function() {
             sfx["win"].play();
@@ -202,7 +202,7 @@ Player.prototype._checkBox = function() {
         }
         Game.destroy();
     } else {
-        console.log("This box is empty :-(");
+        toast("This chest is empty.");
         sfx["miss"].play();
     }
 }
@@ -214,7 +214,7 @@ var Monster = function(x, y) {
 }
     
 Monster.prototype.getSpeed = function() { return 75; }
-    
+
 Monster.prototype.act = function() {
     var x = Game.player.getX();
     var y = Game.player.getY();
@@ -233,7 +233,7 @@ Monster.prototype.act = function() {
     path.shift();
     if (path.length <= 1) {
         Game.engine.lock();
-        console.log("Game over - you were captured by The Monster!");
+        show("#lose");
         sfx["lose"].play();
         Game.destroy();
     } else {
@@ -293,3 +293,9 @@ function hide(which) {
   $(which).classList.remove("show");
   $(which).classList.add("hide");
 }
+
+function toast(message) {
+  //show("#message");
+  console.log("Toast:", message);
+}
+
