@@ -66,12 +66,19 @@ a:hover {
   background-color: #222323;
 }
 
+#title {
+  background-image: url(bg.png);
+  background-size: cover;
+}
+
 #plate {
   display: flex;
-  margin: 100px;
   justify-content: center;
   align-items: center;
   text-align: left;
+  padding: 40px;
+  /*background-color: #222323;*/
+  border-radius: 5px;
 }
 
 #plate > * + * {
@@ -80,11 +87,15 @@ a:hover {
 }
 
 @media (max-width: 600px) {
- #plate {
-   flex-direction: column;
-   margin: 40px;
-   text-align: center;
- }
+  #plate {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  #plate > * + * {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
 }
 
 #options {
