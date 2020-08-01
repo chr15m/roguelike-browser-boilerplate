@@ -148,7 +148,8 @@ canvas {
 #hud {
   position: absolute;
   bottom: 0px;
-  width: 100%;
+  width: 600px;
+  max-width: 100%;
   display: flex;
   justify-content: space-evenly;
   padding: 24px;
