@@ -25,31 +25,31 @@ var tileSet = document.createElement("img");
 tileSet.src = "colored_tilemap_packed.png";
 
 var tileOptions = {
-    layout: "tile",
-    bg: "transparent",
-    tileWidth: 8,
-    tileHeight: 8,
-    tileSet: tileSet,
-    tileMap: {
-        "@": [40, 0],
-        ".": [32, 32],
-        "M": [88, 0],
-        "*": [72, 24],
-        "a": [40, 32],
-        "b": [32, 40],
-        "c": [40, 40],
-        "d": [48, 40],
-        "e": [56, 40],
-        "╔": [0, 72],
-        "╗": [24, 72],
-        "╝": [72, 72],
-        "╚": [48, 72],
-        "═": [8, 72],
-       	"║": [32, 72],
-        "o": [104, 8],
-    },
-    width: 25,
-    height: 40
+  layout: "tile",
+  bg: "transparent",
+  tileWidth: 8,
+  tileHeight: 8,
+  tileSet: tileSet,
+  tileMap: {
+    "@": [40, 0],
+    ".": [32, 32],
+    "M": [88, 0],
+    "*": [72, 24],
+    "a": [40, 32],
+    "b": [32, 40],
+    "c": [40, 40],
+    "d": [48, 40],
+    "e": [56, 40],
+    "╔": [0, 72],
+    "╗": [24, 72],
+    "╝": [72, 72],
+    "╚": [48, 72],
+    "═": [8, 72],
+    "║": [32, 72],
+    "o": [104, 8],
+  },
+  width: 25,
+  height: 40
 }
 
 /*** game code ***/
@@ -58,169 +58,169 @@ var tileOptions = {
 // www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_1
 
 var Game = {
-    display: null,
-    map: {},
-    engine: null,
-    scheduler: null,
-    player: null,
-    monster: null,
-    amulet: null,
+  display: null,
+  map: {},
+  engine: null,
+  scheduler: null,
+  player: null,
+  monster: null,
+  amulet: null,
+  
+  init: function() {
+    this.display = new ROT.Display(tileOptions);
+    resetcanvas(this.display.getContainer());
+
+    this._generateMap();
+
+    this.scheduler = new ROT.Scheduler.Simple();
+    this.scheduler.add(this.player, true);
+    this.scheduler.add(this.monster, true);
+
+    this.engine = new ROT.Engine(this.scheduler);
+    this.engine.start();
+  },
+
+  destroy: function() {
+    if (this.engine) {
+    this.engine.lock();
+    this.display.clear();
+    this.display = null;
+    this.map = {};
+    this.engine = null;
+    this.scheduler.remove(this.player);
+    this.scheduler.remove(this.monster);
+    this.scheduler = null;
+    this.player = null;
+    this.monster = null;
+    this.amulet = null;
+    }
+    window.removeEventListener("keydown", this.player);
+    resetcanvas();
+    $("#title").classList.remove("hide");
+    $("#game").classList.remove("show");
+  },
+  
+  _generateMap: function() {
+    var digger = new ROT.Map.Digger(tileOptions.width, tileOptions.height);
+    var freeCells = [];
+    var zeroCells = [];
     
-    init: function() {
-        this.display = new ROT.Display(tileOptions);
-        resetcanvas(this.display.getContainer());
-
-        this._generateMap();
-
-        this.scheduler = new ROT.Scheduler.Simple();
-        this.scheduler.add(this.player, true);
-        this.scheduler.add(this.monster, true);
-
-        this.engine = new ROT.Engine(this.scheduler);
-        this.engine.start();
-    },
-
-    destroy: function() {
-      if (this.engine) {
-        this.engine.lock();
-        this.display = null;
-        this.map = {};
-        this.engine = null;
-        this.scheduler.remove(this.player);
-        this.scheduler.remove(this.monster);
-        this.scheduler = null;
-        this.player = null;
-        this.monster = null;
-        this.amulet = null;
+    var digCallback = function(x, y, value) {
+      var key = x+","+y;
+      if (value) {
+        zeroCells.push(key);
+      } else {
+        this.map[key] = ".";
+        freeCells.push(key);
       }
-      window.removeEventListener("keydown", this.player);
-      resetcanvas();
-      $("#title").classList.remove("hide");
-      $("#game").classList.remove("show");
-    },
-    
-    _generateMap: function() {
-        var digger = new ROT.Map.Digger(tileOptions.width, tileOptions.height);
-        var freeCells = [];
-        var zeroCells = [];
-        
-        var digCallback = function(x, y, value) {
-            var key = x+","+y;
-            if (value) {
-              zeroCells.push(key);
-            } else {
-              this.map[key] = ".";
-              freeCells.push(key);
-            }
-        }
-        digger.create(digCallback.bind(this));
+    }
+    digger.create(digCallback.bind(this));
 
-        this._generateBoxes(freeCells);
-        this._generateShrubberies(zeroCells);
-        this._drawRooms(digger);
-        this._drawWholeMap();
+    this._generateBoxes(freeCells);
+    this._generateShrubberies(zeroCells);
+    this._drawRooms(digger);
+    this._drawWholeMap();
 
-        this.player = this._createBeing(Player, freeCells);
-        this.monster = this._createBeing(Monster, freeCells);
-        rescale(this.player._x, this.player._y);
-    },
-    
-    _createBeing: function(what, freeCells) {
+    this.player = this._createBeing(Player, freeCells);
+    this.monster = this._createBeing(Monster, freeCells);
+    rescale(this.player._x, this.player._y);
+  },
+  
+  _createBeing: function(what, freeCells) {
+    var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+    var key = freeCells.splice(index, 1)[0];
+    var parts = key.split(",");
+    var x = parseInt(parts[0]);
+    var y = parseInt(parts[1]);
+    return new what(x, y);
+  },
+  
+  _generateBoxes: function(freeCells) {
+    for (var i=0;i<10;i++) {
+      var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+      var key = freeCells.splice(index, 1)[0];
+      this.map[key] = "*";
+      if (!i) { this.amulet = key; } /* first box contains the amulet */
+    }
+  },
+  
+  _generateShrubberies: function(freeCells) {
+    for (var i=0;i<100;i++) {
+      if (freeCells.length) {
         var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
         var key = freeCells.splice(index, 1)[0];
-        var parts = key.split(",");
-        var x = parseInt(parts[0]);
-        var y = parseInt(parts[1]);
-        return new what(x, y);
-    },
-    
-    _generateBoxes: function(freeCells) {
-        for (var i=0;i<10;i++) {
-            var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-            var key = freeCells.splice(index, 1)[0];
-            this.map[key] = "*";
-            if (!i) { this.amulet = key; } /* first box contains the amulet */
-        }
-    },
-  
-    _generateShrubberies: function(freeCells) {
-        for (var i=0;i<100;i++) {
-            if (freeCells.length) {
-              var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-              var key = freeCells.splice(index, 1)[0];
-              this.map[key] = ROT.RNG.getItem("abcde");
-            }
-        }
-    },
-  
-    _drawRooms: function(map) {
-      var rooms = map.getRooms();
-      for (var rm=0; rm<rooms.length; rm++) {
-          var room = rooms[rm];
-        
-          var l=room.getLeft() - 1;
-          var r=room.getRight() + 1;
-          var t=room.getTop() - 1;
-          var b=room.getBottom() + 1;
-
-          /*this.map[l + "," + t] = "╔";
-          this.map[r + "," + t] = "╗";
-          this.map[l + "," + b] = "╚";
-          this.map[r + "," + b] = "╝";*/
-
-          this.map[l + "," + t] = "o";
-          this.map[r + "," + t] = "o";
-          this.map[l + "," + b] = "o";
-          this.map[r + "," + b] = "o";
-
-          for (var i=room.getLeft(); i<=room.getRight(); i++) {
-            var k = i + "," + t;
-            if ([".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"].indexOf(this.map[k]) == -1) {
-              this.map[k] = "═";
-            }
-          }
-
-          for (var i=room.getLeft(); i<=room.getRight(); i++) {
-            var k = i + "," + b;
-            if ([".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"].indexOf(this.map[k]) == -1) {
-              this.map[k] = "═";
-            }
-          }
-
-          for (var i=room.getTop(); i<=room.getBottom(); i++) {
-            var k = l + "," + i;
-            if ([".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"].indexOf(this.map[k]) == -1) {
-              this.map[k] = "║";
-            }
-          }
-
-
-          for (var i=room.getTop(); i<=room.getBottom(); i++) {
-            var k = r + "," + i;
-            if ([".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"].indexOf(this.map[k]) == -1) {
-              this.map[k] = "║";
-            }
-          }
-
-          
-          // room.getDoors(console.log);
+        this.map[key] = ROT.RNG.getItem("abcde");
       }
-    },
-    
-    _drawWholeMap: function() {
-        for (var key in this.map) {
-            var parts = key.split(",");
-            var x = parseInt(parts[0]);
-            var y = parseInt(parts[1]);
-            this.display.draw(x, y, this.map[key]);
-        }
     }
+  },
+  
+  _drawRooms: function(map) {
+    var noreplace = [".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"];
+    var rooms = map.getRooms();
+    for (var rm=0; rm<rooms.length; rm++) {
+      var room = rooms[rm];
+    
+      var l=room.getLeft() - 1;
+      var r=room.getRight() + 1;
+      var t=room.getTop() - 1;
+      var b=room.getBottom() + 1;
+
+      /*this.map[l + "," + t] = "╔";
+      this.map[r + "," + t] = "╗";
+      this.map[l + "," + b] = "╚";
+      this.map[r + "," + b] = "╝";*/
+
+      this.map[l + "," + t] = "o";
+      this.map[r + "," + t] = "o";
+      this.map[l + "," + b] = "o";
+      this.map[r + "," + b] = "o";
+
+      for (var i=room.getLeft(); i<=room.getRight(); i++) {
+        var k = i + "," + t;
+        if (noreplace.indexOf(this.map[k]) == -1) {
+          this.map[k] = "═";
+        }
+      }
+
+      for (var i=room.getLeft(); i<=room.getRight(); i++) {
+        var k = i + "," + b;
+        if (noreplace.indexOf(this.map[k]) == -1) {
+          this.map[k] = "═";
+        }
+      }
+
+      for (var i=room.getTop(); i<=room.getBottom(); i++) {
+        var k = l + "," + i;
+        if (noreplace.indexOf(this.map[k]) == -1) {
+          this.map[k] = "║";
+        }
+      }
+
+      for (var i=room.getTop(); i<=room.getBottom(); i++) {
+        var k = r + "," + i;
+        if (noreplace.indexOf(this.map[k]) == -1) {
+          this.map[k] = "║";
+        }
+      }
+
+      // room.getDoors(console.log);
+    }
+  },
+  
+  _drawWholeMap: function() {
+    for (var key in this.map) {
+      var parts = key.split(",");
+      var x = parseInt(parts[0]);
+      var y = parseInt(parts[1]);
+      this.display.draw(x, y, this.map[key]);
+    }
+  }
 };
 
 var Player = function(x, y) {
-    this._x = x;
-    this._y = y;
-    this._draw();
+  this._x = x;
+  this._y = y;
+  this._draw();
 }
 
 Player.prototype.getSpeed = function() { return 100; }
@@ -228,129 +228,138 @@ Player.prototype.getX = function() { return this._x; }
 Player.prototype.getY = function() { return this._y; }
 
 Player.prototype.act = function() {
-    Game.engine.lock();
-    window.addEventListener("keydown", this);
+  Game.engine.lock();
+  window.addEventListener("keydown", this);
 }
 
 Player.prototype.handleEvent = function(e) {
-    var code = e.keyCode;
+  var code = e.keyCode;
 
-    var keyMap = {};
-    keyMap[38] = 0;
-    keyMap[33] = 1;
-    keyMap[39] = 2;
-    keyMap[34] = 3;
-    keyMap[40] = 4;
-    keyMap[35] = 5;
-    keyMap[37] = 6;
-    keyMap[36] = 7;
+  var keyMap = {};
+  keyMap[38] = 0;
+  keyMap[33] = 1;
+  keyMap[39] = 2;
+  keyMap[34] = 3;
+  keyMap[40] = 4;
+  keyMap[35] = 5;
+  keyMap[37] = 6;
+  keyMap[36] = 7;
 
-    /* one of numpad directions? */
-    if (!(code in keyMap)) { return; }
+  /* one of numpad directions? */
+  if (!(code in keyMap)) { return; }
 
-    /* is there a free space? */
-    var dir = ROT.DIRS[8][keyMap[code]];
-    var newX = this._x + dir[0];
-    var newY = this._y + dir[1];
-    var newKey = newX + "," + newY;
-    if ([".", "*"].indexOf(Game.map[newKey]) == -1) { return; }
+  /* is there a free space? */
+  var dir = ROT.DIRS[8][keyMap[code]];
+  var newX = this._x + dir[0];
+  var newY = this._y + dir[1];
 
-    Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
-    this._x = newX;
-    this._y = newY;
-    this._draw();
-    rescale(newX, newY);
-    window.removeEventListener("keydown", this);
-    Game.engine.unlock();
-    sfx["step1"].play();
-    this._checkBox();
+  var newKey = newX + "," + newY;
+  if ([".", "*"].indexOf(Game.map[newKey]) == -1) { return; }
+
+  Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
+  this._x = newX;
+  this._y = newY;
+  this._draw();
+  rescale(newX, newY);
+  window.removeEventListener("keydown", this);
+  Game.engine.unlock();
+  sfx["step1"].play();
+  this._checkBox();
 }
 
 Player.prototype._draw = function() {
-    Game.display.draw(this._x, this._y, "@", "#ff0");
+  Game.display.draw(this._x, this._y, "@", "#ff0");
 }
 
 Player.prototype._checkBox = function() {
-    var key = this._x + "," + this._y;
-    if (Game.map[key] != "*") {
-        //sfx["miss"].play();
-        //console.log("There is no box here!");
-    } else if (key == Game.amulet) {
-        show("#win");
-        for (var i=0; i<5; i++) {
-          setTimeout(function() {
-            sfx["win"].play();
-          }, 100 * i);
-        }
-        Game.destroy();
-    } else {
-        toast("This chest is empty.");
-        sfx["miss"].play();
+  var key = this._x + "," + this._y;
+  if (Game.map[key] != "*") {
+    //sfx["miss"].play();
+    //console.log("There is no box here!");
+  } else if (key == Game.amulet) {
+    show("#win");
+    for (var i=0; i<5; i++) {
+      setTimeout(function() {
+        sfx["win"].play();
+      }, 100 * i);
     }
+    Game.destroy();
+  } else {
+    toast("This chest is empty.");
+    sfx["miss"].play();
+  }
 }
-    
+  
 var Monster = function(x, y) {
-    this._x = x;
-    this._y = y;
-    this._draw();
+  this._x = x;
+  this._y = y;
+  this._draw();
 }
-    
+  
 Monster.prototype.getSpeed = function() { return 75; }
 
 Monster.prototype.act = function() {
-    var x = Game.player.getX();
-    var y = Game.player.getY();
+  var x = Game.player.getX();
+  var y = Game.player.getY();
 
-    var passableCallback = function(x, y) {
-        return ([".", "*"].indexOf(Game.map[x + "," + y]) != -1);
-    }
-    var astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
+  var passableCallback = function(x, y) {
+    return ([".", "*"].indexOf(Game.map[x + "," + y]) != -1);
+  }
+  var astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
 
-    var path = [];
-    var pathCallback = function(x, y) {
-        path.push([x, y]);
-    }
-    astar.compute(this._x, this._y, pathCallback);
+  var path = [];
+  var pathCallback = function(x, y) {
+    path.push([x, y]);
+  }
+  astar.compute(this._x, this._y, pathCallback);
 
-    path.shift();
-    if (path.length <= 1) {
-        Game.engine.lock();
-        show("#lose");
-        sfx["lose"].play();
-        Game.destroy();
-    } else {
-        x = path[0][0];
-        y = path[0][1];
-        Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
-        this._x = x;
-        this._y = y;
-        this._draw();
-    }
+  path.shift();
+  if (path.length <= 1) {
+    Game.engine.lock();
+    show("#lose");
+    sfx["lose"].play();
+    Game.destroy();
+  } else {
+    x = path[0][0];
+    y = path[0][1];
+    Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
+    this._x = x;
+    this._y = y;
+    this._draw();
+  }
 }
-    
+
 Monster.prototype._draw = function() {
-    Game.display.draw(this._x, this._y, "M");
-}    
+  Game.display.draw(this._x, this._y, "M");
+}
 
 /*** graphics ***/
 
 function resetcanvas(el) {
   show("#game");
-  $("#canvas").innerHTML = "";
   if (el) {
+    $("#canvas").innerHTML = "";
     $("#canvas").appendChild(el);
-    document.addEventListener("touchstart", handletouch);
-    document.addEventListener("click", handletouch);
+    //$("#game").addEventListener("touchstart", handletouch);
+    //$("#game").addEventListener("click", handletouch);
+    $("canvas").addEventListener("touchstart", handletouch);
+    $("canvas").addEventListener("click", handletouch);
+  } else {
+    //$("#game").removeEventListener("touchstart", handletouch);
+    //$("#game").removeEventListener("click", handletouch);
+    $("canvas").removeEventListener("touchstart", handletouch);
+    $("canvas").removeEventListener("click", handletouch);
+    $("#canvas").innerHTML = "";
   }
 }
 
 function rescale(x, y) {
   var c = $("canvas");
   if (canvas) {
-    canvas.style.transform =
-      "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
-      "translate(" + ((x * -8) + (tileOptions.width * 8 / 2)) +
-      "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
+  canvas.style.transform =
+    "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
+    "translate(" + ((x * -8) + (tileOptions.width * 8 / 2)) +
+    "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
   }
 }
 
@@ -359,7 +368,16 @@ function rescale(x, y) {
 function handletouch(ev) {
   ev.preventDefault();
   console.log(ev);
-  console.log(ev.clientX);
+  console.log(ev.clientX, ev.clientY);
+  var tile = [Math.floor(ev.layerX / 8.0),
+              Math.floor(ev.layerY / 8.0)];
+  console.log(tile);
+  //console.log($("#game").innerWidth);
+  /*var pos = [ev.clientX / $("#game").offsetWidth - 0.5,
+             ev.clientY / $("#game").offsetHeight - 0.5];
+  console.log(pos);
+  console.log(pos[0] > pos[1], pos[0] < pos[1]);*/
+  
 }
 
 function start() {
@@ -369,9 +387,15 @@ function start() {
 }
 
 function handlemenuchange(which) {
+  console.log("handlemenuchange", which);
   var choice = which.getAttribute("value");
   show("#" + choice);
   sfx["choice"].play();
+}
+
+function hidemodal(which) {
+  hide('#' + which);
+  sfx['hide'].play();
 }
 
 function show(which) {

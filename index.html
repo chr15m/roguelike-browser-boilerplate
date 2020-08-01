@@ -68,7 +68,7 @@
       <div class="nes-container is-rounded is-dark">
         <p>Put your settings menu here.</p>
       </div>
-      <button class="nes-btn is-success" onclick="hide('#settings');sfx['hide'].play();">Ok</button>
+      <button class="nes-btn is-success" onclick="hidemodal('settings')">Ok</button>
     </div>
 
     <!-- credits screen -->
@@ -76,17 +76,23 @@
       <p>Credits</p>
       <ul class="nes-container is-rounded is-dark">
         <p>Made with:</p>
-        <li><a href="https://chr15m.itch.io/roguelike-browser-boilerplate">
+        <li><a href="https://chr15m.itch.io/roguelike-browser-boilerplate"
+               target="_blank">
           Roguelike Browser Boilerplate</a></li>
         <li>Engine is
-          <a href="https://ondras.github.io/rot.js/hp/">ROT.js</a></li>
+          <a href="https://ondras.github.io/rot.js/hp/"
+             target="_blank">ROT.js</a></li>
         <li>Tiles by
-          <a href="https://kenney.nl/assets/micro-roguelike">kenney.nl</a></li>
+          <a href="https://kenney.nl/assets/micro-roguelike"
+             target="_blank">kenney.nl</a></li>
         <li>Styles from
-          <a href="https://nostalgic-css.github.io/NES.css/">NESS.css</a></li>
-        <li>SFX from <a href="https://sfxr.me/">sfxr.me</a></li>
+          <a href="https://nostalgic-css.github.io/NES.css/"
+             target="_blank">NESS.css</a></li>
+        <li>SFX from
+          <a href="https://sfxr.me/"
+             target="_blank">sfxr.me</a></li>
       </ul>
-      <button class="nes-btn is-success" onclick="hide('#credits');sfx['hide'].play();">Ok</button>
+      <button class="nes-btn is-success" onclick="hidemodal('credits')">Ok</button>
     </div>    
 
     <!-- instructions screen -->
@@ -96,17 +102,17 @@
         <p>You must find The Amulet and avoid getting captured by The Monster</p>
         <p>Use the arrow keys to move around. To look in a chest move over it.</p>
       </div>
-      <button class="nes-btn is-success" onclick="hide('#instructions');sfx['hide'].play();">Ok</button>
+      <button class="nes-btn is-success" onclick="hidemodal('instructions')">Ok</button>
     </div>
 
     <!-- win screen -->
     <div id="win" class="screen modal">
       <p>Win!</p>
       <div class="nes-container is-rounded is-dark">
-        <p>You found The Amulet and won the game!</p>
         <p><div class="sprite amulet"></div></p>
+        <p>You found The Amulet and won the game!</p>
       </div>
-      <button class="nes-btn is-success" onclick="hide('#win');sfx['hide'].play();">Ok</button>
+      <button class="nes-btn is-success" onclick="hidemodal('win')">Ok</button>
     </div>
 
     <!-- win screen -->
@@ -117,7 +123,7 @@
         <p>Oh no, The Monster got you.</p>
         <p>You're dead.</p>
       </div>
-      <button class="nes-btn is-success" onclick="hide('#lose');sfx['hide'].play();">Ok</button>
+      <button class="nes-btn is-success" onclick="hidemodal('lose')">Ok</button>
     </div>
 
     <!-- game screen -->
