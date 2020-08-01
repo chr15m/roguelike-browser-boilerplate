@@ -13,6 +13,7 @@ body {
   font-size: 1.5em;
   background-color: #222323;
   color: #eee;
+  user-select: none;
 }
 
 @media (max-width: 600px) {
@@ -25,6 +26,15 @@ canvas {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+}
+
+a {
+  color: #e77;
+}
+
+a:hover {
+  color: #faa;
+  text-decoration: none;
 }
 
 /*** NES.css overrides ***/
