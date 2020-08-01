@@ -32,8 +32,13 @@ var tileOptions = {
     tileMap: {
         "@": [40, 0],
         ".": [32, 32],
-        "P": [88, 0],
-        "*": [72, 24]
+        "M": [88, 0],
+        "*": [72, 24],
+        "a": [40, 32],
+        "b": [32, 40],
+        "c": [40, 40],
+        "d": [48, 40],
+        "e": [56, 40],
     },
     width: 25,
     height: 40
@@ -66,7 +71,7 @@ var Game = {
         this.engine = new ROT.Engine(this.scheduler);
         this.engine.start();
     },
-  
+
     destroy: function() {
       if (this.engine) {
         this.engine.lock();
@@ -89,19 +94,23 @@ var Game = {
     _generateMap: function() {
         var digger = new ROT.Map.Digger(tileOptions.width, tileOptions.height);
         var freeCells = [];
+        var zeroCells = [];
         
         var digCallback = function(x, y, value) {
-            if (value) { return; }
-            
             var key = x+","+y;
-            this.map[key] = ".";
-            freeCells.push(key);
+            if (value) {
+              zeroCells.push(key);
+            } else {
+              this.map[key] = ".";
+              freeCells.push(key);
+            }
         }
         digger.create(digCallback.bind(this));
-        
+
         this._generateBoxes(freeCells);
+        this._generateShrubberies(zeroCells);
         this._drawWholeMap();
-        
+
         this.player = this._createBeing(Player, freeCells);
         this.monster = this._createBeing(Monster, freeCells);
         rescale(this.player._x, this.player._y);
@@ -122,6 +131,16 @@ var Game = {
             var key = freeCells.splice(index, 1)[0];
             this.map[key] = "*";
             if (!i) { this.amulet = key; } /* first box contains the amulet */
+        }
+    },
+  
+    _generateShrubberies: function(freeCells) {
+        for (var i=0;i<100;i++) {
+            if (freeCells.length) {
+              var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+              var key = freeCells.splice(index, 1)[0];
+              this.map[key] = ROT.RNG.getItem("abcde");
+            }
         }
     },
     
@@ -171,7 +190,7 @@ Player.prototype.handleEvent = function(e) {
     var newX = this._x + dir[0];
     var newY = this._y + dir[1];
     var newKey = newX + "," + newY;
-    if (!(newKey in Game.map)) { return; }
+    if ([".", "*"].indexOf(Game.map[newKey]) == -1) { return; }
 
     Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
     this._x = newX;
@@ -247,7 +266,7 @@ Monster.prototype.act = function() {
 }
     
 Monster.prototype._draw = function() {
-    Game.display.draw(this._x, this._y, "P", "red");
+    Game.display.draw(this._x, this._y, "M");
 }    
 
 /*** graphics ***/
@@ -257,6 +276,8 @@ function resetcanvas(el) {
   $("#canvas").innerHTML = "";
   if (el) {
     $("#canvas").appendChild(el);
+    document.addEventListener("touchstart", handletouch);
+    document.addEventListener("click", handletouch);
   }
 }
 
@@ -271,6 +292,12 @@ function rescale(x, y) {
 }
 
 /*** user interface handlers ***/
+
+function handletouch(ev) {
+  ev.preventDefault();
+  console.log(ev);
+  console.log(ev.clientX);
+}
 
 function start() {
   $("#title").classList.add("hide");
