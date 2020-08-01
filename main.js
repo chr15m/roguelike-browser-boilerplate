@@ -3,6 +3,7 @@ $ = document.querySelector.bind(document);
 /*** resources ***/
 
 // sound effects from sfxr.me
+
 var sfx = {
   "rubber": "5EoyNVaezhPnpFZjpkcJkF8FNCioPncLoztbSHU4u9wDQ8W3P7puffRWvGMnrLRdHa61kGcwhZK3RdoDRitmtwn4JjrQsZCZBmDQgkP5uGUGk863wbpRi1xdA",
   "step1": "34T6PkwiBPcxMGrK7aegATo5WTMWoP17BTc6pwXbwqRvndwRjGYXx6rG758rLSU5suu35ZTkRCs1K2NAqyrTZbiJUHQmra9qvbBrSdbBbJ7JvmyBFVDo6eiVD",
@@ -39,6 +40,13 @@ var tileOptions = {
         "c": [40, 40],
         "d": [48, 40],
         "e": [56, 40],
+        "╔": [0, 72],
+        "╗": [24, 72],
+        "╝": [72, 72],
+        "╚": [48, 72],
+        "═": [8, 72],
+       	"║": [32, 72],
+        "o": [104, 8],
     },
     width: 25,
     height: 40
@@ -109,6 +117,7 @@ var Game = {
 
         this._generateBoxes(freeCells);
         this._generateShrubberies(zeroCells);
+        this._drawRooms(digger);
         this._drawWholeMap();
 
         this.player = this._createBeing(Player, freeCells);
@@ -142,6 +151,60 @@ var Game = {
               this.map[key] = ROT.RNG.getItem("abcde");
             }
         }
+    },
+  
+    _drawRooms: function(map) {
+      var rooms = map.getRooms();
+      for (var rm=0; rm<rooms.length; rm++) {
+          var room = rooms[rm];
+        
+          var l=room.getLeft() - 1;
+          var r=room.getRight() + 1;
+          var t=room.getTop() - 1;
+          var b=room.getBottom() + 1;
+
+          /*this.map[l + "," + t] = "╔";
+          this.map[r + "," + t] = "╗";
+          this.map[l + "," + b] = "╚";
+          this.map[r + "," + b] = "╝";*/
+
+          this.map[l + "," + t] = "o";
+          this.map[r + "," + t] = "o";
+          this.map[l + "," + b] = "o";
+          this.map[r + "," + b] = "o";
+
+          for (var i=room.getLeft(); i<=room.getRight(); i++) {
+            var k = i + "," + t;
+            if ([".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"].indexOf(this.map[k]) == -1) {
+              this.map[k] = "═";
+            }
+          }
+
+          for (var i=room.getLeft(); i<=room.getRight(); i++) {
+            var k = i + "," + b;
+            if ([".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"].indexOf(this.map[k]) == -1) {
+              this.map[k] = "═";
+            }
+          }
+
+          for (var i=room.getTop(); i<=room.getBottom(); i++) {
+            var k = l + "," + i;
+            if ([".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"].indexOf(this.map[k]) == -1) {
+              this.map[k] = "║";
+            }
+          }
+
+
+          for (var i=room.getTop(); i<=room.getBottom(); i++) {
+            var k = r + "," + i;
+            if ([".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"].indexOf(this.map[k]) == -1) {
+              this.map[k] = "║";
+            }
+          }
+
+          
+          // room.getDoors(console.log);
+      }
     },
     
     _drawWholeMap: function() {
@@ -239,7 +302,7 @@ Monster.prototype.act = function() {
     var y = Game.player.getY();
 
     var passableCallback = function(x, y) {
-        return (x+","+y in Game.map);
+        return ([".", "*"].indexOf(Game.map[x + "," + y]) != -1);
     }
     var astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
 
