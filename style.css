@@ -67,7 +67,7 @@ a:hover {
 }
 
 #title {
-  background-image: url(bg2.png);
+  background-image: url(bg.png);
   background-size: cover;
   animation: 20s para infinite ease;
 }
