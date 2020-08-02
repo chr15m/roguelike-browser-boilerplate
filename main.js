@@ -60,6 +60,22 @@ var tileOptions = {
   height: 40
 }
 
+var keyMap = {};
+keyMap[38] = 0;
+keyMap[33] = 1;
+keyMap[39] = 2;
+keyMap[34] = 3;
+keyMap[40] = 4;
+keyMap[35] = 5;
+keyMap[37] = 6;
+keyMap[36] = 7;
+
+var tapMap = {};
+tapMap[0] = 6;
+tapMap[1] = 0;
+tapMap[2] = 2;
+tapMap[3] = 4;
+
 /***
  *** game code
  ***/
@@ -250,37 +266,10 @@ Player.prototype.act = function() {
 
 Player.prototype.handleEvent = function(e) {
   var code = e.keyCode;
-
-  var keyMap = {};
-  keyMap[38] = 0;
-  keyMap[33] = 1;
-  keyMap[39] = 2;
-  keyMap[34] = 3;
-  keyMap[40] = 4;
-  keyMap[35] = 5;
-  keyMap[37] = 6;
-  keyMap[36] = 7;
-
   /* one of numpad directions? */
   if (!(code in keyMap)) { return; }
-
-  /* is there a free space? */
   var dir = ROT.DIRS[8][keyMap[code]];
-  var newX = this._x + dir[0];
-  var newY = this._y + dir[1];
-
-  var newKey = newX + "," + newY;
-  if ([".", "*"].indexOf(Game.map[newKey]) == -1) { return; }
-
-  Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
-  this._x = newX;
-  this._y = newY;
-  this._draw();
-  rescale(newX, newY);
-  window.removeEventListener("keydown", this);
-  Game.engine.unlock();
-  sfx["step1"].play();
-  this._checkBox();
+  moveplayer(dir);
 }
 
 Player.prototype._draw = function() {
@@ -305,6 +294,27 @@ Player.prototype._checkBox = function() {
     toast("This chest is empty.");
     sfx["miss"].play();
   }
+}
+
+function moveplayer(dir) {
+  var p = Game.player;
+
+  var x = p._x + dir[0];
+  var y = p._y + dir[1];
+
+  var newKey = x + "," + y;
+  if ([".", "*"].indexOf(Game.map[newKey]) == -1) { return; }
+
+  Game.display.draw(p._x, p._y, Game.map[p._x + "," + p._y]);
+  p._x = x;
+  p._y = y;
+
+  p._draw();
+  rescale(x, y);
+  window.removeEventListener("keydown", p);
+  Game.engine.unlock();
+  sfx["step1"].play();
+  p._checkBox();
 }
 
 /***
@@ -365,13 +375,9 @@ function resetcanvas(el) {
     $("#canvas").appendChild(el);
     $("#game").addEventListener("touchstart", handletouch);
     $("#game").addEventListener("click", handletouch);
-    //$("canvas").addEventListener("touchstart", handletouch);
-    //$("canvas").addEventListener("click", handletouch);
   } else {
     $("#game").removeEventListener("touchstart", handletouch);
     $("#game").removeEventListener("click", handletouch);
-    //$("canvas").removeEventListener("touchstart", handletouch);
-    //$("canvas").removeEventListener("click", handletouch);
     $("#canvas").innerHTML = "";
   }
 }
@@ -379,10 +385,10 @@ function resetcanvas(el) {
 function rescale(x, y) {
   var c = $("canvas");
   if (canvas) {
-  canvas.style.transform =
-    "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
-    "translate(" + ((x * -8) + (tileOptions.width * 8 / 2)) +
-    "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
+    canvas.style.transform =
+      "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
+      "translate(" + ((x * -8) + (tileOptions.width * 8 / 2)) +
+      "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
   }
 }
 
@@ -417,23 +423,12 @@ function toast(message) {
 
 function handletouch(ev) {
   ev.preventDefault();
-  console.log(ev);
-  //console.log(ev.clientX, ev.clientY);
-  //var tile = [Math.floor(ev.layerX / 8.0),
-  //            Math.floor(ev.layerY / 8.0)];
-  //console.log(tile);
-  //console.log($("#game").innerWidth);
-  /*var pos = [ev.clientX / $("#game").offsetWidth - 0.5,
-             ev.clientY / $("#game").offsetHeight - 0.5];
-  console.log(pos);
-  console.log(pos[0] > pos[1], pos[0] < pos[1]);*/
-  //console.log(pos[0] > pos[1], pos[0] < pos[1], pos[0] > -pos[0]
   var g = $("#game");
   var x = ev.clientX - (g.offsetWidth / 2);
   var y = ev.clientY - (g.offsetHeight / 2);
-  var angle = Math.atan2(y, x) + Math.PI;
-  //var lines = [ev.clientX, ev.clientY, g.offsetWidth - ev.clientX, g.offsetHeight - ev.clientY];
-  console.log(x, y, );
+  var qs = Math.ceil((Math.floor((Math.atan2(y, x) + Math.PI) / (Math.PI / 4.0)) % 7) / 2);
+  var dir = ROT.DIRS[8][tapMap[qs]];
+  moveplayer(dir);
 }
 
 function start() {
