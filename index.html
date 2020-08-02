@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Your game description goes here!">
+    <meta name="description" content="Your game description goes here.">
     <link rel="icon" href="icon.png">
     <script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/chr15m/jsfxr@42a643f/riffwave.js"></script>
@@ -19,11 +19,39 @@
   </head>
   <body>
 
-    <!-- title screen -->
-    <div id="title" class="screen fade-in">
-      <div id="plate">
+    <!-- boilerplate splash -->
+    <div class="screen" id="plate" onanimationend="showtitle()">
+      <div>
         <img src="icon.png" id="logo">
         <p>Roguelike<br/>Browser<br/>Boilerplate</p>
+      </div>
+    </div>
+
+    <!-- title screen -->
+    <div id="title" class="screen">
+      <div>
+        <svg id="game-title" class="game-title-animation" viewBox="0 0 700 200">
+          <defs>
+            <!-- I used SVG Path Builder to get this curve. -->
+            <!-- https://codepen.io/anthonydugois/pen/mewdyZ -->
+            <path id="curve"
+                  fill="None"
+                  d="M 100 200 C 200 150 500 150 600 200"/>
+            <!-- Change the font size below to fit more/less in. -->
+            <text id="words"
+                  stroke-width="10px"
+                  style="font-size: 64px" >
+              <textPath xlink:href="#curve"s
+                        text-anchor="middle"
+                        startOffset="50%">
+                <!-- Change the game title here. -->
+                <tspan>My-rogue</tspan>
+              </textPath>
+            </text>
+          </defs>
+          <use href="#words" stroke="white"/>
+          <use href="#words" fill="#e33"/>
+        </svg>
       </div>
       <div id="options">
         <div id="menu" class="nes-container is-rounded is-dark">

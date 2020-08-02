@@ -67,34 +67,96 @@ a:hover {
 }
 
 #title {
-  background-image: url(bg.png);
+  background-image: url(bg2.png);
   background-size: cover;
+  animation: 20s para infinite ease;
+}
+
+@keyframes para {
+    0% {
+      background-position: 0px 0%;
+    }
+  	50% {
+      background-position: 0px 80px;
+    }
+    100% {
+      background-position: 0px 0px;
+    }
 }
 
 #plate {
+  display: flex;
+  animation: 2s plate-fade;
+  opacity: 0;
+}
+
+#plate > div {
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: left;
   padding: 40px;
-  /*background-color: #222323;*/
   border-radius: 5px;
 }
 
-#plate > * + * {
+@keyframes plate-fade {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+#plate > div > * + * {
   margin-left: 32px;
   margin-right: 0px;
 }
 
 @media (max-width: 600px) {
-  #plate {
+  #plate > div {
     flex-direction: column;
     text-align: center;
   }
 
-  #plate > * + * {
+  #plate > div > * + * {
     margin-left: 0px;
     margin-right: 0px;
+    margin-top: 16px;
+  }
+}
+
+#game-title {
+  margin-bottom: 100px;
+  width: 900px;
+  max-width: 100%;
+}
+
+.game-title-animation {
+  animation-duration: 1s;
+  animation-duration: 2s;
+  animation-fill-mode: both;
+  animation-name: zoomInDown;
+}
+
+/* https://github.com/animate-css/animate.css/blob/master/animate.css */
+@keyframes zoomInDown {
+  from {
+    opacity: 0;
+    transform: scale3d(0.1, 0.1, 0.1) translate3d(0, -1000px, 0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale3d(0.475, 0.475, 0.475) translate3d(0, 60px, 0);
+    animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1);
   }
 }
 

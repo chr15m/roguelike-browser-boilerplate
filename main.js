@@ -1,8 +1,13 @@
 $ = document.querySelector.bind(document);
 
-/*** resources ***/
+/***
+ *** game code
+ ***/
 
-// sound effects from sfxr.me
+// These sound effects are from sfxr.me
+//
+// You can generate your own and click the "copy" button
+// to get the sound code.
 
 var sfx = {
   "rubber": "5EoyNVaezhPnpFZjpkcJkF8FNCioPncLoztbSHU4u9wDQ8W3P7puffRWvGMnrLRdHa61kGcwhZK3RdoDRitmtwn4JjrQsZCZBmDQgkP5uGUGk863wbpRi1xdA",
@@ -19,10 +24,13 @@ for (var s in sfx) {
   sfx[s] = (new SoundEffect(sfx[s])).generate().getAudio();
 }
 
-// tileset from kenney.nl
+// This tileset is from kenney.nl
+// It's the "microrogue" tileset
 
 var tileSet = document.createElement("img");
 tileSet.src = "colored_tilemap_packed.png";
+
+// This is where you specify which tile each character uses
 
 var tileOptions = {
   layout: "tile",
@@ -46,13 +54,15 @@ var tileOptions = {
     "╚": [48, 72],
     "═": [8, 72],
     "║": [32, 72],
-    "o": [104, 8],
+    "o": [40, 72],
   },
   width: 25,
   height: 40
 }
 
-/*** game code ***/
+/***
+ *** game code
+ ***/
 
 // based on a tutorial by Ondřej Žára
 // www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_1
@@ -139,8 +149,10 @@ var Game = {
     for (var i=0;i<10;i++) {
       var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
       var key = freeCells.splice(index, 1)[0];
+      // add a treasure chest to the map
       this.map[key] = "*";
-      if (!i) { this.amulet = key; } /* first box contains the amulet */
+      // the first chest contains the amulet
+      if (!i) { this.amulet = key; }
     }
   },
   
@@ -217,6 +229,10 @@ var Game = {
   }
 };
 
+/***
+ *** player code
+ ***/
+
 var Player = function(x, y) {
   this._x = x;
   this._y = y;
@@ -289,7 +305,11 @@ Player.prototype._checkBox = function() {
     sfx["miss"].play();
   }
 }
-  
+
+/***
+ *** monster code
+ ***/
+
 var Monster = function(x, y) {
   this._x = x;
   this._y = y;
@@ -333,7 +353,9 @@ Monster.prototype._draw = function() {
   Game.display.draw(this._x, this._y, "M");
 }
 
-/*** graphics ***/
+/***
+ *** graphics utils
+ ***/
 
 function resetcanvas(el) {
   show("#game");
@@ -363,38 +385,9 @@ function rescale(x, y) {
   }
 }
 
-/*** user interface handlers ***/
-
-function handletouch(ev) {
-  ev.preventDefault();
-  console.log(ev);
-  console.log(ev.clientX, ev.clientY);
-  var tile = [Math.floor(ev.layerX / 8.0),
-              Math.floor(ev.layerY / 8.0)];
-  console.log(tile);
-  //console.log($("#game").innerWidth);
-  /*var pos = [ev.clientX / $("#game").offsetWidth - 0.5,
-             ev.clientY / $("#game").offsetHeight - 0.5];
-  console.log(pos);
-  console.log(pos[0] > pos[1], pos[0] < pos[1]);*/
-  
-}
-
-function start() {
-  $("#title").classList.add("hide");
-  sfx["rubber"].play();
-  Game.init();
-}
-
-function handlemenuchange(which) {
-  console.log("handlemenuchange", which);
-  var choice = which.getAttribute("value");
-  show("#" + choice);
-  sfx["choice"].play();
-}
-
 function hidemodal(which) {
-  hide('#' + which);
+  hide("#" + which);
+  show("#title");
   sfx['hide'].play();
 }
 
@@ -415,4 +408,41 @@ function toast(message) {
   m.textContent = message;
   void m.offsetWidth; // trigger CSS reflow
   m.classList.add("fade-out");
+}
+
+/***
+ *** user interface handlers
+ ***/
+
+function handletouch(ev) {
+  ev.preventDefault();
+  console.log(ev);
+  console.log(ev.clientX, ev.clientY);
+  var tile = [Math.floor(ev.layerX / 8.0),
+              Math.floor(ev.layerY / 8.0)];
+  console.log(tile);
+  //console.log($("#game").innerWidth);
+  /*var pos = [ev.clientX / $("#game").offsetWidth - 0.5,
+             ev.clientY / $("#game").offsetHeight - 0.5];
+  console.log(pos);
+  console.log(pos[0] > pos[1], pos[0] < pos[1]);*/
+  
+}
+
+function start() {
+  hide("#title");
+  sfx["rubber"].play();
+  Game.init();
+}
+
+function handlemenuchange(which) {
+  console.log("handlemenuchange", which);
+  var choice = which.getAttribute("value");
+  show("#" + choice);
+  sfx["choice"].play();
+}
+
+function showtitle() {
+  hide("#plate");
+  show("#title");
 }
