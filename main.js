@@ -301,6 +301,7 @@ Player.prototype._checkBox = function() {
     }
     Game.destroy();
   } else {
+    Game.map[key] = ".";
     toast("This chest is empty.");
     sfx["miss"].play();
   }
