@@ -424,8 +424,8 @@ function toast(message) {
 function handletouch(ev) {
   ev.preventDefault();
   var g = $("#game");
-  var x = ev.clientX - (g.offsetWidth / 2);
-  var y = ev.clientY - (g.offsetHeight / 2);
+  var x = (ev["touches"] ? ev.touches[0].clientX : ev.clientX) - (g.offsetWidth / 2);
+  var y = (ev["touches"] ? ev.touches[0].clientY : ev.clientY) - (g.offsetHeight / 2);
   var qs = Math.ceil((Math.floor((Math.atan2(y, x) + Math.PI) / (Math.PI / 4.0)) % 7) / 2);
   var dir = ROT.DIRS[8][tapMap[qs]];
   moveplayer(dir);
