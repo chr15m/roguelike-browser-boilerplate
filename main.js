@@ -363,15 +363,15 @@ function resetcanvas(el) {
   if (el) {
     $("#canvas").innerHTML = "";
     $("#canvas").appendChild(el);
-    //$("#game").addEventListener("touchstart", handletouch);
-    //$("#game").addEventListener("click", handletouch);
-    $("canvas").addEventListener("touchstart", handletouch);
-    $("canvas").addEventListener("click", handletouch);
+    $("#game").addEventListener("touchstart", handletouch);
+    $("#game").addEventListener("click", handletouch);
+    //$("canvas").addEventListener("touchstart", handletouch);
+    //$("canvas").addEventListener("click", handletouch);
   } else {
-    //$("#game").removeEventListener("touchstart", handletouch);
-    //$("#game").removeEventListener("click", handletouch);
-    $("canvas").removeEventListener("touchstart", handletouch);
-    $("canvas").removeEventListener("click", handletouch);
+    $("#game").removeEventListener("touchstart", handletouch);
+    $("#game").removeEventListener("click", handletouch);
+    //$("canvas").removeEventListener("touchstart", handletouch);
+    //$("canvas").removeEventListener("click", handletouch);
     $("#canvas").innerHTML = "";
   }
 }
@@ -418,16 +418,22 @@ function toast(message) {
 function handletouch(ev) {
   ev.preventDefault();
   console.log(ev);
-  console.log(ev.clientX, ev.clientY);
-  var tile = [Math.floor(ev.layerX / 8.0),
-              Math.floor(ev.layerY / 8.0)];
-  console.log(tile);
+  //console.log(ev.clientX, ev.clientY);
+  //var tile = [Math.floor(ev.layerX / 8.0),
+  //            Math.floor(ev.layerY / 8.0)];
+  //console.log(tile);
   //console.log($("#game").innerWidth);
   /*var pos = [ev.clientX / $("#game").offsetWidth - 0.5,
              ev.clientY / $("#game").offsetHeight - 0.5];
   console.log(pos);
   console.log(pos[0] > pos[1], pos[0] < pos[1]);*/
-  
+  //console.log(pos[0] > pos[1], pos[0] < pos[1], pos[0] > -pos[0]
+  var g = $("#game");
+  var x = ev.clientX - (g.offsetWidth / 2);
+  var y = ev.clientY - (g.offsetHeight / 2);
+  var angle = Math.atan2(y, x) + Math.PI;
+  //var lines = [ev.clientX, ev.clientY, g.offsetWidth - ev.clientX, g.offsetHeight - ev.clientY];
+  console.log(x, y, );
 }
 
 function start() {
