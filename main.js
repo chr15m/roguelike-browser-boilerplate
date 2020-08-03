@@ -107,6 +107,7 @@ var Game = {
   },
 
   destroy: function() {
+    window.removeEventListener("keydown", this.player);
     if (this.engine) {
     this.engine.lock();
     this.display.clear();
@@ -120,7 +121,6 @@ var Game = {
     this.monster = null;
     this.amulet = null;
     }
-    window.removeEventListener("keydown", this.player);
     resetcanvas();
     $("#title").classList.remove("hide");
     $("#game").classList.remove("show");
