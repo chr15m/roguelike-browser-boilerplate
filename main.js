@@ -109,17 +109,17 @@ var Game = {
   destroy: function() {
     window.removeEventListener("keydown", this.player);
     if (this.engine) {
-    this.engine.lock();
-    this.display.clear();
-    this.display = null;
-    this.map = {};
-    this.engine = null;
-    this.scheduler.remove(this.player);
-    this.scheduler.remove(this.monster);
-    this.scheduler = null;
-    this.player = null;
-    this.monster = null;
-    this.amulet = null;
+      this.engine.lock();
+      this.display.clear();
+      this.display = null;
+      this.map = {};
+      this.engine = null;
+      this.scheduler.remove(this.player);
+      this.scheduler.remove(this.monster);
+      this.scheduler = null;
+      this.player = null;
+      this.monster = null;
+      this.amulet = null;
     }
     resetcanvas();
     $("#title").classList.remove("hide");
