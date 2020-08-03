@@ -1,4 +1,7 @@
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  touch-action: manipulation;
+}
 
 html {
   height: 100%;
