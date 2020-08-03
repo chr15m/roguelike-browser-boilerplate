@@ -385,6 +385,7 @@ function resetcanvas(el) {
 function rescale(x, y) {
   var c = $("canvas");
   if (canvas) {
+    canvas.style.transition = "all 0.5s ease";
     canvas.style.transform =
       "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
       "translate(" + ((x * -8) + (tileOptions.width * 8 / 2)) +
