@@ -48,6 +48,7 @@ var tileOptions = {
     "c": [40, 40],
     "d": [48, 40],
     "e": [56, 40],
+    "T": [72, 56],
     "╔": [0, 72],
     "╗": [24, 72],
     "╝": [72, 72],
@@ -83,6 +84,11 @@ tapMap[3] = 4;
 // based on a tutorial by Ondřej Žára
 // www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_1
 
+if (window["Game"]) {
+  Game.destroy();
+  Game.init();
+}
+
 var Game = {
   display: null,
   map: {},
@@ -108,9 +114,11 @@ var Game = {
 
   destroy: function() {
     window.removeEventListener("keydown", this.player);
+    $("#game").removeEventListener("touchstart", handletouch);
+    $("#game").removeEventListener("click", handletouch);
     if (this.engine) {
       this.engine.lock();
-      this.display.clear();
+      // this.display.clear();
       this.display = null;
       this.map = {};
       this.engine = null;
@@ -192,11 +200,6 @@ var Game = {
       var r=room.getRight() + 1;
       var t=room.getTop() - 1;
       var b=room.getBottom() + 1;
-
-      /*this.map[l + "," + t] = "╔";
-      this.map[r + "," + t] = "╗";
-      this.map[l + "," + b] = "╚";
-      this.map[r + "," + b] = "╝";*/
 
       this.map[l + "," + t] = "o";
       this.map[r + "," + t] = "o";
@@ -282,16 +285,12 @@ Player.prototype._checkBox = function() {
     //sfx["miss"].play();
     //console.log("There is no box here!");
   } else if (key == Game.amulet) {
-    show("#win");
-    for (var i=0; i<5; i++) {
-      setTimeout(function() {
-        sfx["win"].play();
-      }, 100 * i);
-    }
-    Game.destroy();
+    win();
   } else {
     Game.map[key] = ".";
     toast("This chest is empty.");
+    //var empty = el("canvas", "div", {"className": "sprite empty free grow-fade"});
+	//setTimeout(function() { rmel(empty); }, 1000);
     sfx["miss"].play();
   }
 }
@@ -315,6 +314,14 @@ function moveplayer(dir) {
   Game.engine.unlock();
   sfx["step1"].play();
   p._checkBox();
+}
+
+function removelisteners() {
+  Game.engine.lock();
+  window.removeEventListener("keydown", Game.player);
+  $("#game").removeEventListener("touchstart", handletouch);
+  $("#game").removeEventListener("click", handletouch);
+  Game.scheduler.clear();
 }
 
 /***
@@ -346,10 +353,7 @@ Monster.prototype.act = function() {
 
   path.shift();
   if (path.length <= 1) {
-    Game.engine.lock();
-    show("#lose");
-    sfx["lose"].play();
-    Game.destroy();
+    lose();
   } else {
     x = path[0][0];
     y = path[0][1];
@@ -362,6 +366,34 @@ Monster.prototype.act = function() {
 
 Monster.prototype._draw = function() {
   Game.display.draw(this._x, this._y, "M");
+}
+
+/***
+ *** win/lose events
+ ***/
+
+function win() {
+  removelisteners();
+  for (var i=0; i<5; i++) {
+    setTimeout(function() {
+      sfx["win"].play();
+    }, 100 * i);
+  }
+  Game.destroy();
+  show("#win");
+}
+
+function lose() {
+  var p = Game.player;
+  Game.display.draw(p._x, p._y, "T");
+  var ghost = el("#game", "div", {"className": "sprite ghost free float-up"});
+  removelisteners();
+  sfx["lose"].play();
+  setTimeout(function() {
+    rmel(ghost);
+    Game.destroy();
+    show("#lose");
+  }, 2000);
 }
 
 /***
@@ -388,7 +420,7 @@ function rescale(x, y) {
     canvas.style.transition = "all 0.5s ease";
     canvas.style.transform =
       "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
-      "translate(" + ((x * -8) + (tileOptions.width * 8 / 2)) +
+      "translate(" + ((x * -8) + (tileOptions.width * 8 / 2) + -4) +
       "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
   }
 }
@@ -416,6 +448,21 @@ function toast(message) {
   m.textContent = message;
   void m.offsetWidth; // trigger CSS reflow
   m.classList.add("fade-out");
+}
+
+// add an element to the dom
+function el(where, tag, attrs) {
+  var node = document.createElement(tag);
+  //var textnode = document.createTextNode("Hello");
+  //node.appendChild(textnode);
+  for (a in attrs) { node[a] = attrs[a]; }
+  $(where).appendChild(node);
+  return node;
+}
+
+// remove an element from the dom
+function rmel(node) {
+  node.parentNode.removeChild(node);
 }
 
 /***
@@ -448,4 +495,4 @@ function handlemenuchange(which) {
 function showtitle() {
   hide("#plate");
   show("#title");
-}
+} 

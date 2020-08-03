@@ -213,17 +213,65 @@ a:hover {
   margin: 80px auto;
 }
 
+.free {
+  position: absolute;
+}
+
 .amulet {
-  background-position: 0px -64px;  
+  background-position: -0px -64px;  
+}
+
+.tomb {
+  background-position: -72px -56px;
 }
 
 .ghost {
-  background-position: -72px -56px;
+  background-position: -72px -8px;
+  margin: 0px;
+}
+
+.empty {
+  background-position: -8px -48px;
+}
+
+.float-up {
+  animation: float-up 2s linear;
+}
+
+@keyframes float-up {
+  from {
+    transform: scale(8) translate(0px, 0px);
+    opacity: 1;
+  }
+  to {
+    transform: scale(16) translate(0px, -20px);
+    opacity: 0;
+  }
+}
+
+.grow-fade {
+  animation: grow-fade 2s linear;
+}
+
+@keyframes grow-fade {
+  from {
+    transform:  translate(0px, 0px) scale(8);
+    opacity: 0.5;
+  }
+  to {
+    transform: translate(0px, 0px) scale(16);
+    opacity: 0;
+  }
 }
 
 #play {
   width: 400px;
   max-width: 90%;
+}
+
+#win {
+  background: url(01coin.gif);
+  background-size: 20%;
 }
 
 /*** HUD ***/
