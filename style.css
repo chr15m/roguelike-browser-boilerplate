@@ -180,6 +180,10 @@ a:hover {
   padding: 32px;
 }
 
+#menu label {
+  margin-left: -3em;
+}
+
 .modal > * {
   max-width: 90%;
   width: 400px;
@@ -231,6 +235,14 @@ a:hover {
 .ghost {
   background-position: -72px -8px;
   margin: 0px;
+}
+
+.potion {
+  background-position: -56px -64px;
+}
+
+.axe {
+  background-position: -56px -32px;
 }
 
 .empty {
@@ -292,6 +304,39 @@ a:hover {
 #message {
   position: absolute;
   top: 24px;
+}
+
+#inventory {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+}
+
+@media (max-width: 600px) {
+  #inventory {
+    bottom: 72px;
+  }
+}
+
+#inventory .sprite {
+  transform: scale(3);
+  display: inline-block;
+  margin: 1em 2em 1em 1em;
+  vertical-align: middle;
+}
+
+#inventory li {
+  margin: 1em 0px;
+}
+
+#inventory ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+#inventory > div {
+  display: none;
 }
 
 /*** CSS animations ***/
