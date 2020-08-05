@@ -26,9 +26,13 @@ body {
 }
 
 canvas {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
+  image-rendering: optimizeSpeed;
   image-rendering: crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -o-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+  image-rendering: pixelated;
 }
 
 a {
@@ -212,9 +216,13 @@ a:hover {
 .sprite {
   width: 8px;
   height: 8px;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
+  image-rendering: optimizeSpeed;
   image-rendering: crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -o-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+  image-rendering: pixelated;
   transform: scale(8);
   background-image: url("colored_tilemap_packed.png");
   margin: 80px auto;
