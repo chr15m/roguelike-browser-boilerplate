@@ -289,16 +289,11 @@ Player.prototype._draw = function() {
 
 Player.prototype._checkBox = function() {
   var key = this._x + "," + this._y;
-  if (Game.map[key] != "*") {
-    //sfx["miss"].play();
-    //console.log("There is no box here!");
-  } else if (key == Game.amulet) {
+  if (key == Game.amulet) {
     win();
   } else {
     Game.map[key] = ".";
     toast("This chest is empty.");
-    //var empty = el("canvas", "div", {"className": "sprite empty free grow-fade"});
-	//setTimeout(function() { rmel(empty); }, 1000);
     sfx["miss"].play();
   }
 }
@@ -322,14 +317,6 @@ function moveplayer(dir) {
   Game.engine.unlock();
   sfx["step1"].play();
   p._checkBox();
-}
-
-function removelisteners() {
-  Game.engine.lock();
-  window.removeEventListener("keydown", Game.player);
-  $("#game").removeEventListener("touchstart", handletouch);
-  $("#game").removeEventListener("click", handletouch);
-  Game.scheduler.clear();
 }
 
 /***
@@ -405,7 +392,7 @@ function lose() {
 }
 
 /***
- *** graphics utils
+ *** graphics & browser utils
  ***/
 
 function resetcanvas(el) {
@@ -422,6 +409,11 @@ function resetcanvas(el) {
   }
 }
 
+function showtitle() {
+  hide("#plate");
+  show("#title");
+}
+
 function rescale(x, y) {
   var c = $("canvas");
   if (canvas) {
@@ -431,6 +423,14 @@ function rescale(x, y) {
       "translate(" + ((x * -8) + (tileOptions.width * 8 / 2) + -4) +
       "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
   }
+}
+
+function removelisteners() {
+  Game.engine.lock();
+  window.removeEventListener("keydown", Game.player);
+  $("#game").removeEventListener("touchstart", handletouch);
+  $("#game").removeEventListener("click", handletouch);
+  Game.scheduler.clear();
 }
 
 function hidemodal(which) {
@@ -512,9 +512,4 @@ function handlemenuchange(which) {
   var choice = which.getAttribute("value");
   show("#" + choice);
   sfx["choice"].play();
-}
-
-function showtitle() {
-  hide("#plate");
-  show("#title");
 }
