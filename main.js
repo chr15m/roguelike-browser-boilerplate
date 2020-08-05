@@ -1,7 +1,17 @@
+// Update this string to set the game title
+var gametitle = "My Rogue";
+
+// utilities
 $ = document.querySelector.bind(document);
+NodeList.prototype.forEach = Array.prototype.forEach
+
+// this code sets the game title to the string above
+document.querySelectorAll(".game-title-text").forEach(function(t) {
+  t.textContent = gametitle;
+})
 
 /***
- *** game code
+ *** resources
  ***/
 
 // These sound effects are from sfxr.me
@@ -130,7 +140,7 @@ var Game = {
       this.amulet = null;
     }
     resetcanvas();
-    $("#title").classList.remove("hide");
+    showtitle();
     $("#game").classList.remove("show");
   },
   
@@ -427,7 +437,7 @@ function rescale(x, y) {
 
 function hidemodal(which) {
   hide("#" + which);
-  show("#title");
+  showtitle();
   sfx['hide'].play();
 }
 

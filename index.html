@@ -29,28 +29,22 @@
 
     <!-- title screen -->
     <div id="title" class="screen">
-      <div>
-        <svg id="game-title" class="game-title-animation" viewBox="0 0 700 200">
+      <div class="game-title-animation">
+        <!-- The game title is set dynamically at the start of main.js -->
+        <svg id="game-title" viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <!-- I used SVG Path Builder to get this curve. -->
-            <!-- https://codepen.io/anthonydugois/pen/mewdyZ -->
-            <path id="curve"
-                  fill="None"
-                  d="M 100 200 C 200 150 500 150 600 200"/>
-            <!-- Change the font size below to fit more/less in. -->
-            <text id="words"
-                  stroke-width="10px"
-                  style="font-size: 64px" >
-              <textPath xlink:href="#curve"
-                        text-anchor="middle"
-                        startOffset="50%">
-                <!-- Change the game title here. -->
-                <tspan>My-rogue</tspan>
-              </textPath>
-            </text>
+            <path id="curve" d="M 100 200 C 200 150 500 150 600 200"/>
           </defs>
-          <use href="#words" stroke="white"/>
-          <use href="#words" fill="#e33"/>
+          <text stroke-width="10px" stroke="white">
+            <textPath xlink:href="#curve" text-anchor="middle" startOffset="50%">
+              <tspan class="game-title-text">Roguelike</tspan>
+            </textPath>
+          </text>
+          <text fill="#e33" stroke-width="10px">
+            <textPath xlink:href="#curve" text-anchor="middle" startOffset="50%">
+              <tspan class="game-title-text">Roguelike</tspan>
+            </textPath>
+          </text>
         </svg>
       </div>
       <div id="options">

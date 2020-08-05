@@ -142,19 +142,22 @@ a:hover {
 #game-title {
   margin-bottom: 100px;
   width: 900px;
-  max-width: 100%;
+  max-width: 98%;
+}
+
+/* if you have a longer title
+ * make the font size smaller */
+.game-title-text {
+  font-size: 64px;
 }
 
 .game-title-animation {
-  animation-duration: 1s;
-  animation-duration: 2s;
-  animation-fill-mode: both;
-  animation-name: zoomInDown;
+  animation: 2s zoomInDown;
 }
 
 /* https://github.com/animate-css/animate.css/blob/master/animate.css */
 @keyframes zoomInDown {
-  from {
+  0% {
     opacity: 0;
     transform: scale3d(0.1, 0.1, 0.1) translate3d(0, -1000px, 0);
     animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
