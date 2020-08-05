@@ -83,7 +83,7 @@ a:hover {
     0% {
       background-position: 0px 0%;
     }
-  	50% {
+    50% {
       background-position: 0px 80px;
     }
     100% {
@@ -188,7 +188,7 @@ a:hover {
 }
 
 #menu label {
-  margin-left: -3em;
+  margin-left: -1em;
 }
 
 .modal > * {
