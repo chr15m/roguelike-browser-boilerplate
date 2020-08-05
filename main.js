@@ -94,10 +94,8 @@ tapMap[3] = 4;
 // based on a tutorial by Ondřej Žára
 // www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_1
 
-if (window["Game"]) {
-  Game.destroy();
-  Game.init();
-}
+// allow live reloading
+if (window["Game"]) { Game.destroy(); }
 
 var Game = {
   display: null,
