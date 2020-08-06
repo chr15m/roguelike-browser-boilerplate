@@ -1,10 +1,13 @@
-all: roguelike-browser-boilerplate.zip roguelike-browser-boilerplate.pdf
+name=roguelike-browser-boilerplate
+
+all: $(name).zip $(name).pdf
+
 
 roguelike-browser-boilerplate.zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png roguelike-browser-boilerplate.pdf
-	mkdir -p roguelike-browser-boilerplate
-	cp $? roguelike-browser-boilerplate
-	zip -r $@ roguelike-browser-boilerplate
-	rm -rf roguelike-browser-boilerplate
+	mkdir -p $(name)
+	cp $? $(name)
+	zip -r $@ $(foreach f, $?, "roguelike-browser-boilerplate/$(f)")
+	rm -rf $(name)
 
 roguelike-browser-boilerplate.pdf: README.md print.css
 	pandoc -f markdown --css print.css $< -o README.html

@@ -49,9 +49,9 @@ h2 {
   page-break-before: always;
 }
 
-p, h2, h3 {
-  orphans: 3;
-  widows: 3;
+p, h2, h3, li {
+  orphans: 5;
+  widows: 5;
 }
 
 pre, blockquote {
