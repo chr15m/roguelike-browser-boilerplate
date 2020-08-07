@@ -1,38 +1,43 @@
 name=roguelike-browser-boilerplate
 
-all: $(name)-hobbyist.zip $(name)-indie.zip $(name)-professional.zip
+all: $(name).zip $(name)-documents.zip $(name)-discord-access.pdf
 
-roguelike-browser-boilerplate-hobbyist.zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png
-	mkdir -p $(name)-hobbyist
-	cp $? $(name)-hobbyist
-	zip -r $@ $(foreach f, $?, "roguelike-browser-boilerplate-hobbyist/$(f)")
-	rm -rf $(name)-hobbyist
+$(name).zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png
+	mkdir -p $(name)
+	cp $? $(name)
+	zip -r $@ $(foreach f, $?, "$(name)/$(f)")
+	rm -rf $(name)
 
-roguelike-browser-boilerplate-indie.zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png roguelike-browser-boilerplate.pdf
-	mkdir -p $(name)-indie
-	cp $? $(name)-indie
-	zip -r $@ $(foreach f, $?, "roguelike-browser-boilerplate-indie/$(f)")
-	rm -rf $(name)-indie
+$(name)-documents.zip: $(name).pdf LICENSE-$(name).pdf
+	mkdir -p $(name)-documents
+	cp $? $(name)-documents
+	zip -r $@ $(foreach f, $?, "$(name)-documents/$(f)")
+	rm -rf $(name)-documents
 
-roguelike-browser-boilerplate-professional.zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png roguelike-browser-boilerplate.pdf DISCORD-ACCESS.txt
-	mkdir -p $(name)-professional
-	cp $? $(name)-professional
-	zip -r $@ $(foreach f, $?, "roguelike-browser-boilerplate-professional/$(f)")
-	rm -rf $(name)-professional
+$(name)-discord-access.pdf: discord.md
+	pandoc -f markdown --highlight-style=tango --css print.css $< -o discord.html
+	wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 0mm --zoom 2 discord.html $@
+	rm discord.html
+
+LICENSE-$(name).pdf: LICENSE.txt
+	pandoc -f markdown -t latex --highlight-style=tango --css print.css $< -o $@
 
 roguelike-browser-boilerplate.pdf: README.md print.css Makefile
 	pandoc -f markdown --highlight-style=tango --css print.css $< -o README.html
 	# chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --no-margins --print-to-pdf-no-header --print-to-pdf="$@" README.html --virtual-time-budget=10000
-	wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 0mm --zoom 2 README.html roguelike-browser-boilerplate.pdf
-	#rm README.html
+	wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 0mm --zoom 2 README.html $@
+	rm README.html
 
-.PHONY: watch serve clean
+.PHONY: watch serve browserstack clean
 
 watch:
 	while true; do $(MAKE) -q || $(MAKE); sleep 0.5; done
 
 serve:
 	php -S 0.0.0.0:8000
+
+browserstack:
+	BrowserStackLocal --key 9pLHVRg5npQmv96R5QEx
 
 clean:
 	rm -rf roguelike-browser-boilerplate.*
