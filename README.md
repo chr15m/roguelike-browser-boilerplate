@@ -14,7 +14,7 @@ The next step is to open `index.html` in your browser. You can do that however y
 
 Once you've done that you're going to want to open `index.html`, `main.js`, and `style.css` in your text editor so you can change the code.
 
-If you don't have a text editor you can use the one at [slingcode.net](https://slingcode.net/), just upload the zip file there and you can start editing.
+If you don't have a text editor you can use the one at [slingcode.net](https://slingcode.net/), just upload `roguelike-browser-boilerplate.zip` in the app there and you can start editing.
 
 ## The Boilerplate
 
@@ -51,7 +51,7 @@ var gametitle = "My Rogue";
 ```
 
 If your game has a longer title you might find that some letters disappear off the screen.
-You can accomodate more letters by changing the size of the letters in `style.css`:
+You can accommodate a longer by changing the size of the letters in `style.css`:
 
 ``` {.css .numberLines startFrom="150"}
 .game-title-text {
@@ -59,11 +59,68 @@ You can accomodate more letters by changing the size of the letters in `style.cs
 }
 ```
 
+You can also completely change the inline SVG if you want a different looking title in there, or replace it completely with an image or something like that. You can find the start of the SVG on line 33 of the `index.html` file:
+
+``` {.xml .numberLines startFrom="33"}
+<!-- The game title is set dynamically ... -->
+<svg id="game-title" viewBox="0 0 700 250" ...>
+```
+
 ### Changing the tileset graphics
 
+The default tileset used is the [Micro Rogue tileset from kenney.nl](https://kenney.nl/assets/micro-roguelike). You're welcome to keep using these tiles, or you can tweak them, or you can replace them completely with your own tileset.
 
+To tweak the tiles, load `colored_tilemap_packed.png` up in your favourite pixel editor and just modify the bits you want to change, then save it again. If you reload the game in the browser your changes will take effect immediately.
+
+You can also replace the tiles completely with a different set. Just get your new tileset image (a spritesheet with all of the tiles you need on it) and put it in the folder where your game is. Then to set everything up with your new tileset you'll need to change `main.js` starting at line `14` where you'll replace `colored_tilemap_packed.png` with the file name of your new tileset image:
+
+``` {.javascript .numberLines startFrom="14"}
+tileSet.src = "YOUR-NEW-IMAGE-FILE-NAME";
+```
+
+Next you'll need to tell ROT.js how your tiles are set up. To do this modify the `tileOptions` data just below that:
+
+``` {.javascript .numberLines startFrom="21"}
+var tileOptions = {
+  layout: "tile",
+  bg: "transparent",
+  tileWidth: 8,
+  tileHeight: 8,
+  tileSet: tileSet,
+  tileMap: {
+    "@": [40, 0],
+    ".": [32, 32],
+...
+```
+
+The `tileWidth` and `tileHeight` keys specify how many pixels wide and high each of your tiles is. The Micro Rogue tiles are `8 x 8` but if you use a different tileset they may have different dimensions.
+
+Next you will want to modify the `tileMap` too. It's a lookup table from the character type to the position in the tilemap for the sprite for drawing that character. For example in the default `tileMap` the player ("@" symbol) is represented by a little dude who is at position `[40,0]` pixels in the `colored_tilemap_packed.png` tilemap.
+
+If you add more character types to your game this is how you specify the corresponding graphic to draw, just create new entries for each character type:
+
+``` {.javascript}
+  "X": [80, 40],
+```
+
+and then use the `draw()` method to draw them:
+
+``` {.javascript}
+  Game.display.draw(x, y, "X");
+```
+
+You can find more documentation on the tile options in the [ROT.js documentation for graphical tiles](http://ondras.github.io/rot.js/manual/#tiles). There is a neat tile colorizing technique you can use in there to get more variation.
+
+Finally, if you want to overlay multiple tiles on each other that's easy too.
+When you are calling the ROT.js `display.draw()` method, simply pass it an array of characters rather than a single character. For example, to draw the floor tile (`"."`) underneath the player tile (`"@"`) do this:
+
+``` {.javascript}
+  Game.display.draw(x, y, [".", "@"]);
+```
 
 ### Changing the sound effects
+
+
 
 ### Changing the monster code
 
@@ -86,9 +143,9 @@ With a few extra steps, it is possible to distribute your game as a Windows, Mac
 
 This is generally a requirement of distributing through channels like Steam.
 
-### Final note
+### Thanks!
 
-If you have any feedback or improvement suggestions please share them with me at [mailto:chris@mccormick.cx](chris@mccormick.cx)!
+If you have feedback or suggestions for improvements to this document or any other part of the project, I would love to hear them. You can share your ideas with me at [chris@mccormick.cx](mailto:chris+rogue@mccormick.cx)!
 
 ## Resources
 
