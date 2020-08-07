@@ -175,7 +175,6 @@ var Game = {
     }
 
     // close out the game screen and show the title
-    resetcanvas();
     showscreen("title");
   },
 
@@ -571,21 +570,14 @@ document.querySelectorAll(".game-title-text")
 })
 
 // this code resets the ROT.js display canvas
-// it also removes a bunch of event listeners
-// it is called by init() and destroy() at the
-// start and end of the game
+// and sets up the touch and click event handlers
+// when it's called at the start of the game
 function resetcanvas(el) {
+  $("#canvas").innerHTML = "";
+  $("#canvas").appendChild(el);
+  $("#game").addEventListener("touchstart", handletouch);
+  $("#game").addEventListener("click", handletouch);
   showscreen("game");
-  if (el) {
-    $("#canvas").innerHTML = "";
-    $("#canvas").appendChild(el);
-    $("#game").addEventListener("touchstart", handletouch);
-    $("#game").addEventListener("click", handletouch);
-  } else {
-    $("#game").removeEventListener("touchstart", handletouch);
-    $("#game").removeEventListener("click", handletouch);
-    $("#canvas").innerHTML = "";
-  }
 }
 
 // this function uses CSS styles to reposition the
