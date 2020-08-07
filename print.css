@@ -74,7 +74,7 @@ li {
 }
 
 div.sourceCode::before {
-  content: url(blips.svg);
+  content: url(doc/blips.svg);
   display: block;
   margin-bottom: 1em;
   margin-top: 0.5em;
