@@ -449,9 +449,9 @@ function moveplayer(dir) {
   p._checkBox();
 }
 
-/***
- *** monster code
- ***/
+/********************
+ *** monster code ***
+ ********************/
 
 // basic ROT.js entity with a position
 var Monster = function(x, y) {
@@ -511,10 +511,11 @@ Monster.prototype._draw = function() {
   Game.display.draw(this._x, this._y, "M");
 }
 
-/***
- *** win/lose events
- ***/
+/***********************
+ *** win/lose events ***
+ ***********************/
 
+// this gets called when the player wins the game
 function win() {
   // play the win sound effect a bunch of times
   for (var i=0; i<5; i++) {
@@ -528,6 +529,7 @@ function win() {
   show("#win");
 }
 
+// this gets called when the player loses the game
 function lose() {
   // change the player into a tombstone tile
   var p = Game.player;
@@ -551,9 +553,9 @@ function lose() {
   }, 2000);
 }
 
-/***
- *** graphics & browser utils
- ***/
+/************************************
+ *** graphics, UI & browser utils ***
+ ************************************/
 
 // handy shortcuts and shims for manipulating the dom
 $ = document.querySelector.bind(document);
@@ -566,6 +568,10 @@ document.querySelectorAll(".game-title-text")
   t.textContent = gametitle;
 })
 
+// this code resets the ROT.js display canvas
+// it also removes a bunch of event listeners
+// it is called by init() and destroy() at the
+// start and end of the game
 function resetcanvas(el) {
   show("#game");
   if (el) {
@@ -585,10 +591,16 @@ function showtitle() {
   show("#title");
 }
 
+// this function uses CSS styles to reposition the
+// canvas so that the player is centered.
+// it does this using an "ease" animation which
+// gives a sort of camera follow effect.
 function rescale(x, y) {
   var c = $("canvas");
   if (canvas) {
+    // this applies the animation effect
     canvas.style.transition = "all 0.5s ease";
+    // this sets the scale and position to focus on the player
     canvas.style.transform =
       "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
       "translate(" + ((x * -8) + (tileOptions.width * 8 / 2) + -4) +
@@ -596,6 +608,9 @@ function rescale(x, y) {
   }
 }
 
+// while showing the lose animation we don't want
+// any event handlers to fire so we remove them
+// and lock the game
 function removelisteners() {
   Game.engine.lock();
   window.removeEventListener("keydown", Game.player);
@@ -604,17 +619,24 @@ function removelisteners() {
   Game.scheduler.clear();
 }
 
+// this helper function hides any of the menu
+// screens, shows the title screen again,
+// and plays a sound as it does so
 function hidemodal(which) {
   hide("#" + which);
   showtitle();
   sfx['hide'].play();
 }
 
+// this helper function applies the "show"
+// class to modals and screens
 function show(which) {
   $(which).classList.remove("hide");  
   $(which).classList.add("show");
 }
 
+// this helper function applies the "hide"
+// class to modals and screens
 function hide(which) {
   $(which).classList.remove("show");
   $(which).classList.add("hide");
@@ -647,17 +669,19 @@ function rmel(node) {
   node.parentNode.removeChild(node);
 }
 
-/***
- *** user interface handlers
- ***/
+/*************************
+ *** UI event handlers ***
+ *************************/
 
+// when a touch event happens
+// this is where it is caught
 function handletouch(ev) {
   ev.preventDefault();
   // if the inventory div was clicked
   if ($("#inventory").contains(ev.target)) {
+    // toggle the inventory to visible/invisible
     var b = $("#inventory>span");
     var d = $("#inventory>div");
-    // toggle the inventory to visible/invisible
     if (b.style.display == "none") {
       b.style.display = "block";
       d.style.display = "none";
@@ -668,7 +692,7 @@ function handletouch(ev) {
   // otherwise the map itself was clicked
   } else {
     var g = $("#game");
-    // where on the game the click or touch occurred
+    // where on the map the click or touch occurred
     var cx = (ev["touches"] ? ev.touches[0].clientX : ev.clientX);
     var cy = (ev["touches"] ? ev.touches[0].clientY : ev.clientY)
     var x = cx - (g.offsetWidth / 2);
@@ -691,7 +715,7 @@ function start() {
 
 // this function gets called when the user selects
 // a menu item on the front page and shows the 
-// relevant screen.
+// relevant screen
 function handlemenuchange(which) {
   console.log("handlemenuchange", which);
   var choice = which.getAttribute("value");
