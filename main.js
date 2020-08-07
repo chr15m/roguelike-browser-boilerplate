@@ -176,8 +176,7 @@ var Game = {
 
     // close out the game screen and show the title
     resetcanvas();
-    showtitle();
-    $("#game").classList.remove("show");
+    showscreen("title");
   },
 
   // guess what, this generates the game map
@@ -529,7 +528,7 @@ function win() {
   // tear down the game
   Game.destroy();
   // show the blingy "win" screen to the user
-  show("#win");
+  showscreen("win");
 }
 
 // this gets called when the player loses the game
@@ -552,7 +551,7 @@ function lose() {
     // tear down the game
     Game.destroy();
     // show the "lose" screen to the user
-    show("#lose");
+    showscreen("lose");
   }, 2000);
 }
 
@@ -576,7 +575,7 @@ document.querySelectorAll(".game-title-text")
 // it is called by init() and destroy() at the
 // start and end of the game
 function resetcanvas(el) {
-  show("#game");
+  showscreen("game");
   if (el) {
     $("#canvas").innerHTML = "";
     $("#canvas").appendChild(el);
@@ -587,11 +586,6 @@ function resetcanvas(el) {
     $("#game").removeEventListener("click", handletouch);
     $("#canvas").innerHTML = "";
   }
-}
-
-function showtitle() {
-  hide("#plate");
-  show("#title");
 }
 
 // this function uses CSS styles to reposition the
@@ -622,27 +616,15 @@ function removelisteners() {
   Game.scheduler.clear();
 }
 
-// this helper function hides any of the menu
-// screens, shows the title screen again,
-// and plays a sound as it does so
-function hidemodal(which) {
-  hide("#" + which);
-  showtitle();
-  sfx['hide'].play();
-}
-
-// this helper function applies the "show"
-// class to modals and screens
-function show(which) {
-  $(which).classList.remove("hide");  
-  $(which).classList.add("show");
-}
-
-// this helper function applies the "hide"
-// class to modals and screens
-function hide(which) {
-  $(which).classList.remove("show");
-  $(which).classList.add("hide");
+// hides all screens and shows the requested screen
+function showscreen(which) {
+  document.querySelectorAll(".screen")
+  .forEach(function(s) {
+    s.classList.remove("show");
+    s.classList.add("hide");
+  });
+  $("#" + which).classList.remove("hide");
+  $("#" + which).classList.add("show");
 }
 
 // this function displays a message at the top
@@ -711,7 +693,7 @@ function handletouch(ev) {
 // this function gets called from the first screen
 // when the "play" button is clicked.
 function start() {
-  hide("#title");
+  showscreen("game");
   sfx["rubber"].play();
   Game.init();
 }
@@ -720,8 +702,15 @@ function start() {
 // a menu item on the front page and shows the 
 // relevant screen
 function handlemenuchange(which) {
-  console.log("handlemenuchange", which);
   var choice = which.getAttribute("value");
-  show("#" + choice);
+  showscreen(choice);
   sfx["choice"].play();
+}
+
+// this helper function hides any of the menu
+// screens above, shows the title screen again,
+// and plays a sound as it does so
+function hidemodal(which) {
+  showscreen("title");
+  sfx['hide'].play();
 }
