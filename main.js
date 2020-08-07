@@ -1,38 +1,11 @@
 // Update this string to set the game title
 var gametitle = "My Rogue";
 
-// utilities
-$ = document.querySelector.bind(document);
-NodeList.prototype.forEach = Array.prototype.forEach
 
-// this code sets the game title to the string above
-document.querySelectorAll(".game-title-text").forEach(function(t) {
-  t.textContent = gametitle;
-})
+/*****************
+ *** resources ***
+ *****************/
 
-/***
- *** resources
- ***/
-
-// These sound effects are from sfxr.me
-//
-// You can generate your own and click the "copy" button
-// to get the sound code.
-
-var sfx = {
-  "rubber": "5EoyNVaezhPnpFZjpkcJkF8FNCioPncLoztbSHU4u9wDQ8W3P7puffRWvGMnrLRdHa61kGcwhZK3RdoDRitmtwn4JjrQsZCZBmDQgkP5uGUGk863wbpRi1xdA",
-  "step1": "34T6PkwiBPcxMGrK7aegATo5WTMWoP17BTc6pwXbwqRvndwRjGYXx6rG758rLSU5suu35ZTkRCs1K2NAqyrTZbiJUHQmra9qvbBrSdbBbJ7JvmyBFVDo6eiVD",
-  "option": "34T6PkzXyyB6jHiwFztCFWCTX5oxdNq2D1HnxL9evKJV5eYK2ESUG8QUB2QvmqTdMmFHVjKLwJRYZR4QgenUUmG2AfG3rrieQTXbsM6ZYz52LHRu74TuRpnQX",
-  "choice": "34T6PkzXyyB6jHiwFztCFWEWsogkzrhzAH3FH2d97BCuFhqmZgfuXG3xtz8YYSKMzn95yyX8xZXJyesKmpcjpEL3dPP5h2e8mt5MmhExAksyqZyqgavBgsWMd",
-  "hide": "34T6PkzXyyB6jHiwFztCFWEniygA1GJtjsQuGxcd38JLDquhRqTB28dQgigseMjQSjSY14Z3aBmAtzz9KWcJZ2o9S1oCcgqQY4dxTAXikS7qCs3QJ3KuWJUyD",
-  "miss": "111112RrwhZ2Q7NGcdAP21KUHHKNQa3AhmK4Xea8mbiXfzkxr9aX41M8XYt5xYaaLeo9iZdUKUVL3u2N6XASue2wPv2wCCDy6W6TeFiUjk3dXSzFcBY7kTAM",
-  "win": "34T6Pkv34QJsqDqEa8aV4iwF2LnASMc3683oFUPKZic6kVUHvwjUQi6rz8qNRUHRs34cu37P5iQzz2AzipW3DHMoG5h4BZgDmZnyLhsXgPKsq2r4Fb2eBFVuR",
-  "lose": "7BMHBGHKKnn7bgcmGprqiBmpuRaTytcd4JS9eRNDzUTRuQy8BTBzs5g8XzS7rrp4C9cNeSaqAtWR9qdvXvtnWVTmTC8GXgDuCXD2KyHJNXzfUahbZrce8ibuy",
-}
-
-for (var s in sfx) {
-  sfx[s] = (new SoundEffect(sfx[s])).generate().getAudio();
-}
 
 // This tileset is from kenney.nl
 // It's the "microrogue" tileset
@@ -40,7 +13,10 @@ for (var s in sfx) {
 var tileSet = document.createElement("img");
 tileSet.src = "colored_tilemap_packed.png";
 
-// This is where you specify which tile each character uses
+// This is where you specify which tile
+// is used to draw each "character"
+// where a character can be a background tile
+// or a player, monster, or item tile
 
 var tileOptions = {
   layout: "tile",
@@ -71,62 +47,122 @@ var tileOptions = {
   height: 40
 }
 
-var keyMap = {};
-keyMap[38] = 0;
-keyMap[33] = 1;
-keyMap[39] = 2;
-keyMap[34] = 3;
-keyMap[40] = 4;
-keyMap[35] = 5;
-keyMap[37] = 6;
-keyMap[36] = 7;
+// These sound effects are generated using sfxr.me
+//
+// You can generate your own and click the "copy" button
+// to get the sound code and paste it here.
+// Play sounds using this code: `sfxr[soundname].play()`
 
-var tapMap = {};
-tapMap[0] = 6;
-tapMap[1] = 0;
-tapMap[2] = 2;
-tapMap[3] = 4;
+var sfx = {
+  "rubber": "5EoyNVaezhPnpFZjpkcJkF8FNCioPncLoztbSHU4u9wDQ8W3P7puffRWvGMnrLRdHa61kGcwhZK3RdoDRitmtwn4JjrQsZCZBmDQgkP5uGUGk863wbpRi1xdA",
+  "step1": "34T6PkwiBPcxMGrK7aegATo5WTMWoP17BTc6pwXbwqRvndwRjGYXx6rG758rLSU5suu35ZTkRCs1K2NAqyrTZbiJUHQmra9qvbBrSdbBbJ7JvmyBFVDo6eiVD",
+  "option": "34T6PkzXyyB6jHiwFztCFWCTX5oxdNq2D1HnxL9evKJV5eYK2ESUG8QUB2QvmqTdMmFHVjKLwJRYZR4QgenUUmG2AfG3rrieQTXbsM6ZYz52LHRu74TuRpnQX",
+  "choice": "34T6PkzXyyB6jHiwFztCFWEWsogkzrhzAH3FH2d97BCuFhqmZgfuXG3xtz8YYSKMzn95yyX8xZXJyesKmpcjpEL3dPP5h2e8mt5MmhExAksyqZyqgavBgsWMd",
+  "hide": "34T6PkzXyyB6jHiwFztCFWEniygA1GJtjsQuGxcd38JLDquhRqTB28dQgigseMjQSjSY14Z3aBmAtzz9KWcJZ2o9S1oCcgqQY4dxTAXikS7qCs3QJ3KuWJUyD",
+  "miss": "111112RrwhZ2Q7NGcdAP21KUHHKNQa3AhmK4Xea8mbiXfzkxr9aX41M8XYt5xYaaLeo9iZdUKUVL3u2N6XASue2wPv2wCCDy6W6TeFiUjk3dXSzFcBY7kTAM",
+  "win": "34T6Pkv34QJsqDqEa8aV4iwF2LnASMc3683oFUPKZic6kVUHvwjUQi6rz8qNRUHRs34cu37P5iQzz2AzipW3DHMoG5h4BZgDmZnyLhsXgPKsq2r4Fb2eBFVuR",
+  "lose": "7BMHBGHKKnn7bgcmGprqiBmpuRaTytcd4JS9eRNDzUTRuQy8BTBzs5g8XzS7rrp4C9cNeSaqAtWR9qdvXvtnWVTmTC8GXgDuCXD2KyHJNXzfUahbZrce8ibuy",
+}
+
+// here we are turning the sfxr sound codes into
+// audio objects that can be played with `sfx[name].play()`
+for (var s in sfx) {
+  sfx[s] = (new SoundEffect(sfx[s])).generate().getAudio();
+}
+
+// these are lookup tables mapping keycodes and
+// click/tap directions to game direction vectors
+
+var keyMap = {
+  38: 0,
+  33: 1,
+  39: 2,
+  34: 3,
+  40: 4,
+  35: 5,
+  37: 6,
+  36: 7,
+};
+
+var tapMap = {
+  0: 6,
+  1: 0,
+  2: 2,
+  3: 4,
+};
 
 /***
  *** game code
  ***/
 
-// based on a tutorial by Ondřej Žára
+// based on the original tutorial by Ondřej Žára
 // www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_1
 
-// allow live reloading
+// allow live reloading of the game code
 if (window["Game"]) { Game.destroy(); }
 
+// this object is a namespace holding all of the
+// bits of our game together in one place for easy
+// reference
+
 var Game = {
+  // this is the ROT.js display handler
   display: null,
+  // this is our map data
+  // it's a lookup of `x,y` to "character"
+  // where "character" can any one of:
+  // background, item, player, or monster
   map: {},
+  // reference to the ROT.js engine which
+  // manages stuff like scheduling
   engine: null,
+  // schedules events in the game for ROT.js
   scheduler: null,
+  // reference to the `Player` class below
   player: null,
+  // reference to the `Monster` class below
   monster: null,
+  // the position of the amulet in the map
+  // as `x,y` so it can be checked against
+  // the map keys above
   amulet: null,
-  
+
+  // this gets called by the menu system
+  // to launch the actual game
   init: function() {
+    // first create a ROT.js display manager
     this.display = new ROT.Display(tileOptions);
     resetcanvas(this.display.getContainer());
 
+    // this is where we populate the map data structure
+    // with all of the background tiles, items,
+    // player and the monster positions
     this._generateMap();
 
+    // let ROT.js schedule the Player and Monster objects
     this.scheduler = new ROT.Scheduler.Simple();
     this.scheduler.add(this.player, true);
     this.scheduler.add(this.monster, true);
 
+    // kick everything off
     this.engine = new ROT.Engine(this.scheduler);
     this.engine.start();
   },
 
+  // this gets called at the end of the game when we want
+  // to exit back out and clean everything up to display
+  // the menu and get ready for next round
   destroy: function() {
+    // remove all listening event handlers
     window.removeEventListener("keydown", this.player);
     $("#game").removeEventListener("touchstart", handletouch);
     $("#game").removeEventListener("click", handletouch);
+
+    // tear everything down and 
+    // reset all our variables back
+    // to null as before init()
     if (this.engine) {
       this.engine.lock();
-      // this.display.clear();
       this.display = null;
       this.map = {};
       this.engine = null;
@@ -137,49 +173,89 @@ var Game = {
       this.monster = null;
       this.amulet = null;
     }
+
+    // close out the game screen and show the title
     resetcanvas();
     showtitle();
     $("#game").classList.remove("show");
   },
-  
+
+  // guess what, this generates the game map
   _generateMap: function() {
-    var digger = new ROT.Map.Digger(tileOptions.width, tileOptions.height);
+    // we're using the ROT.js Digger tilemap
+    // there are lots of interesting dungeon
+    // generation algorithms here:
+    // http://ondras.github.io/rot.js/manual/#map
+    // http://ondras.github.io/rot.js/manual/#map/maze
+    // http://ondras.github.io/rot.js/manual/#map/cellular
+    // http://ondras.github.io/rot.js/manual/#map/dungeon
+    var digger = new ROT.Map.Digger(
+        tileOptions.width,
+        tileOptions.height);
+    // list of floor tiles that can be walked on
+    // but don't have anything on them yet
     var freeCells = [];
+    // list of non-floor tiles that can't be traversed
+    // which we'll put scenery on
     var zeroCells = [];
-    
+
+    // the way the ROT.js map generators work is they
+    // call this callback for every tile generated with
+    // the `value` set to the type of space at that point
     var digCallback = function(x, y, value) {
       var key = x+","+y;
       if (value) {
+        // store this in the non-walkable cells list
         zeroCells.push(key);
       } else {
+        // on our map we want to draw a "walkable" tile
+        // here which is represented by a dot
         this.map[key] = ".";
+        // store this in the walkable cells list
         freeCells.push(key);
       }
     }
+    // kick off the map creation algorithm to build
+    // the basic map shape with rooms and corridors
     digger.create(digCallback.bind(this));
 
+    // now we spawn generators for populating other stuff
+    // in the map - you can read each of these below
     this._generateBoxes(freeCells);
     this._generateShrubberies(zeroCells);
     this._drawRooms(digger);
+    // draw the map so far on the screen
     this._drawWholeMap();
 
+    // finally we put the player and the monster on their
+    // starting tiles, which must be from the walkable list
     this.player = this._createBeing(Player, freeCells);
     this.monster = this._createBeing(Monster, freeCells);
+
+    // here we are re-scaling the background so it is
+    // zoomed in and centered on the player tile
     rescale(this.player._x, this.player._y);
   },
-  
+
+  // both the player and monster initial position is set
+  // by choosing a random freeCell and creating the type
+  // of object (`what`) on that position
   _createBeing: function(what, freeCells) {
-    var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+    var index = Math.floor(
+        ROT.RNG.getUniform() * freeCells.length);
+    // remove from the freeCells array now that it's taken
     var key = freeCells.splice(index, 1)[0];
     var parts = key.split(",");
     var x = parseInt(parts[0]);
     var y = parseInt(parts[1]);
     return new what(x, y);
   },
-  
+
+  // here we are creating the treasure chest items
   _generateBoxes: function(freeCells) {
     for (var i=0;i<10;i++) {
-      var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+      var index = Math.floor(
+          ROT.RNG.getUniform() * freeCells.length);
       var key = freeCells.splice(index, 1)[0];
       // add a treasure chest to the map
       this.map[key] = "*";
@@ -187,18 +263,25 @@ var Game = {
       if (!i) { this.amulet = key; }
     }
   },
-  
+
+  // these plant tiles are purely bling
+  // we're just going to play 100 plants randomly
+  // in the spaces where there isn't anything already
   _generateShrubberies: function(freeCells) {
     for (var i=0;i<100;i++) {
       if (freeCells.length) {
-        var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+        var index = Math.floor(
+            ROT.RNG.getUniform() * freeCells.length);
         var key = freeCells.splice(index, 1)[0];
         this.map[key] = ROT.RNG.getItem("abcde");
       }
     }
   },
-  
+
+  // to make the map look a bit cooler we'll actually draw
+  // walls around the rooms
   _drawRooms: function(map) {
+    // these map tiles should not be replaced by room edges
     var noreplace = [".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"];
     var rooms = map.getRooms();
     for (var rm=0; rm<rooms.length; rm++) {
@@ -209,11 +292,20 @@ var Game = {
       var t=room.getTop() - 1;
       var b=room.getBottom() + 1;
 
-      this.map[l + "," + t] = "o";
+      // place the room corner tiles
+      this.map[l + "," + t] = "╔";
+      this.map[r + "," + t] = "╗";
+      this.map[l + "," + b] = "╚";
+      this.map[r + "," + b] = "╝";
+
+      // you can also use a single corner tile for every
+      // corner if you prefer that look
+      /*this.map[l + "," + t] = "o";
       this.map[r + "," + t] = "o";
       this.map[l + "," + b] = "o";
-      this.map[r + "," + b] = "o";
+      this.map[r + "," + b] = "o";*/
 
+      // the next four loops just draw each side of the room
       for (var i=room.getLeft(); i<=room.getRight(); i++) {
         var k = i + "," + t;
         if (noreplace.indexOf(this.map[k]) == -1) {
@@ -242,10 +334,13 @@ var Game = {
         }
       }
 
+      // you can also do something more interesting with
+      // the doors of the room if you want
       // room.getDoors(console.log);
     }
   },
-  
+
+  // we ask ROT.js to actually draw the map tiles via display
   _drawWholeMap: function() {
     for (var key in this.map) {
       var parts = key.split(",");
@@ -256,25 +351,33 @@ var Game = {
   }
 };
 
-/***
- *** player code
- ***/
+/*************************
+ *** the player object ***
+ *************************/
 
+// basic ROT.js entity with a position
 var Player = function(x, y) {
   this._x = x;
   this._y = y;
   this._draw();
 }
 
+// basic ROT.js entity properties
 Player.prototype.getSpeed = function() { return 100; }
 Player.prototype.getX = function() { return this._x; }
 Player.prototype.getY = function() { return this._y; }
 
+// the ROT.js scheduler calls this method when it is time
+// for the player to act
+// what this does is lock the engine to take control
+// and then wait for keyboard input from the user
 Player.prototype.act = function() {
   Game.engine.lock();
   window.addEventListener("keydown", this);
 }
 
+// when keyboard input happens this even handler is called
+// and the position of the player is updated
 Player.prototype.handleEvent = function(e) {
   var code = e.keyCode;
   /* one of numpad directions? */
@@ -283,39 +386,66 @@ Player.prototype.handleEvent = function(e) {
   moveplayer(dir);
 }
 
+// this is how the Player draws itself on the map
+// using ROT.js display
 Player.prototype._draw = function() {
   Game.display.draw(this._x, this._y, "@", "#ff0");
 }
 
+// this method gets called by the `moveplayer` function
+// in order to check whether they hit an empty box
+// or The Amulet
 Player.prototype._checkBox = function() {
   var key = this._x + "," + this._y;
   if (key == Game.amulet) {
+    // the amulet is hit initiate the win flow below
     win();
   } else if (Game.map[key] == "*") {
+    // if an empty box is opened make it disappear
+    // by replacing with a floor tile, show the user
+    // a message, and play the "miss" sound effect
     Game.map[key] = ".";
     toast("This chest is empty.");
     sfx["miss"].play();
   }
 }
 
+// this function moves the player on the tilemap
+// it is called from the keyboard event handler above
+// `Player.prototype.handleEvent()`
+// and also from the click/tap handler `handletouch()` below
 function moveplayer(dir) {
+  // get a reference to our global player object
+  // this is needed when called from the tap/click handler
   var p = Game.player;
 
+  // work out the new position based on direction vector
   var x = p._x + dir[0];
   var y = p._y + dir[1];
 
+  // map lookup - if we're not moving onto a floor tile
+  // or a treasure chest, then we should abort this move
   var newKey = x + "," + y;
   if ([".", "*"].indexOf(Game.map[newKey]) == -1) { return; }
 
+  // update the old tile to whatever was there before
+  // (e.g. "." floor tile)
   Game.display.draw(p._x, p._y, Game.map[p._x + "," + p._y]);
+
+  // update the player's coordinates
   p._x = x;
   p._y = y;
 
+  // re-draw the player
   p._draw();
+  // re-locate the game screen to center the player
   rescale(x, y);
+  // remove the keyboard event listener and unlock the scheduler
   window.removeEventListener("keydown", p);
   Game.engine.unlock();
+  // play the "step" sound
   sfx["step1"].play();
+  // check if the player stepped on a treasure chest
   p._checkBox();
 }
 
@@ -323,42 +453,60 @@ function moveplayer(dir) {
  *** monster code
  ***/
 
+// basic ROT.js entity with a position
 var Monster = function(x, y) {
   this._x = x;
   this._y = y;
   this._draw();
 }
   
+// basic ROT.js entity properties
 Monster.prototype.getSpeed = function() { return 75; }
 
+// the ROT.js scheduler calls this method when it is time
+// for the player to act
 Monster.prototype.act = function() {
+  // the monster wants to know where the player is
   var x = Game.player.getX();
   var y = Game.player.getY();
 
+  // in this whole code block we use the ROT.js "astar" path finding
+  // algorithm to help the monster figure out the fastest way to get
+  // to the player - for implementation details check out the doc:
+  // http://ondras.github.io/rot.js/manual/#path
   var passableCallback = function(x, y) {
     return ([".", "*"].indexOf(Game.map[x + "," + y]) != -1);
   }
   var astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
-
   var path = [];
   var pathCallback = function(x, y) {
     path.push([x, y]);
   }
   astar.compute(this._x, this._y, pathCallback);
 
+  // we just want the first move on the path from monster to player
+  // because this function is called once per monster turn and the
+  // player will have moved on the next round
   path.shift();
+  // if the distance from the monster to the player is less than one
+  // square the player has lost the game
   if (path.length <= 1) {
+    // trigger the `lose()` UI flow below
     lose();
   } else {
+    // the player is safe for now so update the monster position
     x = path[0][0];
     y = path[0][1];
+    // draw whatever was on the last tile the monster was one
     Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
+    // update the monster's position and redraw
     this._x = x;
     this._y = y;
     this._draw();
   }
 }
 
+// We draw the monster with an "M" tile
 Monster.prototype._draw = function() {
   Game.display.draw(this._x, this._y, "M");
 }
@@ -368,25 +516,37 @@ Monster.prototype._draw = function() {
  ***/
 
 function win() {
-  removelisteners();
+  // play the win sound effect a bunch of times
   for (var i=0; i<5; i++) {
     setTimeout(function() {
       sfx["win"].play();
     }, 100 * i);
   }
+  // tear down the game
   Game.destroy();
+  // show the blingy "win" screen to the user
   show("#win");
 }
 
 function lose() {
+  // change the player into a tombstone tile
   var p = Game.player;
   Game.display.draw(p._x, p._y, "T");
-  var ghost = el("#game", "div", {"className": "sprite ghost free float-up"});
+  // create an animated div element over the top of the game
+  // holding a rising ghost image above the tombstone
+  var ghost = el("#game", "div",
+      {"className": "sprite ghost free float-up"});
+  // we stop listening for user input while the ghost animates
   removelisteners();
+  // play the lose sound effect
   sfx["lose"].play();
+  // wait 2 seconds for the ghost animation to finish
   setTimeout(function() {
+    // remove the ghost animation
     rmel(ghost);
+    // tear down the game
     Game.destroy();
+    // show the "lose" screen to the user
     show("#lose");
   }, 2000);
 }
@@ -394,6 +554,17 @@ function lose() {
 /***
  *** graphics & browser utils
  ***/
+
+// handy shortcuts and shims for manipulating the dom
+$ = document.querySelector.bind(document);
+NodeList.prototype.forEach = Array.prototype.forEach
+
+// this code is called at load time and sets the game title
+// to the `gametitle` variable at the top
+document.querySelectorAll(".game-title-text")
+.forEach(function(t) {
+  t.textContent = gametitle;
+})
 
 function resetcanvas(el) {
   show("#game");
@@ -449,6 +620,9 @@ function hide(which) {
   $(which).classList.add("hide");
 }
 
+// this function displays a message at the top
+// of the game screen for the player such as
+// "You have found a sneaky wurzel."
 function toast(message) {
   var m = $("#message");
   m.classList.remove("hide");
@@ -479,10 +653,11 @@ function rmel(node) {
 
 function handletouch(ev) {
   ev.preventDefault();
+  // if the inventory div was clicked
   if ($("#inventory").contains(ev.target)) {
     var b = $("#inventory>span");
     var d = $("#inventory>div");
-    console.log(b.style.display, d.style.display);
+    // toggle the inventory to visible/invisible
     if (b.style.display == "none") {
       b.style.display = "block";
       d.style.display = "none";
@@ -490,23 +665,33 @@ function handletouch(ev) {
       b.style.display = "none";
       d.style.display = "block";
     }
-
+  // otherwise the map itself was clicked
   } else {
     var g = $("#game");
-    var x = (ev["touches"] ? ev.touches[0].clientX : ev.clientX) - (g.offsetWidth / 2);
-    var y = (ev["touches"] ? ev.touches[0].clientY : ev.clientY) - (g.offsetHeight / 2);
+    // where on the game the click or touch occurred
+    var cx = (ev["touches"] ? ev.touches[0].clientX : ev.clientX);
+    var cy = (ev["touches"] ? ev.touches[0].clientY : ev.clientY)
+    var x = cx - (g.offsetWidth / 2);
+    var y = cy - (g.offsetHeight / 2);
+    // figure out which quadrant was clicked relative to the player
     var qs = Math.ceil((Math.floor((Math.atan2(y, x) + Math.PI) / (Math.PI / 4.0)) % 7) / 2);
     var dir = ROT.DIRS[8][tapMap[qs]];
+    // actually move the player in that direction
     moveplayer(dir);
   }
 }
 
+// this function gets called from the first screen
+// when the "play" button is clicked.
 function start() {
   hide("#title");
   sfx["rubber"].play();
   Game.init();
 }
 
+// this function gets called when the user selects
+// a menu item on the front page and shows the 
+// relevant screen.
 function handlemenuchange(which) {
   console.log("handlemenuchange", which);
   var choice = which.getAttribute("value");
