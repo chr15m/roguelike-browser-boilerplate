@@ -54,7 +54,7 @@ p, h2, h3, li {
   widows: 5;
 }
 
-pre, blockquote {
+blockquote {
   padding-right: 1em;
   page-break-inside: avoid;
   border-radius: 10px;
@@ -72,3 +72,36 @@ tr, img {
 li {
   margin-top: 1em;
 }
+
+div.sourceCode::before {
+  content: url(blips.svg);
+  display: block;
+  margin-bottom: 1em;
+  margin-top: 0.5em;
+  margin-left: 0.5em;
+}
+
+div.sourceCode {
+  font-size: 0.6em;
+  background-color: #f8f8f8;
+  border: 2px solid #aeaeae;
+  border-radius: 10px;
+  margin: 1em 0px;
+}
+
+div.sourceCode td.lineNumbers pre {
+  font-family: 'Press Start 2P', cursive;
+}
+
+div.sourceCode td {
+  line-height: 1.5em;
+}
+
+/*.numberLines pre {
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
+  margin-right: -2em;
+}
+
+.numberLines pre::before*/

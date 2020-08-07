@@ -26,13 +26,44 @@ Let's take a look at the files in the boilerplate.
  * `colored_tilemap_packed.png` is the tilemap containing both sprites and background tiles used in the boilerplate game. You can modify or replace this to use your own game tiles.
  * `icon.png`, `bg.png`, and `01coin.gif` are graphical assets used for the browser icon of the game, the background image on the first menu, and a rotating coin animation for the win screen.
 
-Take a look around at each of these files to familiarize yourself. Next up we'll look at changing things in these files to make the game look and work the way you want it to.
+Take a look around at each of these files to familiarize yourself.
+Next up we'll look at changing stuff in these files to make the game look and work the way you want it to.
 
 ### Changing the title, icon, and font
 
-### Changing the tiles
+The first thing you can do is change the game title. There are two places to change the title.
 
-### Changing the sounds
+First there is the title tag at the top of the `index.html` file. This is the standard page title attribute from HTML.
+
+``` {.html .numberLines startFrom="4"}
+<title>Roguelike Browser Boilerplate</title>
+```
+
+Next there is the title that appears at the start of the game:
+
+![](./doc/title.png)
+
+You can change the text of this title right at the top of the `main.js`:
+
+``` {.javascript .numberLines startFrom="1"}
+// Update this string to set the game title
+var gametitle = "My Rogue";
+```
+
+If your game has a longer title you might find that some letters disappear off the screen.
+You can accomodate more letters by changing the size of the letters in `style.css`:
+
+``` {.css .numberLines startFrom="150"}
+.game-title-text {
+  font-size: 64px;
+}
+```
+
+### Changing the tileset graphics
+
+
+
+### Changing the sound effects
 
 ### Changing the monster code
 
