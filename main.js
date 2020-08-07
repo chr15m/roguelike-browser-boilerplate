@@ -493,6 +493,9 @@ Monster.prototype.act = function() {
   if (path.length <= 1) {
     // trigger the `lose()` UI flow below
     lose();
+    // if you want to implement combat mechanics this is the place
+    // instead of killing the player, roll some virtual dice and
+    // compute new hit point values
   } else {
     // the player is safe for now so update the monster position
     x = path[0][0];
