@@ -291,7 +291,7 @@ Player.prototype._checkBox = function() {
   var key = this._x + "," + this._y;
   if (key == Game.amulet) {
     win();
-  } else {
+  } else if (Game.map[key] == "*") {
     Game.map[key] = ".";
     toast("This chest is empty.");
     sfx["miss"].play();
