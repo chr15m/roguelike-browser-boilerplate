@@ -148,6 +148,9 @@ var Game = {
     // render some example items in the inventory
     renderinventory(this.player.inventory);
 
+    // render the stats hud at the bottom of the screen
+    renderstats(this.player.stats);
+
     // kick everything off
     this.engine = new ROT.Engine(this.scheduler);
     this.engine.start();
@@ -365,6 +368,7 @@ var Player = function(x, y) {
     ["x", "Axe (+5)"],
     ["p", "Potion"]
   ];
+  this.stats = {"hp": 6, "xp": 1, "gold": 5};
   this._draw();
 }
 
@@ -463,6 +467,7 @@ function moveplayer(dir) {
 var Monster = function(x, y) {
   this._x = x;
   this._y = y;
+  this.stats = {"hp": 6};
   this._draw();
 }
   
@@ -645,6 +650,18 @@ function renderinventory(items) {
               "style": "background-position: -" + tile[0] + "px -" + tile[1] + "px;"
             }), words]));
   });
+}
+
+// updates the stats listed at the bottom of the screen
+// pass in an object containing key value pairs where
+// the key is the name of the stat and the value is the
+// number
+function renderstats(stats) {
+  var st = $("#hud");
+  st.innerHTML = "";
+  for (var s in stats) {
+    attach(st, el("span", {}, [s.toUpperCase() + ": " + stats[s]]));
+  }
 }
 
 // this function displays a message at the top

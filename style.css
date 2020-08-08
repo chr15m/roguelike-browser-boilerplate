@@ -213,7 +213,7 @@ a:hover {
 }
 
 #credits ul {
-  list-style: ">";
+  list-style: "> ";
   padding-left: 2em;
   text-align: left;
 }
