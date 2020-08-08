@@ -42,6 +42,8 @@ var tileOptions = {
     "═": [8, 72],
     "║": [32, 72],
     "o": [40, 72],
+    "x": [56, 32],
+    "p": [56, 64],
   },
   width: 25,
   height: 40
@@ -142,6 +144,9 @@ var Game = {
     this.scheduler = new ROT.Scheduler.Simple();
     this.scheduler.add(this.player, true);
     this.scheduler.add(this.monster, true);
+
+    // render some example items in the inventory
+    renderinventory([["x", "Axe (+5)"], ["p", "Potion"]]);
 
     // kick everything off
     this.engine = new ROT.Engine(this.scheduler);
@@ -536,8 +541,7 @@ function lose() {
   Game.display.draw(p._x, p._y, "T");
   // create an animated div element over the top of the game
   // holding a rising ghost image above the tombstone
-  var ghost = el("#game", "div",
-      {"className": "sprite ghost free float-up"});
+  var ghost = attach($("#game"), el("div", {"className": "sprite ghost free float-up"}));
   // we stop listening for user input while the ghost animates
   removelisteners();
   // play the lose sound effect
@@ -618,6 +622,27 @@ function showscreen(which) {
   $("#" + which).classList.add("show");
 }
 
+// updates the contents of the inventory UI
+// with a list of things you want in there
+// items is an array of ["C", "Words"]
+// where "C" is the character from the tileset
+// and "Words" are whatever words you want next
+// to it
+function renderinventory(items) {
+  var inv = $("#inventory ul");
+  inv.innerHTML = "";
+  items.forEach(function(i) {
+    var tile = tileOptions.tileMap[i[0]];
+    var words = i[1];
+    attach(inv,
+         el("li", {},
+            [el("div", {
+              "className": "sprite",
+              "style": "background-position: -" + tile[0] + "px -" + tile[1] + "px;"
+            }), words]));
+  });
+}
+
 // this function displays a message at the top
 // of the game screen for the player such as
 // "You have found a sneaky wurzel."
@@ -630,14 +655,24 @@ function toast(message) {
   m.classList.add("fade-out");
 }
 
-// add an element to the dom
-function el(where, tag, attrs) {
+// create an HTML element
+function el(tag, attrs, children) {
   var node = document.createElement(tag);
-  //var textnode = document.createTextNode("Hello");
-  //node.appendChild(textnode);
   for (a in attrs) { node[a] = attrs[a]; }
-  $(where).appendChild(node);
+  (children || []).forEach(function(c) {
+    if (typeof(c) == "string") {
+      node.appendChild(document.createTextNode(c));
+    } else {
+      attach(node, c);
+    }
+  });
   return node;
+}
+
+// add an HTML element to a parent node
+function attach(node, el) {
+    node.appendChild(el);
+    return el;
 }
 
 // remove an element from the dom
