@@ -29,6 +29,7 @@ var tileOptions = {
     ".": [32, 32],
     "M": [88, 0],
     "*": [72, 24],
+    "g": [64, 40],
     "a": [40, 32],
     "b": [32, 40],
     "c": [40, 40],
@@ -258,14 +259,19 @@ var Game = {
 
   // here we are creating the treasure chest items
   _generateBoxes: function(freeCells) {
-    for (var i=0;i<10;i++) {
+    for (var i=0; i<15; i++) {
       var index = Math.floor(
           ROT.RNG.getUniform() * freeCells.length);
       var key = freeCells.splice(index, 1)[0];
-      // add a treasure chest to the map
-      this.map[key] = "*";
       // the first chest contains the amulet
-      if (!i) { this.amulet = key; }
+      if (!i) {
+        this.amulet = key;
+        this.map[key] = "*";
+      } else {
+        // add either a treasure chest
+        // or a piece of gold to the map
+        this.map[key] = ROT.RNG.getItem(["*", "g"]);
+      }
     }
   },
 
@@ -287,7 +293,7 @@ var Game = {
   // walls around the rooms
   _drawRooms: function(map) {
     // these map tiles should not be replaced by room edges
-    var noreplace = [".", "*", "M", "╔", "╗", "╚", "╝", "═", "║"];
+    var noreplace = [".", "*", "g", "M", "╔", "╗", "╚", "╝", "═", "║"];
     var rooms = map.getRooms();
     for (var rm=0; rm<rooms.length; rm++) {
       var room = rooms[rm];
@@ -368,7 +374,7 @@ var Player = function(x, y) {
     ["x", "Axe (+5)"],
     ["p", "Potion"]
   ];
-  this.stats = {"hp": 6, "xp": 1, "gold": 5};
+  this.stats = {"hp": 6, "xp": 1, "gold": 0};
   this._draw();
 }
 
@@ -410,14 +416,24 @@ Player.prototype._checkBox = function() {
   if (key == Game.amulet) {
     // the amulet is hit initiate the win flow below
     win();
+  } else if (Game.map[key] == "g") {
+    // if the player stepped on gold
+    // increment their gold stat,
+    // show a message, re-render the stats
+    // then play the pickup/win sound
+    Game.player.stats.gold += 1;
+    renderstats(Game.player.stats);
+    toast("You found gold!");
+    sfx["win"].play();
   } else if (Game.map[key] == "*") {
-    // if an empty box is opened make it disappear
+    // if an empty box is opened
     // by replacing with a floor tile, show the user
     // a message, and play the "miss" sound effect
-    Game.map[key] = ".";
     toast("This chest is empty.");
     sfx["miss"].play();
   }
+  // make the item disappear by drawing floor
+  Game.map[key] = ".";
 }
 
 // this function moves the player on the tilemap
@@ -436,7 +452,7 @@ function moveplayer(dir) {
   // map lookup - if we're not moving onto a floor tile
   // or a treasure chest, then we should abort this move
   var newKey = x + "," + y;
-  if ([".", "*"].indexOf(Game.map[newKey]) == -1) { return; }
+  if ([".", "*", "g"].indexOf(Game.map[newKey]) == -1) { return; }
 
   // update the old tile to whatever was there before
   // (e.g. "." floor tile)
@@ -486,7 +502,7 @@ Monster.prototype.act = function() {
   // to the player - for implementation details check out the doc:
   // http://ondras.github.io/rot.js/manual/#path
   var passableCallback = function(x, y) {
-    return ([".", "*"].indexOf(Game.map[x + "," + y]) != -1);
+    return ([".", "*", "g"].indexOf(Game.map[x + "," + y]) != -1);
   }
   var astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
   var path = [];
