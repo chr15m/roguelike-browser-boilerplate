@@ -55,6 +55,7 @@
                    class="nes-radio is-dark"
                    name="menu-items"
                    onclick="handlemenuchange(this)"
+                   ontouchstart="handlemenuchange(this)"
                    onchange="handlemenuchange(this)"
                    checked/>
             <span>How to play</span>
@@ -66,6 +67,7 @@
                    class="nes-radio is-dark"
                    name="menu-items"
                    onclick="handlemenuchange(this)"
+                   ontouchstart="handlemenuchange(this)"
                    onchange="handlemenuchange(this)"/>
             <span>Settings</span>
           </label>
@@ -76,12 +78,16 @@
                    class="nes-radio is-dark"
                    name="menu-items"
                    onclick="handlemenuchange(this)"
+                   ontouchstart="handlemenuchange(this)"
                    onchange="handlemenuchange(this)"/>
             <span>Credits</span>
           </label>
         </div>
       </div>
-      <button id="play" class="nes-btn is-success" onclick="start();">Play</button>
+      <button id="play"
+              class="nes-btn is-success action"
+              onclick="start()"
+              ontouchstart="start()">Play</button>
     </div>
 
     <!-- settings screen -->
@@ -90,7 +96,9 @@
       <div class="nes-container is-rounded is-dark">
         <p>Put your settings menu here.</p>
       </div>
-      <button class="nes-btn is-success" onclick="hidemodal('settings')">Ok</button>
+      <button class="nes-btn is-success action"
+              onclick="hidemodal('settings')"
+              ontouchstart="hidemodal('settings')">Ok</button>
     </div>
 
     <!-- credits screen -->
@@ -118,7 +126,9 @@
                target="_blank">irmirx</a></li>
         </ul>
       </div>
-      <button class="nes-btn is-success" onclick="hidemodal('credits')">Ok</button>
+      <button class="nes-btn is-success action"
+              onclick="hidemodal('credits')"
+              ontouchstart="hidemodal('credits')">Ok</button>
     </div>    
 
     <!-- instructions screen -->
@@ -128,7 +138,9 @@
         <p>You must find The Amulet and avoid getting captured by The Monster</p>
         <p>Use the arrow keys to move around. To look in a chest move over it.</p>
       </div>
-      <button class="nes-btn is-success" onclick="hidemodal('instructions')">Ok</button>
+      <button class="nes-btn is-success action"
+              onclick="hidemodal('instructions')"
+              ontouchstart="hidemodal('instructions')">Ok</button>
     </div>
 
     <!-- win screen -->
@@ -138,7 +150,9 @@
         <p><div class="sprite amulet"></div></p>
         <p>You found The Amulet and won the game!</p>
       </div>
-      <button class="nes-btn is-success" onclick="hidemodal('win')">Ok</button>
+      <button class="nes-btn is-success action"
+              onclick="hidemodal('win')"
+              ontouchstart="hidemodal('win')">Ok</button>
     </div>
 
     <!-- win screen -->
@@ -149,18 +163,16 @@
         <p>Oh no, The Monster got you.</p>
         <p>You're dead.</p>
       </div>
-      <button class="nes-btn is-success" onclick="hidemodal('lose')">Ok</button>
+      <button class="nes-btn is-success action"
+              onclick="hidemodal('lose')"
+              ontouchstart="hidemodal('lose')">Ok</button>
     </div>
 
     <!-- game screen -->
     <div id="game" class="screen">
       <div id="canvas"></div>
       <div id="message" class="nes-container is-rounded is-dark hide"></div>
-      <div id="hud" class="nes-container is-rounded is-dark">
-        <span id="hp">HP: 5</span>
-        <span id="xp">XP: 2</span>
-        <span id="gold">Gold: 2</span>
-      </div>
+      <div id="hud" class="nes-container is-rounded is-dark"></div>
       <div id="inventory" class="nes-container is-rounded is-dark">
         <span>i</span>
         <div>

@@ -645,6 +645,8 @@ function showscreen(which) {
   });
   $("#" + which).classList.remove("hide");
   $("#" + which).classList.add("show");
+  var action = $("#" + which + ">.action");
+  if (action) { action.focus(); };
 }
 
 // updates the contents of the inventory UI
