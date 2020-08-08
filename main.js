@@ -146,7 +146,7 @@ var Game = {
     this.scheduler.add(this.monster, true);
 
     // render some example items in the inventory
-    renderinventory([["x", "Axe (+5)"], ["p", "Potion"]]);
+    renderinventory(this.player.inventory);
 
     // kick everything off
     this.engine = new ROT.Engine(this.scheduler);
@@ -361,6 +361,10 @@ var Game = {
 var Player = function(x, y) {
   this._x = x;
   this._y = y;
+  this.inventory = [
+    ["x", "Axe (+5)"],
+    ["p", "Potion"]
+  ];
   this._draw();
 }
 
