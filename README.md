@@ -153,15 +153,51 @@ After that you can play the sound with `sfx[key].play()`.
 
 If you search the source code for `sfx` or `play` you should find all the places where sounds are played and you can change those too.
 
+### Changing the level generation algorithm
+
+Fog of war, line of sight.
+
+### Changing the player code
+
+
+
 ### Changing the monster code
 
-TODO: fixme
+The code implementing the monster starts on line `454` of `main.js`:
+
+```{.javascript .numberLines startFrom="454"}
+var Monster = function(x, y) {
+  this._x = x;
+  this._y = y;
+  this._draw();
+}
+```
+
+If you want to store other variables or properties of this particular monster you can put them in here. At the moment the only variables passed in are the `x, y` position, but you could add things like hit points, damage, etc. for implementing combat.
+
+On line `465` of `main.js` you can find the code which controls how the monster behaves on each turn in `Monster.prototype.act`. This function gets called every time the ROT scheduler determines that it is the monster's turn to move.
+
+At the moment what happens is the monster uses the `astar` algorithm to figure out the fastest way to get to where the player is, and takes one step in that direction. There are lots of more interesting behaviours you could implement including field-of-view and distance from the player, interaction between monsters, monsters that can create items, monsters that talk, fast monsters, slow monsters, monsters that freeze the player, monsters that are friendly, etc. etc. The only limit is your imagination.
+
+ROT.js has some great helpers you can use like the [field-of-view](http://ondras.github.io/rot.js/manual/#fov) algorithm. Check out the [interactive documentation](http://ondras.github.io/rot.js/manual/) for more info.
+
+The monster in the boilerplate is added on line `230` of `main.js` and you can modify the code there to add an array of different monsters with different properties when the level starts, rather than just adding a single monster.
 
 ### Changing the items code
 
+At the moment the treasure chests are very simply implemented as `"*"` characters on the map. They don't carry any more interesting data than their position. You can make more interesting items by creating a data structure to hold item positions and the properties of the items which are there. A good place to add a new datastructure like that would be in the `Game` code around line `127` in `main.js`.
 
+For example you might have traps which take off varying amounts of HP when the player lands on them, or potions that give the player strength, or food so that players don't starve, or scrolls etc. etc.
+
+You can also implement items which can be collected and added to the player's inventory.
 
 ### Using the inventory
+
+At the moment the inventory is an example user interface. To flesh it out you'll want to create an inventory datastructure to hold items that the player picks up. You can make this a new array in the `Game` object around line `127` in `main.js` and when items are added simply add them to the array.
+
+You can use the `$` and `el` methods to re-render the items in the inventory.
+
+### Changing the combat system
 
 
 
