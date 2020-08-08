@@ -25,8 +25,8 @@ LICENSE-$(name).pdf: LICENSE.txt
 roguelike-browser-boilerplate.pdf: README.md print.css Makefile
 	pandoc -f markdown --highlight-style=tango --css print.css $< -o README.html
 	# chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --no-margins --print-to-pdf-no-header --print-to-pdf="$@" README.html --virtual-time-budget=10000
-	wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 0mm --zoom 2 README.html $@
-	rm README.html
+	wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 20mm --zoom 2 README.html $@
+	#rm README.html
 
 .PHONY: watch serve browserstack clean
 

@@ -23,6 +23,7 @@ code {
   font-family: 'Press Start 2P', cursive;
   color: #5f5;
   color: #3a3;
+  background-color: #fff;
 }
 
 a {
@@ -33,7 +34,7 @@ a {
 
 img {
   display: block;
-  margin: 1em auto;
+  margin: 2em auto;
   max-width: 100%;
   border-radius: 10px;
 }
@@ -86,7 +87,16 @@ div.sourceCode {
   background-color: #f8f8f8;
   border: 2px solid #aeaeae;
   border-radius: 10px;
-  margin: 1em 0px;
+  margin: 4em 0px;
+  page-break-inside: avoid;
+}
+
+div.sourceCode code {
+  background-color: #f8f8f8;
+}
+
+div.sourceCode td.sourceCode {
+  width: 100%;
 }
 
 div.sourceCode td.lineNumbers pre {

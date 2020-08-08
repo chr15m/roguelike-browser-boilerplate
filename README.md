@@ -29,6 +29,8 @@ Let's take a look at the files in the boilerplate.
 Take a look around at each of these files to familiarize yourself.
 Next up we'll look at changing stuff in these files to make the game look and work the way you want it to.
 
+![](screenshots/game-2.png)
+
 ### Changing the title, icon, and font
 
 The first thing you can do is change the game title. There are two places to change the title.
@@ -51,7 +53,7 @@ var gametitle = "My Rogue";
 ```
 
 If your game has a longer title you might find that some letters disappear off the screen.
-You can accommodate a longer by changing the size of the letters in `style.css`:
+You can accommodate a longer title by changing the size of the letters in `style.css`:
 
 ``` {.css .numberLines startFrom="150"}
 .game-title-text {
@@ -59,7 +61,7 @@ You can accommodate a longer by changing the size of the letters in `style.css`:
 }
 ```
 
-You can also completely change the inline SVG if you want a different looking title in there, or replace it completely with an image or something like that. You can find the start of the SVG on line 33 of the `index.html` file:
+The title is created with an inline SVG which you can change any way you like, or even replace it with an image. You can find the start of the SVG on line 33 of the `index.html` file:
 
 ``` {.xml .numberLines startFrom="33"}
 <!-- The game title is set dynamically ... -->
@@ -68,17 +70,21 @@ You can also completely change the inline SVG if you want a different looking ti
 
 ### Changing the tileset graphics
 
-The default tileset used is the [Micro Rogue tileset from kenney.nl](https://kenney.nl/assets/micro-roguelike). You're welcome to keep using these tiles, or you can tweak them, or you can replace them completely with your own tileset.
+The default tileset used is the [Micro Rogue tileset from kenney.nl](https://kenney.nl/assets/micro-roguelike). You're welcome to keep using these tiles, or you can tweak them a bit, or you can replace them completely with your own tileset.
+
+![](./doc/tilemap-large.png)
 
 To tweak the tiles, load `colored_tilemap_packed.png` up in your favourite pixel editor and just modify the bits you want to change, then save it again. If you reload the game in the browser your changes will take effect immediately.
 
-You can also replace the tiles completely with a different set. Just get your new tileset image (a spritesheet with all of the tiles you need on it) and put it in the folder where your game is. Then to set everything up with your new tileset you'll need to change `main.js` starting at line `14` where you'll replace `colored_tilemap_packed.png` with the file name of your new tileset image:
+You can also replace the tiles with a completely different tileset. Just save your new tileset image (a spritesheet with all of the tiles you need on it) in the folder where your game is.
+
+Then to set everything up with your new tileset you'll need to change `main.js` starting at line `14` where you can replace `colored_tilemap_packed.png` with the file name of your new tileset image:
 
 ``` {.javascript .numberLines startFrom="14"}
 tileSet.src = "YOUR-NEW-IMAGE-FILE-NAME";
 ```
 
-Next you'll need to tell ROT.js how your tiles are set up. To do this modify the `tileOptions` data just below that:
+Next you'll need to tell ROT.js how your tiles are laid out. To do this modify the `tileOptions` data just below that:
 
 ``` {.javascript .numberLines startFrom="21"}
 var tileOptions = {
@@ -95,7 +101,9 @@ var tileOptions = {
 
 The `tileWidth` and `tileHeight` keys specify how many pixels wide and high each of your tiles is. The Micro Rogue tiles are `8 x 8` but if you use a different tileset they may have different dimensions.
 
-Next you will want to modify the `tileMap` too. It's a lookup table from the character type to the position in the tilemap for the sprite for drawing that character. For example in the default `tileMap` the player ("@" symbol) is represented by a little dude who is at position `[40,0]` pixels in the `colored_tilemap_packed.png` tilemap.
+Next you will want to modify the `tileMap` to specify how to draw each character. It's a lookup table from the character type to the position in the tilemap for that character's graphic.
+
+For example in the default `tileMap` the player ("@" symbol) is represented by a little dude who is at position `[40,0]` pixels in the `colored_tilemap_packed.png` tilemap.
 
 If you add more character types to your game this is how you specify the corresponding graphic to draw, just create new entries for each character type:
 
@@ -120,15 +128,59 @@ When you are calling the ROT.js `display.draw()` method, simply pass it an array
 
 ### Changing the sound effects
 
+All of the sound effects in the boilerplate are generated with `jsfxr`. It is both a library for playing sounds and a user interface for creating sounds. You can find an online version of this at [sfxr.me](https://sfxr.me) and you can make new sound effects there. It's pretty fun to play with.
 
+To change the sound effects in the game, or to add new ones, you're going to want to modify the table on line `56` in `main.js`:
+
+``` {.javascript .numberLines startFrom="21"}
+var sfx = {
+  "rubber": "5EoyNVaezhPnpFZjpkcJkF8FNCio...
+```
+
+The key (e.g. `"rubber"`) is the name that you use to play the sound effect:
+
+``` {.javascript}
+  sfx["rubber"].play();
+```
+
+The code on the right hand side comes from pressing the "copy" button on the sfxr interface:
+
+![](doc/sfxr-copy-button.png)
+
+So the workflow is to tinker around on [sfxr.me](https://sfxr.me) until you make a sound you want to use. Then click the "Copy" button to copy the sound's code. Then finally paste the code into the `sfx` table on line `21` of `main.js`, either as a new sound (with a unique key) or replacing an existing sound.
+
+After that you can play the sound with `sfx[key].play()`.
+
+If you search the source code for `sfx` or `play` you should find all the places where sounds are played and you can change those too.
 
 ### Changing the monster code
 
+TODO: fixme
+
 ### Changing the items code
 
-### Changing the inventory
 
-### Where to find library documentation
+
+### Using the inventory
+
+
+
+### Adding new screens
+
+
+
+### Changing the look of the UI
+
+All of the UIs in the game are drawn using basic HTML primitives and styled with the [NES.css] stylesheet. You can blah.
+
+The font used throughout the game is blah blah blah from Google. You can change it by blah.
+
+### Where to find more documentation
+
+ * ROT.js interactive manual
+ * ROT.js API
+ * [NES.css](https://nostalgic-css.github.io/NES.css/)
+ * sfxr.me GitHub page
 
 ### Publishing your game
 
