@@ -61,9 +61,12 @@ var sfx = {
   "step": "34T6PkwiBPcxMGrK7aegATo5WTMWoP17BTc6pwXbwqRvndwRjGYXx6rG758rLSU5suu35ZTkRCs1K2NAqyrTZbiJUHQmra9qvbBrSdbBbJ7JvmyBFVDo6eiVD",
   "choice": "34T6PkzXyyB6jHiwFztCFWEWsogkzrhzAH3FH2d97BCuFhqmZgfuXG3xtz8YYSKMzn95yyX8xZXJyesKmpcjpEL3dPP5h2e8mt5MmhExAksyqZyqgavBgsWMd",
   "hide": "34T6PkzXyyB6jHiwFztCFWEniygA1GJtjsQuGxcd38JLDquhRqTB28dQgigseMjQSjSY14Z3aBmAtzz9KWcJZ2o9S1oCcgqQY4dxTAXikS7qCs3QJ3KuWJUyD",
-  "miss": "111112RrwhZ2Q7NGcdAP21KUHHKNQa3AhmK4Xea8mbiXfzkxr9aX41M8XYt5xYaaLeo9iZdUKUVL3u2N6XASue2wPv2wCCDy6W6TeFiUjk3dXSzFcBY7kTAM",
+  "empty": "111112RrwhZ2Q7NGcdAP21KUHHKNQa3AhmK4Xea8mbiXfzkxr9aX41M8XYt5xYaaLeo9iZdUKUVL3u2N6XASue2wPv2wCCDy6W6TeFiUjk3dXSzFcBY7kTAM",
+  "hit": "34T6Pks4nddGzchAFWpSTRAKitwuQsfX8bfzRpJx5eDR7NSqxeeLMEkLjcuwvTCDS1ve7amXBg4eipzDdgKWoYnJBsQVESZh2X1DFV2GWybY5bAihB2EdHsbd",
+  "miss": "8R25jogvbp3Qy6A4GTPxRP4aT2SywwsAgoJ2pKmxUFMExgNashjgd311MnmZ2ThwrPQz71LA53QCfFmYQLHaXo6SocUv4zcfNAU5SFocZnoQSDCovnjpioNz3",
   "win": "34T6Pkv34QJsqDqEa8aV4iwF2LnASMc3683oFUPKZic6kVUHvwjUQi6rz8qNRUHRs34cu37P5iQzz2AzipW3DHMoG5h4BZgDmZnyLhsXgPKsq2r4Fb2eBFVuR",
   "lose": "7BMHBGHKKnn7bgcmGprqiBmpuRaTytcd4JS9eRNDzUTRuQy8BTBzs5g8XzS7rrp4C9cNeSaqAtWR9qdvXvtnWVTmTC8GXgDuCXD2KyHJNXzfUahbZrce8ibuy",
+  "kill": "7BMHBGKMhg8NZkxKcJxNfTWXKtMPiZVNsLR4aPEAghCSpz5ZxpjS5k4j4ZQpJ65UZnHSr4R2d7ALCHJe41pAS2ZPjauM7SveudhDGAxw2dhXpiNwEhG8xUYkX",
 }
 
 // here we are turning the sfxr sound codes into
@@ -174,8 +177,7 @@ var Game = {
       this.display = null;
       this.map = {};
       this.engine = null;
-      this.scheduler.remove(this.player);
-      this.scheduler.remove(this.monster);
+      this.scheduler.clear();
       this.scheduler = null;
       this.player = null;
       this.monster = null;
@@ -374,7 +376,7 @@ var Player = function(x, y) {
     ["x", "Axe (+5)"],
     ["p", "Potion"]
   ];
-  this.stats = {"hp": 6, "xp": 1, "gold": 0};
+  this.stats = {"hp": 10, "xp": 1, "gold": 0};
   this._draw();
 }
 
@@ -428,9 +430,9 @@ Player.prototype._checkBox = function() {
   } else if (Game.map[key] == "*") {
     // if an empty box is opened
     // by replacing with a floor tile, show the user
-    // a message, and play the "miss" sound effect
+    // a message, and play the "empty" sound effect
     toast("This chest is empty.");
-    sfx["miss"].play();
+    sfx["empty"].play();
   }
   // make the item disappear by drawing floor
   Game.map[key] = ".";
@@ -453,6 +455,14 @@ function moveplayer(dir) {
   // or a treasure chest, then we should abort this move
   var newKey = x + "," + y;
   if ([".", "*", "g"].indexOf(Game.map[newKey]) == -1) { return; }
+
+  // check if we've hit the monster
+  // and if we have initiate combat
+  var m = Game.monster;
+  if (m && m._x == x && m._y == y) {
+    combat(m);
+    return;
+  }
 
   // update the old tile to whatever was there before
   // (e.g. "." floor tile)
@@ -483,12 +493,12 @@ function moveplayer(dir) {
 var Monster = function(x, y) {
   this._x = x;
   this._y = y;
-  this.stats = {"hp": 6};
+  this.stats = {"hp": 10};
   this._draw();
 }
   
 // basic ROT.js entity properties
-Monster.prototype.getSpeed = function() { return 75; }
+Monster.prototype.getSpeed = function() { return 100; }
 
 // the ROT.js scheduler calls this method when it is time
 // for the player to act
@@ -518,11 +528,7 @@ Monster.prototype.act = function() {
   // if the distance from the monster to the player is less than one
   // square the player has lost the game
   if (path.length <= 1) {
-    // trigger the `lose()` UI flow below
-    lose();
-    // if you want to implement combat mechanics this is the place
-    // instead of killing the player, roll some virtual dice and
-    // compute new hit point values
+    combat(this);
   } else {
     // the player is safe for now so update the monster position
     x = path[0][0];
@@ -541,9 +547,77 @@ Monster.prototype._draw = function() {
   Game.display.draw(this._x, this._y, "M");
 }
 
-/***********************
- *** win/lose events ***
- ***********************/
+// if the monster is dead remove it from the game
+Monster.prototype._checkDeath = function() {
+  if (this.stats.hp < 1) {
+    Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
+    Game.scheduler.remove(this);
+    Game.monster = null;
+    sfx["kill"].play();
+  }
+}
+
+/******************************
+ *** win/lose/combat events ***
+ ******************************/
+
+// this is how the player fights a monster
+function combat(monster) {
+  // a description of the combat to tell
+  // the user what is happening
+  var msg = "";
+  // roll a dice to see if the player hits
+  var roll = ROT.RNG.getItem([1,2,3,4,5,6])
+  // a hit is a four or more
+  if (roll > 3) {
+    // add to the combat message
+    msg += "You hit the monster. ";
+    // remove hitpoints from the monster
+    monster.stats.hp -= roll;
+    // play the hit sound
+    sfx["hit"].play();
+    // check if the monster has died
+    monster._checkDeath();
+  } else {
+    sfx["miss"].play();
+    msg += "You missed the monster. ";
+  }
+  // if the monster is alive it hits back
+  if (monster.stats.hp > 0) {
+    // roll a dice to see if the monster hits
+    var roll = ROT.RNG.getItem([1,2,3,4,5,6])
+    // a hit is a four or more
+    if (roll > 3) {
+      // add to the combat message
+      msg += "The monster hit.";
+      // remove hit points from the player
+      Game.player.stats.hp -= roll;
+      // re-render the player's hud stats
+      renderstats(Game.player.stats);
+      // play the hit sound after 1/4 second
+      setTimeout(function() {
+        sfx["hit"].play();
+      }, 250);
+      // check if the player has died
+      if (Game.player.stats.hp < 1) {
+        // player hitpoints are completely expended
+        // trigger the `lose()` UI flow below
+        lose();
+      }
+    } else {
+      // if the monster missed add to message
+      msg += "The monster missed.";
+      // then play the miss sound after 1/4 second
+      setTimeout(function() {
+        sfx["miss"].play();
+      }, 250);
+    }
+  }
+  // if there is a message to display do so
+  if (msg) {
+    toast(msg);
+  }
+}
 
 // this gets called when the player wins the game
 function win() {
@@ -687,11 +761,13 @@ function renderstats(stats) {
 // "You have found a sneaky wurzel."
 function toast(message) {
   var m = $("#message");
-  m.classList.remove("hide");
   m.classList.remove("fade-out");
   m.textContent = message;
   void m.offsetWidth; // trigger CSS reflow
   m.classList.add("fade-out");
+  m.onanimationend = function() {
+    m.classList.remove("fade-out");
+  };
 }
 
 // create an HTML element
