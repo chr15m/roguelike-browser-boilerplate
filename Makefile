@@ -14,19 +14,20 @@ $(name)-documents.zip: $(name).pdf LICENSE-$(name).pdf
 	zip -r $@ $(foreach f, $?, "$(name)-documents/$(f)")
 	rm -rf $(name)-documents
 
-$(name)-discord-access.pdf: discord.md
-	pandoc -f markdown --highlight-style=tango --css print.css $< -o discord.html
-	wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 0mm --zoom 2 discord.html $@
-	rm discord.html
+$(name)-discord-access.pdf: discord.md print.css Makefile
+	pandoc -f markdown --highlight-style=tango --css print.css $< -o "$(@:.pdf=.html)"
+	chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --no-margins --print-to-pdf-no-header --print-to-pdf="$@" "$(@:.pdf=.html)" --virtual-time-budget=10000
+	#wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 0mm --zoom 2 discord.html $@
+	rm -f "$(@:.pdf=.html)"
+
+roguelike-browser-boilerplate.pdf: README.md print.css Makefile
+	pandoc -f markdown --highlight-style=tango --css print.css $< -o "$(@:.pdf=.html)"
+	chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --no-margins --print-to-pdf-no-header --print-to-pdf="$@" "$(@:.pdf=.html)" --virtual-time-budget=10000
+	#wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 20mm --zoom 2 README.html $@
+	rm -f "$(@:.pdf=.html)"
 
 LICENSE-$(name).pdf: LICENSE.txt
 	pandoc -f markdown -t latex --highlight-style=tango --css print.css $< -o $@
-
-roguelike-browser-boilerplate.pdf: README.md print.css Makefile
-	pandoc -f markdown --highlight-style=tango --css print.css $< -o README.html
-	# chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --no-margins --print-to-pdf-no-header --print-to-pdf="$@" README.html --virtual-time-budget=10000
-	wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 20mm --zoom 2 README.html $@
-	#rm README.html
 
 .PHONY: watch serve browserstack clean
 
@@ -40,4 +41,4 @@ browserstack:
 	BrowserStackLocal --key 9pLHVRg5npQmv96R5QEx
 
 clean:
-	rm -rf roguelike-browser-boilerplate.*
+	rm -rf roguelike-browser-boilerplate*

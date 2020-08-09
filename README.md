@@ -103,7 +103,7 @@ The `tileWidth` and `tileHeight` keys specify how many pixels wide and high each
 
 Next you will want to modify the `tileMap` to specify how to draw each character. It's a lookup table from the character type to the position in the tilemap for that character's graphic.
 
-For example in the default `tileMap` the player ("@" symbol) is represented by a little dude who is at position `[40,0]` pixels in the `colored_tilemap_packed.png` tilemap.
+For example in the default `tileMap` the player (`"@"` symbol) is represented by a little adventurer who is at position `[40,0]` pixels in the `colored_tilemap_packed.png` tilemap. Try position `[32,0]` instead to use a different adventurer sprite.
 
 If you add more character types to your game this is how you specify the corresponding graphic to draw, just create new entries for each character type:
 
@@ -117,7 +117,7 @@ and then use the `draw()` method to draw them:
   Game.display.draw(x, y, "X");
 ```
 
-You can find more documentation on the tile options in the [ROT.js documentation for graphical tiles](http://ondras.github.io/rot.js/manual/#tiles). There is a neat tile colorizing technique you can use in there to get more variation.
+You can find more documentation on the tile options in the [ROT.js documentation for graphical tiles](http://ondras.github.io/rot.js/manual/#tiles). There is also a neat tile colorizing technique you can use in there to get more variation.
 
 Finally, if you want to overlay multiple tiles on each other that's easy too.
 When you are calling the ROT.js `display.draw()` method, simply pass it an array of characters rather than a single character. For example, to draw the floor tile (`"."`) underneath the player tile (`"@"`) do this:
@@ -143,7 +143,7 @@ The key (e.g. `"rubber"`) is the name that you use to play the sound effect:
   sfx["rubber"].play();
 ```
 
-The code on the right hand side comes from pressing the "copy" button on the sfxr interface:
+The code on the right hand side comes from pressing the "copy" button on the [sfxr.me](https://sfxr.me/) interface:
 
 ![](doc/sfxr-copy-button.png)
 
@@ -155,7 +155,47 @@ If you search the source code for `sfx` or `play` you should find all the places
 
 ### Changing the level generation algorithm
 
-Fog of war, line of sight.
+The default level is created using the `_generateMap()` method in the `Game` object on line `192`. The dungeon layout is generated first using ROT's `Digger` implementation:
+
+``` {.javascript .numberLines startFrom="200"}
+var digger = new ROT.Map.Digger(
+    tileOptions.width,
+    tileOptions.height);
+```
+
+``` {.javascript .numberLines startFrom="228"}
+  digger.create(digCallback.bind(this));
+```
+
+There are several excellent dungeon generators in the ROT library including maze, cellular, and dungeon algorithms, and you can find [more info on those in the interactive documentation](http://ondras.github.io/rot.js/manual/#map). Of course you can also write your own dungeon generation algorithm and there are a ton of resources on [RogueBasin](http://www.roguebasin.com/index.php?title=Roguelike_Dev_FAQ#How_are_dungeons_generated.3F) to help you do this. All you need to do is fill the `map` data structure with `x,y` keys pointing to the character that goes at that position.
+
+Next the level generator places 15 items on the map in the `_generateItems()` method. It randomly assigns these to be either pieces of gold or treasure chests. The treasure chests are all empty except for the first one which contains the amulet:
+
+``` {.javascript  .numberLines startFrom="232"}
+_generateItems: function(freeCells) {
+  for (var i=0; i<15; i++) {
+    ...
+```
+
+You can modify this method to generate your own more complicated types of items with different properties.
+
+After this the `_generateMap()` level generator adds some background scenery (trees and plants) which is purely for looks and mood, using the `_generateShrubberies()` method. A total of 100 background scenery elements are added like this and you can modify that method on line `283` to add your own scenery elements.
+
+Next the room walls and corners are drawn in `_drawRooms()` and you can customise the way these are drawn too if you need.
+
+Finally the `player` and `monster` objects are created and added to the map. If you want more than one monster in your levels you will need to modify this code to add monsters to an array rather than setting a single value on `self.monster`. You will want to create multiple monster classes with different abilities and properties, and randomly choose between them to make your game more interesting.
+
+If you want to implement a fog of war algorithm, do so in the `_drawWholeMap()` method, only drawing tiles that are within a certain distance of the player. You can use a simple distance calculation to check the distance of the tile from the player's position like this:
+
+``` {.javascript}
+  function distance(x1, y1, x2, y2) {
+    return Math.sqrt(
+      Math.pow(x2 - x1, 2) +
+      Math.pow(y2 - y1, 2));
+  }
+```
+
+Implementing more complex field-of-view lookups is also possible and again the ROT library has functions for this built in. Check [the documentation for FOV](http://ondras.github.io/rot.js/manual/#fov) for more details.
 
 ### Changing the player code
 

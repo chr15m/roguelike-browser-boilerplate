@@ -7,7 +7,8 @@ html {
 body {
   margin: 1.6cm 0cm;
   margin: 1cm;
-  font-family: 'Press Start 2P', cursive;
+  font-family: 'Courier New';
+  font-weight: bold;
   background-color: #232222;
   background-color: #fff;
   color: #eee;
@@ -20,7 +21,6 @@ body {
 }
 
 code {
-  font-family: 'Press Start 2P', cursive;
   color: #5f5;
   color: #3a3;
   background-color: #fff;
@@ -40,6 +40,7 @@ img {
 }
 
 h1, h2, h3 {
+  font-family: 'Press Start 2P', cursive;
   margin-top: 4em;
   page-break-after: avoid;
   color: #fff;
@@ -50,9 +51,10 @@ h2 {
   page-break-before: always;
 }
 
-p, h2, h3, li {
+p, h1, h2, h3, li {
   orphans: 5;
   widows: 5;
+  page-break-after: avoid;
 }
 
 blockquote {
@@ -83,12 +85,12 @@ div.sourceCode::before {
 }
 
 div.sourceCode {
-  font-size: 0.6em;
   background-color: #f8f8f8;
   border: 2px solid #aeaeae;
   border-radius: 10px;
-  margin: 4em 0px;
+  margin: 2em 0px;
   page-break-inside: avoid;
+  overflow-x: hidden;
 }
 
 div.sourceCode code {
@@ -100,11 +102,10 @@ div.sourceCode td.sourceCode {
 }
 
 div.sourceCode td.lineNumbers pre {
-  font-family: 'Press Start 2P', cursive;
 }
 
 div.sourceCode td {
-  line-height: 1.5em;
+  line-height: 1.25em;
 }
 
 /*.numberLines pre {
