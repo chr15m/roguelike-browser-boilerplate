@@ -4,11 +4,17 @@
 
 Hello and thanks for purchasing the Roguelike Browser Boilerplate. Are you ready to make your roguelike? Let's get started!
 
-[Roguelike Browser Boilerplate on itch.io >](https://chr15m.itch.io/roguelike-browser-boilerplate)
+<https://chr15m.itch.io/roguelike-browser-boilerplate>
+
+> © 2009 Chris McCormick
+> 
+> All rights reserved, including the right to reproduce this book or portions thereof in any form whatsoever. For information, or permission requests, write to the author at <chris+rogue@mccormick.cx>.
+
+![](screenshots/game-2.png)
 
 ## Setup
 
-If you're reading this you have already figured out how to unpack the zip file. Congratulations, acheivement unlocked!
+If you're reading this you have already figured out how to unpack the zip file. Congratulations, achievement unlocked!
 
 The next step is to open `index.html` in your browser. You can do that however you like but the easiest thing is probably just to double-click it.
 
@@ -28,8 +34,6 @@ Let's take a look at the files in the boilerplate.
 
 Take a look around at each of these files to familiarize yourself.
 Next up we'll look at changing stuff in these files to make the game look and work the way you want it to.
-
-![](screenshots/game-2.png)
 
 ### Changing the title, icon, and font
 

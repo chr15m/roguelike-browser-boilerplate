@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P');
 
+* {
+  box-sizing: border-box;
+}
+
 html {
   min-height: 100%;
 }
@@ -58,6 +62,7 @@ p, h1, h2, h3, li {
 }
 
 blockquote {
+  max-width: 100%;
   padding-right: 1em;
   page-break-inside: avoid;
   border-radius: 10px;
@@ -66,6 +71,7 @@ blockquote {
   background-color: #aebeae;
   color: #333;
   margin-left: 0px;
+  width: 100%;
 }
 
 tr, img {

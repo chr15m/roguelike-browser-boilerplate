@@ -16,13 +16,13 @@ $(name)-documents.zip: $(name).pdf LICENSE-$(name).pdf
 
 $(name)-discord-access.pdf: discord.md print.css Makefile
 	pandoc -f markdown --highlight-style=tango --css print.css $< -o "$(@:.pdf=.html)"
-	chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --no-margins --print-to-pdf-no-header --print-to-pdf="$@" "$(@:.pdf=.html)" --virtual-time-budget=10000
+	chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf-no-header --print-to-pdf="$@" "$(@:.pdf=.html)" --virtual-time-budget=10000
 	#wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 0mm --zoom 2 discord.html $@
 	rm -f "$(@:.pdf=.html)"
 
 roguelike-browser-boilerplate.pdf: README.md print.css Makefile
 	pandoc -f markdown --highlight-style=tango --css print.css $< -o "$(@:.pdf=.html)"
-	chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --no-margins --print-to-pdf-no-header --print-to-pdf="$@" "$(@:.pdf=.html)" --virtual-time-budget=10000
+	chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf-no-header --print-to-pdf="$@" "$(@:.pdf=.html)" --virtual-time-budget=10000
 	#wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 20mm --zoom 2 README.html $@
 	rm -f "$(@:.pdf=.html)"
 

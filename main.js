@@ -413,7 +413,7 @@ Player.prototype._draw = function() {
 // this method gets called by the `moveplayer` function
 // in order to check whether they hit an empty box
 // or The Amulet
-Player.prototype._checkBox = function() {
+Player.prototype._checkItem = function() {
   var key = this._x + "," + this._y;
   if (key == Game.amulet) {
     // the amulet is hit initiate the win flow below
@@ -434,7 +434,7 @@ Player.prototype._checkBox = function() {
     toast("This chest is empty.");
     sfx["empty"].play();
   }
-  // make the item disappear by drawing floor
+  // make the item disappear by replacing with floor
   Game.map[key] = ".";
 }
 
@@ -481,8 +481,8 @@ function moveplayer(dir) {
   Game.engine.unlock();
   // play the "step" sound
   sfx["step"].play();
-  // check if the player stepped on a treasure chest
-  p._checkBox();
+  // check if the player stepped on an item
+  p._checkItem();
 }
 
 /********************
