@@ -229,7 +229,7 @@ var Game = {
 
     // now we spawn generators for populating other stuff
     // in the map - you can read each of these below
-    this._generateBoxes(freeCells);
+    this._generateItems(freeCells);
     this._generateShrubberies(zeroCells);
     this._drawRooms(digger);
     // draw the map so far on the screen
@@ -260,7 +260,7 @@ var Game = {
   },
 
   // here we are creating the treasure chest items
-  _generateBoxes: function(freeCells) {
+  _generateItems: function(freeCells) {
     for (var i=0; i<15; i++) {
       var index = Math.floor(
           ROT.RNG.getUniform() * freeCells.length);
@@ -368,7 +368,7 @@ var Game = {
  *** the player object ***
  *************************/
 
-// basic ROT.js entity with a position
+// basic ROT.js entity with position, inventory, stats
 var Player = function(x, y) {
   this._x = x;
   this._y = y;
@@ -489,7 +489,7 @@ function moveplayer(dir) {
  *** monster code ***
  ********************/
 
-// basic ROT.js entity with a position
+// basic ROT.js entity with position and stats
 var Monster = function(x, y) {
   this._x = x;
   this._y = y;
