@@ -96,9 +96,11 @@ var tapMap = {
   3: 4,
 };
 
-/***
- *** game code
- ***/
+
+/*****************
+ *** game code ***
+ *****************/
+
 
 // based on the original tutorial by Ondřej Žára
 // www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_1
@@ -366,9 +368,11 @@ var Game = {
   }
 };
 
-/*************************
- *** the player object ***
- *************************/
+
+/************************
+ *** the Player class ***
+ ************************/
+
 
 // basic ROT.js entity with position, inventory, stats
 var Player = function(x, y) {
@@ -487,9 +491,11 @@ function moveplayer(dir) {
   p._checkItem();
 }
 
-/********************
- *** monster code ***
- ********************/
+
+/*************************
+ *** The Monster class ***
+ *************************/
+
 
 // basic ROT.js entity with position and stats
 var Monster = function(x, y) {
@@ -559,9 +565,11 @@ Monster.prototype._checkDeath = function() {
   }
 }
 
+
 /******************************
- *** win/lose/combat events ***
+ *** combat/win/lose events ***
  ******************************/
+
 
 // this is how the player fights a monster
 function combat(monster) {
@@ -659,9 +667,11 @@ function lose() {
   }, 2000);
 }
 
+
 /************************************
  *** graphics, UI & browser utils ***
  ************************************/
+
 
 var clickevt = !!('ontouchstart' in window) ? "touchstart" : "click";
 
@@ -820,9 +830,11 @@ function rmel(node) {
   node.parentNode.removeChild(node);
 }
 
+
 /*************************
  *** UI event handlers ***
  *************************/
+
 
 // when a touch event happens
 // this is where it is caught
