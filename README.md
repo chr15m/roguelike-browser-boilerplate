@@ -329,7 +329,38 @@ Eventually you will probably want to store more complex item data structures in 
 
 ### Changing the combat system
 
+Combat is initiated in `main.js` either when the player tries to move onto the monster square on line `467`:
 
+``` {.javascript .numberLines .startFrom="467" }
+if (m && m._x == x && m._y == y) {
+  combat(m);
+  return;
+}
+```
+
+Or when the monster tries to move onto the player square on line `539`:
+
+``` {.javascript .numberLines .startFrom="539" }
+if (path.length <= 1) {
+  combat(this);
+}
+```
+
+Both of these events will run the `combat()` function on line `575`. The combat function itself is fairly simple and easy to modify to make it more interesting. At the moment a dice roll is simulated for the player and if they roll above a 3 they take that many HP off the monster's health. Then if the monster is not dead the same happens in reverse with the monster rolling a dice and trying for a number above 3. If the monster HP are depleted completely the monster dies and is taken out of the game. If the player's HP are depleted the `lose()` function is called to initiate the lose condition UI.
+
+Here are some different ways you could build on this to make the combat more interesting:
+
+ * Factor in the weapon the player is weilding.
+ * Factor in how many experience points the player has.
+ * Factor in the strength of armour the player is wearing.
+ * Give the player experience points if they beat the monster.
+ * More complex dice and probability systems.
+ * Design a more interesting UI to communicate the player's health.
+ * Reveal to the player the health of the monster.
+ * Add some AI so the monster can run when hurt.
+ * Add ranged weapons, throwing, darts, etc.
+
+The [RogueBasin Articles page](http://www.roguebasin.com/index.php?title=Articles) has numerous interesting articles on combat systems in Roguelikes that you can use for inspiration.
 
 ### Changing or adding new screens
 
