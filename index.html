@@ -20,7 +20,7 @@
   <body>
 
     <!-- boilerplate splash -->
-    <div class="screen" id="plate" onanimationend="showscreen('title')">
+    <div class="screen" id="plate">
       <div>
         <img src="icon.png" id="logo">
         <p>Roguelike<br/>Browser<br/>Boilerplate</p>
@@ -54,9 +54,6 @@
                    value="instructions"
                    class="nes-radio is-dark"
                    name="menu-items"
-                   onclick="handlemenuchange(this)"
-                   ontouchstart="handlemenuchange(this)"
-                   onchange="handlemenuchange(this)"
                    checked/>
             <span>How to play</span>
           </label>
@@ -65,10 +62,7 @@
             <input type="radio"
                    value="settings"
                    class="nes-radio is-dark"
-                   name="menu-items"
-                   onclick="handlemenuchange(this)"
-                   ontouchstart="handlemenuchange(this)"
-                   onchange="handlemenuchange(this)"/>
+                   name="menu-items"/>
             <span>Settings</span>
           </label>
 		  <br/>
@@ -76,18 +70,12 @@
             <input type="radio"
                    value="credits"
                    class="nes-radio is-dark"
-                   name="menu-items"
-                   onclick="handlemenuchange(this)"
-                   ontouchstart="handlemenuchange(this)"
-                   onchange="handlemenuchange(this)"/>
+                   name="menu-items"/>
             <span>Credits</span>
           </label>
         </div>
       </div>
-      <button id="play"
-              class="nes-btn is-success action"
-              onclick="start()"
-              ontouchstart="start()">Play</button>
+      <button id="play" class="nes-btn is-success action">Play</button>
     </div>
 
     <!-- settings screen -->
@@ -96,18 +84,17 @@
       <div class="nes-container is-rounded is-dark">
         <p>Put your settings menu here.</p>
       </div>
-      <button class="nes-btn is-success action"
-              onclick="hidemodal('settings')"
-              ontouchstart="hidemodal('settings')">Ok</button>
+      <button class="nes-btn is-success action">Ok</button>
     </div>
 
     <!-- credits screen -->
     <div id="credits" class="screen modal">
       <div class="nes-container is-rounded is-dark">
+        <p>By Your Name</p>
+        <p>Made with:</p>
         <p><a href="https://chr15m.itch.io/roguelike-browser-boilerplate"
               target="_blank">
           Roguelike Browser Boilerplate</a></p>
-        <p>Made with:</p>
         <ul>
           <li>Engine =
             <a href="https://ondras.github.io/rot.js/hp/"
@@ -126,9 +113,7 @@
                target="_blank">irmirx</a></li>
         </ul>
       </div>
-      <button class="nes-btn is-success action"
-              onclick="hidemodal('credits')"
-              ontouchstart="hidemodal('credits')">Ok</button>
+      <button class="nes-btn is-success action">Ok</button>
     </div>    
 
     <!-- instructions screen -->
@@ -138,9 +123,7 @@
         <p>You must find The Amulet and avoid getting captured by The Monster</p>
         <p>Use the arrow keys to move around. To look in a chest move over it.</p>
       </div>
-      <button class="nes-btn is-success action"
-              onclick="hidemodal('instructions')"
-              ontouchstart="hidemodal('instructions')">Ok</button>
+      <button class="nes-btn is-success action">Ok</button>
     </div>
 
     <!-- win screen -->
@@ -150,9 +133,7 @@
         <p><div class="sprite amulet"></div></p>
         <p>You found The Amulet and won the game!</p>
       </div>
-      <button class="nes-btn is-success action"
-              onclick="hidemodal('win')"
-              ontouchstart="hidemodal('win')">Ok</button>
+      <button class="nes-btn is-success action">Ok</button>
     </div>
 
     <!-- win screen -->
@@ -163,9 +144,7 @@
         <p>Oh no, The Monster got you.</p>
         <p>You're dead.</p>
       </div>
-      <button class="nes-btn is-success action"
-              onclick="hidemodal('lose')"
-              ontouchstart="hidemodal('lose')">Ok</button>
+      <button class="nes-btn is-success action">Ok</button>
     </div>
 
     <!-- game screen -->
@@ -174,11 +153,12 @@
       <div id="message" class="nes-container is-rounded is-dark hide"></div>
       <div id="hud" class="nes-container is-rounded is-dark"></div>
       <div id="inventory" class="nes-container is-rounded is-dark">
-        <span>i</span>
         <div>
-          <p>Inventory example</p>
+          <p>Example inventory</p>
           <ul></ul>
+          <span class="toggle">X</span>
         </div>
+        <span class="toggle">i</span>
       </div>
     </div>
 

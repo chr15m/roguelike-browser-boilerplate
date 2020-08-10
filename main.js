@@ -150,7 +150,11 @@ var Game = {
     this.scheduler.add(this.monster, true);
 
     // render some example items in the inventory
-    renderinventory(this.player.inventory);
+    renderinventory(this.player.inventory, function(which, ev) {
+      // this function is called when an inventory item is clicked
+      toast(which[1] + " selected");
+      toggleinventory(ev, true);
+    });
 
     // render the stats hud at the bottom of the screen
     renderstats(this.player.stats);
@@ -165,9 +169,7 @@ var Game = {
   // the menu and get ready for next round
   destroy: function() {
     // remove all listening event handlers
-    window.removeEventListener("keydown", this.player);
-    $("#game").removeEventListener("touchstart", handletouch);
-    $("#game").removeEventListener("click", handletouch);
+    removelisteners();
 
     // tear everything down and 
     // reset all our variables back
@@ -493,7 +495,7 @@ function moveplayer(dir) {
 var Monster = function(x, y) {
   this._x = x;
   this._y = y;
-  this.stats = {"hp": 10};
+  this.stats = {"hp": 14};
   this._draw();
 }
   
@@ -640,7 +642,8 @@ function lose() {
   Game.display.draw(p._x, p._y, "T");
   // create an animated div element over the top of the game
   // holding a rising ghost image above the tombstone
-  var ghost = attach($("#game"), el("div", {"className": "sprite ghost free float-up"}));
+  var ghost = attach($("#game"),
+      el("div", {"className": "sprite ghost free float-up"}));
   // we stop listening for user input while the ghost animates
   removelisteners();
   // play the lose sound effect
@@ -660,6 +663,8 @@ function lose() {
  *** graphics, UI & browser utils ***
  ************************************/
 
+var clickevt = !!('ontouchstart' in window) ? "touchstart" : "click";
+
 // handy shortcuts and shims for manipulating the dom
 $ = document.querySelector.bind(document);
 NodeList.prototype.forEach = Array.prototype.forEach
@@ -677,8 +682,7 @@ document.querySelectorAll(".game-title-text")
 function resetcanvas(el) {
   $("#canvas").innerHTML = "";
   $("#canvas").appendChild(el);
-  $("#game").addEventListener("touchstart", handletouch);
-  $("#game").addEventListener("click", handletouch);
+  $("#canvas").addEventListener(clickevt, handletouch);
   showscreen("game");
 }
 
@@ -705,13 +709,13 @@ function rescale(x, y) {
 function removelisteners() {
   Game.engine.lock();
   window.removeEventListener("keydown", Game.player);
-  $("#game").removeEventListener("touchstart", handletouch);
-  $("#game").removeEventListener("click", handletouch);
+  $("#canvas").removeEventListener(clickevt, handletouch);
   Game.scheduler.clear();
 }
 
 // hides all screens and shows the requested screen
-function showscreen(which) {
+function showscreen(which, ev) {
+  ev && ev.preventDefault();
   document.querySelectorAll(".screen")
   .forEach(function(s) {
     s.classList.remove("show");
@@ -729,17 +733,19 @@ function showscreen(which) {
 // where "C" is the character from the tileset
 // and "Words" are whatever words you want next
 // to it
-function renderinventory(items) {
+function renderinventory(items, callback) {
   var inv = $("#inventory ul");
   inv.innerHTML = "";
   items.forEach(function(i) {
     var tile = tileOptions.tileMap[i[0]];
     var words = i[1];
     attach(inv,
-         el("li", {},
+         el("li", {"onclick": callback.bind(null, i),
+                   "className": "inventory-item",},
             [el("div", {
               "className": "sprite",
-              "style": "background-position: -" + tile[0] + "px -" + tile[1] + "px;"
+              "style": "background-position: -" +
+                tile[0] + "px -" + tile[1] + "px;"
             }), words]));
   });
 }
@@ -753,6 +759,25 @@ function renderstats(stats) {
   st.innerHTML = "";
   for (var s in stats) {
     attach(st, el("span", {}, [s.toUpperCase() + ": " + stats[s]]));
+  }
+}
+
+// toggles the inventory UI open or closed
+function toggleinventory(ev, force) {
+  var c = ev.target.className;
+  if (c != "sprite" && c != "inventory-item" || force) {
+    ev.preventDefault();
+    // toggle the inventory to visible/invisible
+    var b = $("#inventory>span");
+    var d = $("#inventory>div");
+    if (b.style.display == "none") {
+      b.style.display = "block";
+      d.style.display = "none";
+    } else {
+      b.style.display = "none";
+      d.style.display = "block";
+    }
+    return false;
   }
 }
 
@@ -803,37 +828,24 @@ function rmel(node) {
 // this is where it is caught
 function handletouch(ev) {
   ev.preventDefault();
-  // if the inventory div was clicked
-  if ($("#inventory").contains(ev.target)) {
-    // toggle the inventory to visible/invisible
-    var b = $("#inventory>span");
-    var d = $("#inventory>div");
-    if (b.style.display == "none") {
-      b.style.display = "block";
-      d.style.display = "none";
-    } else {
-      b.style.display = "none";
-      d.style.display = "block";
-    }
-  // otherwise the map itself was clicked
-  } else {
-    var g = $("#game");
-    // where on the map the click or touch occurred
-    var cx = (ev["touches"] ? ev.touches[0].clientX : ev.clientX);
-    var cy = (ev["touches"] ? ev.touches[0].clientY : ev.clientY)
-    var x = cx - (g.offsetWidth / 2);
-    var y = cy - (g.offsetHeight / 2);
-    // figure out which quadrant was clicked relative to the player
-    var qs = Math.ceil((Math.floor((Math.atan2(y, x) + Math.PI) / (Math.PI / 4.0)) % 7) / 2);
-    var dir = ROT.DIRS[8][tapMap[qs]];
-    // actually move the player in that direction
-    moveplayer(dir);
-  }
+  var g = $("#game");
+  // where on the map the click or touch occurred
+  var cx = (ev["touches"] ? ev.touches[0].clientX : ev.clientX);
+  var cy = (ev["touches"] ? ev.touches[0].clientY : ev.clientY)
+  var x = cx - (g.offsetWidth / 2);
+  var y = cy - (g.offsetHeight / 2);
+  // figure out which quadrant was clicked relative to the player
+  var qs = Math.ceil((Math.floor(
+          (Math.atan2(y, x) + Math.PI) /
+          (Math.PI / 4.0)) % 7) / 2);
+  var dir = ROT.DIRS[8][tapMap[qs]];
+  // actually move the player in that direction
+  moveplayer(dir);
 }
 
 // this function gets called from the first screen
 // when the "play" button is clicked.
-function start() {
+function startgame() {
   showscreen("game");
   sfx["rubber"].play();
   Game.init();
@@ -842,7 +854,8 @@ function start() {
 // this function gets called when the user selects
 // a menu item on the front page and shows the 
 // relevant screen
-function handlemenuchange(which) {
+function handlemenuchange(which, ev) {
+  ev.preventDefault();
   var choice = which.getAttribute("value");
   showscreen(choice);
   sfx["choice"].play();
@@ -851,7 +864,34 @@ function handlemenuchange(which) {
 // this helper function hides any of the menu
 // screens above, shows the title screen again,
 // and plays a sound as it does so
-function hidemodal(which) {
+function hidemodal(ev) {
+  ev.preventDefault();
   showscreen("title");
   sfx['hide'].play();
+}
+
+// attach all our various handlers
+if (!window["rbb-events"]) {
+  // listen for the end of the title
+  // animation to show the first screen
+  $("#plate").addEventListener(
+      "animationend", showscreen.bind(null, 'title'));
+  // listen for clicks on the front screen menu options
+  document.querySelectorAll("#options #menu input")
+  .forEach(function(el) {
+    el.addEventListener("touchstart",
+        handlemenuchange.bind(null, el));
+    el.addEventListener("click",
+        handlemenuchange.bind(null, el));
+  });
+  // listen for inventory interactions
+  $("#inventory").addEventListener(clickevt, toggleinventory);
+  // listen for the start game button
+  $("#play").addEventListener(clickevt, startgame);
+  // listen for "close modal" ok buttons
+  document.querySelectorAll(".modal button.action")
+  .forEach(function(el) {
+    el.addEventListener(clickevt, hidemodal);
+  });
+  window["rbb-events"] = true;
 }
