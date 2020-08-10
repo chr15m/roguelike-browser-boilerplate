@@ -8,7 +8,7 @@ Hello and thanks for purchasing the Roguelike Browser Boilerplate. Are you ready
 
 > © 2009 Chris McCormick
 > 
-> All rights reserved, including the right to reproduce this book or portions thereof in any form whatsoever. For information, or permission requests, write to the author at <chris+rogue@mccormick.cx>.
+> All rights reserved, including the right to reproduce this document or portions thereof in any form whatsoever. For information, or permission requests, write to the author at <chris+rogue@mccormick.cx>.
 
 ![](screenshots/game-2.png)
 
@@ -71,6 +71,8 @@ The title is created with an inline SVG which you can change any way you like, o
 <!-- The game title is set dynamically ... -->
 <svg id="game-title" viewBox="0 0 700 250" ...>
 ```
+
+After modifying the code, refresh the game page in your browser to see the changes.
 
 ### Changing the tileset graphics
 
@@ -203,7 +205,7 @@ Implementing more complex field-of-view lookups is also possible and again the R
 
 ### Changing the player code
 
-
+There are three main parts to the player code.
 
 ### Changing the monster code
 
@@ -229,17 +231,19 @@ The monster in the boilerplate is added on line `230` of `main.js` and you can m
 
 ### Changing the items code
 
-At the moment the treasure chests are very simply implemented as `"*"` characters on the map. They don't carry any more interesting data than their position. You can make more interesting items by creating a data structure to hold item positions and the properties of the items which are there. A good place to add a new datastructure like that would be in the `Game` code around line `127` in `main.js`.
+At the moment the treasure chests are very simply implemented as `"*"` characters on the map. They don't carry any more interesting data than their position in the map. You can make more interesting items by creating a data structure to hold item positions and the properties of the items which are there. A good place to add a new datastructure like that would be in the `Game` code around line `127` in `main.js`.
 
-For example you might have traps which take off varying amounts of HP when the player lands on them, or potions that give the player strength, or food so that players don't starve, or scrolls etc. etc.
+For example you might have traps which take off varying amounts of HP when the player lands on them, or potions that give the player strength, or food so that players don't starve, or scrolls etc. etc. You can also implement items which can be collected and added to the player's inventory.
 
-You can also implement items which can be collected and added to the player's inventory.
+The code for detecting when the player steps on an item is on line `416` in `main.js` in the `_checkItem()` method. You can add checks for your other types of items in there and take different action. You can use the "gold" item as an example, which simply increments the player's gold stat, shows a message, and plays a sound.
 
 ### Using the inventory
 
-At the moment the inventory is an example user interface. To flesh it out you'll want to create an inventory datastructure to hold items that the player picks up. You can make this a new array in the `Game` object around line `127` in `main.js` and when items are added simply add them to the array.
+The inventory user interface is rendered with the `renderinventory()` function and at the moment by default it is rendering the contents of the `Player` object's `inventory` property. It's a simple data structure indicating what to draw in the inventory list. Each row in the inventory structure is an array with the first element being the tile image lookup character and the second element being the words to print next to the image.
 
-You can use the `$` and `el` methods to re-render the items in the inventory.
+When an inventory item is selected the code in the callback starting on line `154` in `main.js` is called. Customise this to make more complicated inventory item selection behaviours such as weilding weapons, drinking potions, reading scrolls, etc.
+
+Eventually you will probably want to store more complex item data structures in the player's inventory and then you will want to pre-process `player.inventory` before passing it into the `renderinventory()` function in the format it expects (e.g. the tile/words pairs described above).
 
 ### Changing the combat system
 
@@ -296,16 +300,4 @@ If you have feedback or suggestions for improvements to this document or any oth
  * [sfxr.me](https://sfxr.me) (Public domain)
  * [Pixel coin image](https://opengameart.org/content/spinning-pixel-coin-0) (CC-BY 3.0 license)
 
-Roguelike Browser Boilerplate is Copyright Chris McCormick 2020.
-
-## License
-
-If you have purchased this boilerplate you're free to use it as the basis of any project, personal or commercial.
-
-There's no need to ask permission before using it.
-
-Giving attribution is not required, but is greatly appreciated! Please include a link to the Itch page.
-
-If a third party wants to use the boilerplate please ask them to purchase a copy.
-
-Thanks you very much & enjoy!
+# Fin
