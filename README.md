@@ -331,7 +331,7 @@ Eventually you will probably want to store more complex item data structures in 
 
 Combat is initiated in `main.js` either when the player tries to move onto the monster square on line `467`:
 
-``` {.javascript .numberLines .startFrom="467" }
+``` {.javascript .numberLines startFrom="467"}
 if (m && m._x == x && m._y == y) {
   combat(m);
   return;
@@ -340,7 +340,7 @@ if (m && m._x == x && m._y == y) {
 
 Or when the monster tries to move onto the player square on line `539`:
 
-``` {.javascript .numberLines .startFrom="539" }
+``` {.javascript .numberLines startFrom="539"}
 if (path.length <= 1) {
   combat(this);
 }

@@ -14,10 +14,6 @@ html {
     margin-top: 2cm;
     margin-bottom: 2cm;
   }
-
-  @page :first a {
-    font-size: 0.75em;
-  }
 }
 
 body {
