@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P');
+@import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&display=swap');
 
 * {
   box-sizing: border-box;
@@ -8,10 +9,17 @@ html {
   min-height: 100%;
 }
 
+@media print {
+  @page {
+    margin-top: 2cm;
+    margin-bottom: 2cm;
+  }
+}
+
 body {
   margin: 1.6cm 0cm;
   margin: 1cm;
-  font-family: 'Courier New';
+  font-family: 'Cutive Mono', monospace;
   font-weight: bold;
   background-color: #232222;
   background-color: #fff;
