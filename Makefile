@@ -2,13 +2,13 @@ name=roguelike-browser-boilerplate
 
 all: $(name).zip $(name)-documents.zip $(name)-discord-access.pdf
 
-$(name).zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png
+$(name).zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png $(name)-license-student-hobbyist.pdf
 	mkdir -p $(name)
 	cp $? $(name)
 	zip -r $@ $(foreach f, $?, "$(name)/$(f)")
 	rm -rf $(name)
 
-$(name)-documents.zip: $(name).pdf LICENSE-$(name).pdf
+$(name)-documents.zip: $(name).pdf $(name)-license-indie-professional.pdf
 	mkdir -p $(name)-documents
 	cp $? $(name)-documents
 	zip -r $@ $(foreach f, $?, "$(name)-documents/$(f)")
@@ -26,8 +26,11 @@ roguelike-browser-boilerplate.pdf: README.md print.css Makefile
 	#wkhtmltopdf -L 0mm -R 0mm -T 20mm -B 20mm --zoom 2 README.html $@
 	rm -f "$(@:.pdf=.html)"
 
-LICENSE-$(name).pdf: LICENSE.txt
-	pandoc -f markdown -t latex --highlight-style=tango --css print.css $< -o $@
+$(name)-license-student-hobbyist.pdf: license-common.md license-student-hobbyist.md
+	cat $? | pandoc -f markdown -t latex --highlight-style=tango --css print.css -o $@
+
+$(name)-license-indie-professional.pdf: license-common.md license-indie-professional.md
+	cat $? | pandoc -f markdown -t latex --highlight-style=tango --css print.css -o $@
 
 .PHONY: watch serve browserstack clean
 
