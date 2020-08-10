@@ -1,1 +1,11 @@
-Hello, this is a license.
+# License
+
+Roguelike Browser Boilerplate is Copyright Chris McCormick 2020.
+
+If you have purchased the Student / Hobbyist tier of the boilerplate you may use it as the basis of any personal, non-commercial project.
+
+If you have purchased this boilerplate you're free to use it as the basis of any project, personal or commercial.
+
+Giving attribution is not required, but is greatly appreciated! Please include a link to the Itch page.
+
+If a third party wants to use the boilerplate please ask them to purchase a copy.
