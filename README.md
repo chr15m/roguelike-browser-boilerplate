@@ -4,13 +4,35 @@
 
 Hello and thanks for purchasing the Roguelike Browser Boilerplate. Are you ready to make your roguelike? Let's get started!
 
-<https://chr15m.itch.io/roguelike-browser-boilerplate>
+[chr15m.itch.io/roguelike-browser-boilerplate](https://chr15m.itch.io/roguelike-browser-boilerplate)
 
-> © 2009 Chris McCormick
+> © 2020 Chris McCormick
 > 
 > All rights reserved, including the right to reproduce this document or portions thereof in any form whatsoever. For information, or permission requests, write to the author at <chris+rogue@mccormick.cx>.
 
 ![](screenshots/game-2.png)
+
+## Contents
+
+* [Setup](#setup)
+* [The Boilerplate](#the-boilerplate)
+    * [Changing the title and icon](#changing-the-title-and-icon)
+    * [Changing the look of the UI](#changing-the-look-of-the-ui)
+    * [Changing the tileset graphics](#changing-the-tileset-graphics)
+    * [Changing the sound effects](#changing-the-sound-effects)
+    * [Changing the level generator](#changing-the-level-generator)
+    * [Changing the player code](#changing-the-player-code)
+    * [Changing the monster code](#changing-the-monster-code)
+    * [Changing the items code](#changing-the-items-code)
+    * [Using the inventory](#using-the-inventory)
+    * [Changing the combat system](#changing-the-combat-system)
+    * [Changing or adding new screens](#changing-or-adding-new-screens)
+* [Bonus: make an app](#bonus-make-an-app)
+* [Publish your game](#publish-your-game)
+* [More documentation](#more-documentation)
+* [Resources](#resources)
+* [Credits](#credits)
+* [Thanks](#thanks)
 
 ## Setup
 
@@ -22,7 +44,7 @@ Once you've done that you're going to want to open `index.html`, `main.js`, and 
 
 If you don't have a text editor you can use the one at [slingcode.net](https://slingcode.net/), just upload `roguelike-browser-boilerplate.zip` in the app there and you can start editing.
 
-## The Boilerplate
+## The boilerplate
 
 Let's take a look at the files in the boilerplate.
 
@@ -35,7 +57,7 @@ Let's take a look at the files in the boilerplate.
 Take a look around at each of these files to familiarize yourself.
 Next up we'll look at changing stuff in these files to make the game look and work the way you want it to.
 
-### Changing the title, icon, and font
+### Changing the title and icon
 
 The first thing you can do is change the game title. There are two places to change the title.
 
@@ -73,6 +95,42 @@ The title is created with an inline SVG which you can change any way you like, o
 ```
 
 After modifying the code, refresh the game page in your browser to see the changes.
+
+The icon for your game is defined at the top of `index.html`:
+
+``` {.html .numberLines startFrom="9"}
+<link rel="icon" href="icon.png">
+```
+
+You can simply replace the file `icon.png` with your own image to change it.
+
+### Changing the look of the UI
+
+All of the UIs in the game are drawn using basic HTML primitives and styled with the [NES.css](https://github.com/nostalgic-css/NES.css) stylesheet. That's what gives the game those pixelly retro styled boxes and buttons. If you want to style it differently you can remove the NES.css style sheet load on line `13` of `index.html`:
+
+``` {.html .numberLines startFrom="13"}
+<link href="https://cdn.jsdelivr.net/npm/nes.css@2.3.0/css/nes.min.css"
+      rel="stylesheet">
+```
+
+You'll probably want to implement your own styles if you do this and you can do that using CSS in `style.css`. You might also want to change the HTML classes used like `nes-container is-rounded is-dark` as they are specific to the NES.css styling.
+
+The default font used in the boilerplate is called "Press Start 2P". The font is loaded at the start of `style.css`:
+
+``` {.css .numberLines startFrom="1" }
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P');
+```
+
+You can change that to any other CSS font stylesheet.
+
+One place to find new fonts is on Google Fonts.
+
+If you link to a different font you'll need to update the CSS to the name of the new font:
+
+``` {.css .numberLines startFrom="13" }
+body {
+  font-family: 'Press Start 2P', cursive;
+```
 
 ### Changing the tileset graphics
 
@@ -159,7 +217,7 @@ After that you can play the sound with `sfx[key].play()`.
 
 If you search the source code for `sfx` or `play` you should find all the places where sounds are played and you can change those too.
 
-### Changing the level generation algorithm
+### Changing the level generator
 
 The default level is created using the `_generateMap()` method in the `Game` object on line `192`. The dungeon layout is generated first using ROT's `Digger` implementation:
 
@@ -206,6 +264,30 @@ Implementing more complex field-of-view lookups is also possible and again the R
 ### Changing the player code
 
 There are three main parts to the player code.
+First up is the basic definition of the Player's properties starting on line `378` of `main.js`:
+
+``` {.javascript .numberLines startFrom="378"}
+var Player = function(x, y) {
+  this._x = x;
+  this._y = y;
+  this.inventory = [
+    ["x", "Axe (+5)"],
+    ["p", "Potion"]
+  ];
+  this.stats = {"hp": 10, "xp": 1, "gold": 0};
+  this._draw();
+}
+```
+
+Here you can see the player's position is defined from whatever position is passed in at creation time. There is also an inventory of items the player carries, and some character stats (hit points, experience points, and gold). If you want to build more complex player entities you should start by adding to this datastructure, any extra information which you need to store about the player. At the moment if you add or change a stat it will automatically be rendered in the heads-up-display at the bottom of the screen. See the later section for using the basic inventory implementation.
+
+The next interesting bit of code is what happens when a key press event comes in. This behaviour is defined on line `405` in the `handleEvent()` method. Basically a lookup is done to see which direction corresponds to the key pressed, and then the `moveplayer()` function on line `451` is called with the direction vector. The reason the `moveplayer()` function is broken out is because is also used later in the click/touch even code so that the game is playable with a touch device or mouse. If you want to implement interesting movement mechanics such as drunken walk or freezing, this is the place to do it. This is also the place where you would implement a hunger function, with the hunger increasing every X steps. You'd keep track of the hunger stat in the `Player` class too.
+
+In the `moveplayer()` function we can also see checks for what kind of tile is being stepped on. Only floor tiles and items are allowed to be stepped on in this implementation. If a monster is moved onto then the `combat()` function is initiated. Near the end of this function the "step" sound is played and the `_checkItem()` method is called.
+
+The `_checkItem()` method on line `422` is the final important part of the player code. Three checks are performed against the tile the player has stepped into. If the amulet has been stepped on the `win()` function is called, displaying that win condition UI flow. If the player has picked up gold their stat is incremented and a sound is played. Finally, if the player has stepped on a chest it must be empty because the amulet was checked for already, so a message is shown to the user.
+
+In this implementation the item is used up and replaced with a floor tile on the last line of that function, but you could just as easily do something different. For example if a trap has been discovered then you would draw the trap in the map datastructure at this point.
 
 ### Changing the monster code
 
@@ -249,55 +331,91 @@ Eventually you will probably want to store more complex item data structures in 
 
 
 
-### Adding new screens
+### Changing or adding new screens
 
+The non-game screens defined in the HTML code are:
 
+ * Title screen
+ * Settings
+ * Credits
+ * Instructions
+ * Win game
+ * Lose game
 
-### Changing the look of the UI
+You can modify any of these simply by editing the HTML. If you need additional functionality such as adding clickable toggles in the settings screen then you can add new event bindings at the bottom of `main.js` on line `886` where all of the event bindings happen.
 
-All of the UIs in the game are drawn using basic HTML primitives and styled with the [NES.css] stylesheet. You can blah.
+You can add a new screen by cloning one of the existing screens and using the `showscreen()` command to show a particular screen using its `id` like this: `showscreen("title")`. Make sure you give each new screen a unique `id` like this:
 
-The font used throughout the game is blah blah blah from Google. You can change it by blah.
+``` {.html}
+  <div id="myscreen" class="screen modal">
+```
 
-### Where to find more documentation
+## Bonus: make an app
 
- * ROT.js interactive manual
- * ROT.js API
- * [NES.css](https://nostalgic-css.github.io/NES.css/)
- * sfxr.me GitHub page
+With a few extra steps, it is possible to distribute your game as a Windows, Mac, iOS, and Android binary.
+This is a requirement of distributing through channels like Steam and if you want to sell your game on Itch.io.
 
-### Publishing your game
+There are a few different ways to turn your web app into a native binary:
 
-A great place to publish your game is on Itch.
+ * If you want to make binaries for mobile platforms like iOS and Android you can use [Apache Cordova](https://cordova.apache.org/). It's a framework for converting web apps to native apps with command line tools. If you know how to use Nodejs you can get an app converted in just a few steps.
+ * Similar to Cordova is the [Electron framework](https://www.electronjs.org/), but it works for building desktop apps for OSX, Windows, and Linux. Once again if you are comfortable using Nodejs on the command line this is a good option for creating a native app.
+ * Finally, there are now websites which will do the same task without having to use the command line. Simply search for "convert web app to native" in your favourite search engine. Often you can simply input the URL of your web app and they will produce the right kind of artifact for you automatically.
+
+Once you have produced the native binary using one of the tools above you can use it to sell on Steam, Itch.io the App Store, or Google Play.
+
+## Publish your game
 
 > Pro tip: post frequent updates and screenshots of your progress as you make your game.
 > This will increase engagement when it's time to release.
 
-### Bonus: making an app
+A great place to publish your game is on Itch.io, and it's very easy. You can publish your HTML game directly on <itch.io> by going to "upload new project" and then selecting "HTML" in the "Kind of project" selector. If you have take the extra step of building binaries of your game then you can upload them to to stores for sale.
 
-With a few extra steps, it is possible to distribute your game as a Windows, Mac, iOS, or Android binary.
+Once you have published you will want to tell people about your game. Some places you can announce your game:
 
-This is generally a requirement of distributing through channels like Steam.
+ * Tag your game with #roguelike when you upload it to Itch.io.
+ * [reddit.com/r/roguelikedev](https://reddit.com/r/roguelikedev) (please read the rules before posting).
+ * The #advertise-releases channel on the Roguelikes Discord channel.
+ * On Twitter, tagging your game with #roguelike, #gamedev, and #indiedev.
+ * If you have an email list this is one of the best ways to get the word out.
 
-### Thanks!
+## More documentation
 
-If you have feedback or suggestions for improvements to this document or any other part of the project, I would love to hear them. You can share your ideas with me at [chris@mccormick.cx](mailto:chris+rogue@mccormick.cx)!
+ * The [ROT.js interactive manual](https://ondras.github.io/rot.js/manual/) is an excellent resource for exploring what ROT is capable of.
+ * If you need more technical documentation the [ROT.js API](https://ondras.github.io/rot.js/doc/index.html) is also comprehensive.
+ * [Documentation for NES.css](https://nostalgic-css.github.io/NES.css/) is available and you can do quite a bit with it.
+ * The [sfxr.me GitHub page](https://github.com/chr15m/jsfxr) has documentation on using it should you need it.
 
 ## Resources
 
  * [Roguelike Radio podcast](http://www.roguelikeradio.com/)
  * [/r/roguelikedev on Reddit](https://www.reddit.com/r/roguelikedev/)
- * [Roguelike tag on Itch.io]() 
+ * [Roguelike tag on Itch.io](https://itch.io/games/tag-roguelike) 
  * [Roguebasin Wiki](http://www.roguebasin.com/index.php?title=Main_Page)
  * [7 Day Roguelike challenge](https://7drl.com/)
  * [BSD Rogue v5.4.4 source code](https://github.com/Davidslv/rogue)
 
 ## Credits
 
+Roguelike Browser Boilerplate is Copyright Chris McCormick, 2020.
+
+The following third party properties are also bundled or linked with the boilerplate:
+
  * [ROT.js](https://ondras.github.io/rot.js/hp/) (BSD license)
- * [kenney.nl](https://kenney.nl/assets/micro-roguelike) (CC0 1.0 Universal license)
+ * [kenney.nl Micro Rogue tileset](https://kenney.nl/assets/micro-roguelike) (CC0 1.0 Universal license)
  * [NES.css](https://nostalgic-css.github.io/NES.css/) (MIT License)
  * [sfxr.me](https://sfxr.me) (Public domain)
  * [Pixel coin image](https://opengameart.org/content/spinning-pixel-coin-0) (CC-BY 3.0 license)
 
-# Fin
+Please see the attached license PDF for licensing terms.
+
+## Thanks!
+
+Thank you very much for your purchase and best of luck with your games.
+
+If you have feedback or suggestions please do get in touch at [chris+rogue@mccormick.cx](mailto:chris+rogue@mccormick.cx)!
+
+To find out about more games and games tech join the Infinite Lives mailing list:
+
+<https://infinitelives.github.io>
+
+![](./doc/infinitelivesLogo.png)

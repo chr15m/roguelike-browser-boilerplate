@@ -14,6 +14,10 @@ html {
     margin-top: 2cm;
     margin-bottom: 2cm;
   }
+
+  @page :first a {
+    font-size: 0.75em;
+  }
 }
 
 body {
@@ -53,14 +57,23 @@ img {
 
 h1, h2, h3 {
   font-family: 'Press Start 2P', cursive;
-  margin-top: 4em;
+  margin-top: 3em;
   page-break-after: avoid;
   color: #fff;
   color: #333;
 }
 
-h2 {
+h4 {
+  font-family: 'Press Start 2P', cursive;
+  color: #333;
+}
+
+h2, h3 {
   page-break-before: always;
+}
+
+h3 {
+  font-size: 16px;
 }
 
 p, h1, h2, h3, li {
@@ -76,7 +89,7 @@ blockquote {
   border-radius: 10px;
   background-color: #333232;
   padding: 1em 2em;
-  background-color: #aebeae;
+  background-color: #e2e0e0;
   color: #333;
   margin-left: 0px;
   width: 100%;
@@ -87,7 +100,7 @@ tr, img {
 }
 
 li {
-  margin-top: 1em;
+  /*margin-top: 1em;*/
 }
 
 div.sourceCode::before {
