@@ -140,7 +140,7 @@ The default tileset used is the [Micro Rogue tileset from kenney.nl](https://ken
 
 To tweak the tiles, load `colored_tilemap_packed.png` up in your favourite pixel editor and just modify the bits you want to change, then save it again. If you reload the game in the browser your changes will take effect immediately.
 
-You can also replace the tiles with a completely different tileset. Just save your new tileset image (a spritesheet with all of the tiles you need on it) in the folder where your game is.
+You can replace the tiles in the boilerplate with a completely different tileset. Just save your new tileset image (a spritesheet with all of the tiles you need on it) in the folder where your game is.
 
 Then to set everything up with your new tileset you'll need to change `main.js` starting at line `14` where you can replace `colored_tilemap_packed.png` with the file name of your new tileset image:
 
@@ -180,6 +180,8 @@ and then use the `draw()` method to draw them:
 ``` {.javascript}
   Game.display.draw(x, y, "X");
 ```
+
+If you are interested in creating your own tile sets there are a ton of great resources available online. One of the best pixel graphics editors out there is [Aseprite](https://www.aseprite.org/). Another great option is the free online pixel art editor [Piskel](https://www.piskelapp.com/). If you prefer free vector graphics editors, there is a great tip in the video [How to Draw Pixel Art in Inkscape](https://www.youtube.com/watch?v=Se7WVuyIEnU). Finally, there are hundreds of video tutorials on YouTube to help you learn to draw pixel art, simply search for "pixel art tutorial".
 
 You can find more documentation on the tile options in the [ROT.js documentation for graphical tiles](http://ondras.github.io/rot.js/manual/#tiles). There is also a neat tile colorizing technique you can use in there to get more variation.
 
@@ -386,11 +388,14 @@ You can add a new screen by cloning one of the existing screens and using the `s
 With a few extra steps, it is possible to distribute your game as a Windows, Mac, iOS, and Android binary.
 This is a requirement of distributing through channels like Steam and if you want to sell your game on Itch.io.
 
-There are a few different ways to turn your web app into a native binary:
+There are two basic targets for native binaries: mobile devices running iOS and Android, or desktop devices running Windows, OSX, and Linux.
+The largest markets globally for mobile and desktop are Android and Windows, so those platforms are a good place to start.
 
- * If you want to make binaries for mobile platforms like iOS and Android you can use [Apache Cordova](https://cordova.apache.org/). It's a framework for converting web apps to native apps with command line tools. If you know how to use Nodejs you can get an app converted in just a few steps.
- * Similar to Cordova is the [Electron framework](https://www.electronjs.org/), but it works for building desktop apps for OSX, Windows, and Linux. Once again if you are comfortable using Nodejs on the command line this is a good option for creating a native app.
- * Finally, there are now websites which will do the same task without having to use the command line. Simply search for "convert web app to native" in your favourite search engine. Often you can simply input the URL of your web app and they will produce the right kind of artifact for you automatically.
+If you want to make binaries for **mobile platforms** like iOS and Android you can use [Apache Cordova](https://cordova.apache.org/). It's a framework for converting web apps to native apps with command line tools. If you know how to use Nodejs you can get an app converted in just a few steps. Some other interesting options for porting your HTML game to native apps include [Capacitor](https://capacitorjs.com/), [Monaco](https://monaca.io/), and just straight up [Progressive web apps](https://web.dev/progressive-web-apps/).
+
+If you want to target **desktop platforms** the [Electron framework](https://www.electronjs.org/) is similar to Cordova, but it builds desktop apps for OSX, Windows, and Linux. Once again if you are comfortable using Nodejs on the command line this is a good option for creating a native app.
+
+There are also now websites which will accomplish the same task without having to use the command line. Simply search for "convert web app to native" in your favourite search engine. Often you can simply input the URL of your web app and they will produce the right kind of artifact for you automatically.
 
 Once you have produced the native binary using one of the tools above you can use it to sell on Steam, Itch.io the App Store, or Google Play.
 
@@ -399,7 +404,7 @@ Once you have produced the native binary using one of the tools above you can us
 > Pro tip: post frequent updates and screenshots of your progress as you make your game.
 > This will increase engagement when it's time to release.
 
-A great place to publish your game is on Itch.io, and it's very easy. You can publish your HTML game directly on <itch.io> by going to "upload new project" and then selecting "HTML" in the "Kind of project" selector. If you have take the extra step of building binaries of your game then you can upload them to to stores for sale.
+A great place to publish your game is on Itch.io, and it's very easy. You can publish your HTML game directly on [itch.io](https://itch.io) by going to "upload new project" and then selecting "HTML" in the "Kind of project" selector. If you have take the extra step of building binaries of your game then you can upload them to to stores for sale.
 
 Once you have published you will want to tell people about your game. Some places you can announce your game:
 
@@ -407,7 +412,7 @@ Once you have published you will want to tell people about your game. Some place
  * [reddit.com/r/roguelikedev](https://reddit.com/r/roguelikedev) (please read the rules before posting).
  * The #advertise-releases channel on the Roguelikes Discord channel.
  * On Twitter, tagging your game with #roguelike, #gamedev, and #indiedev.
- * If you have an email list this is one of the best ways to get the word out.
+ * If you have an email list of people interested in your games already, then this is one of the best ways to get the word out.
 
 ## More documentation
 
