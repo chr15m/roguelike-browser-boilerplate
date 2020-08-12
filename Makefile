@@ -14,7 +14,7 @@ $(name).zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01
 #	zip -r $@ $(foreach f, $?, "$(name)-documents/$(f)")
 #	rm -rf $(name)-documents
 
-$(name)-private-coaching.pdf: $(name)-private-coaching.md print.css Makefile
+$(name)-private-coaching.pdf: private-coaching.md print.css Makefile
 	pandoc -f markdown --highlight-style=tango --css print.css $< -o "$(@:.pdf=.html)"
 	chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf-no-header --print-to-pdf="$@" "$(@:.pdf=.html)" --virtual-time-budget=10000
 	rm -f "$(@:.pdf=.html)"
