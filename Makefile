@@ -1,6 +1,6 @@
 name=roguelike-browser-boilerplate
 
-all: $(name).zip private-video-coaching-ticket.pdf
+all: $(name).zip $(name)-private-coaching.pdf
 
 $(name).zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png $(name).pdf $(name)-license-indie-professional.pdf
 	mkdir -p $(name)
