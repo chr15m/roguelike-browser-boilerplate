@@ -79,17 +79,17 @@ var gametitle = "My Rogue";
 ```
 
 If your game has a longer title you might find that some letters disappear off the screen.
-You can accommodate a longer title by changing the size of the letters in `style.css`:
+You can accommodate a longer title by changing the size of the letters in `style.css` on line `155`:
 
-``` {.css .numberLines startFrom="150"}
+``` {.css .numberLines startFrom="155"}
 .game-title-text {
   font-size: 64px;
 }
 ```
 
-The title is created with an inline SVG which you can change any way you like, or even replace it with an image. You can find the start of the SVG on line 33 of the `index.html` file:
+The title is created with an inline SVG which you can change any way you like, or even replace it with an image. You can find the start of the SVG on line `31` of the `index.html` file:
 
-``` {.xml .numberLines startFrom="33"}
+``` {.xml .numberLines startFrom="31"}
 <!-- The game title is set dynamically ... -->
 <svg id="game-title" viewBox="0 0 700 250" ...>
 ```
@@ -138,11 +138,13 @@ The default tileset used is the [Micro Rogue tileset from kenney.nl](https://ken
 
 ![](./doc/tilemap-large.png)
 
-To tweak the tiles, load `colored_tilemap_packed.png` up in your favourite pixel editor and just modify the bits you want to change, then save it again. If you reload the game in the browser your changes will take effect immediately.
+To tweak the tiles in the boilerplate, load `colored_tilemap_packed.png` up in your favourite pixel editor and just modify the bits you want to change, then save it again. If you reload the game in the browser your changes will take effect immediately.
 
-You can replace the tiles in the boilerplate with a completely different tileset. Just save your new tileset image (a spritesheet with all of the tiles you need on it) in the folder where your game is.
+If you want to use a completely different tile set you can find a lot of roguelike tilesets by searching for ["roguelike" on the Open Game Art site](https://opengameart.org/art-search?keys=roguelike) and you can also search for ["roguelike" on kenney.nl](https://kenney.nl/assets?s=roguelike) to find more like the default one included with the boilerplate. Finally there is the [epic list of tile sets in the /r/roguelikedev community on Reddit](https://www.reddit.com/r/roguelikedev/wiki/tilesets).
 
-Then to set everything up with your new tileset you'll need to change `main.js` starting at line `14` where you can replace `colored_tilemap_packed.png` with the file name of your new tileset image:
+If you are interested in creating your own tile sets from scratch there are several great apps and tutorials available. One of the best pixel graphics editors out there is [Aseprite](https://www.aseprite.org/). Another good option is the free online pixel art editor [Piskel](https://www.piskelapp.com/). If you prefer free vector graphics editors, there is an interesting tip in the video [How to Draw Pixel Art in Inkscape](https://www.youtube.com/watch?v=Se7WVuyIEnU). Finally, there are hundreds of video tutorials on YouTube to help you learn to draw pixel art, simply search for "pixel art tutorial".
+
+To set everything up with your new tileset you'll need to change `main.js` starting at line `14` where you can replace `colored_tilemap_packed.png` with the file name of your new tileset image:
 
 ``` {.javascript .numberLines startFrom="14"}
 tileSet.src = "YOUR-NEW-IMAGE-FILE-NAME";
@@ -181,8 +183,6 @@ and then use the `draw()` method to draw them:
   Game.display.draw(x, y, "X");
 ```
 
-If you are interested in creating your own tile sets there are a ton of great resources available online. One of the best pixel graphics editors out there is [Aseprite](https://www.aseprite.org/). Another great option is the free online pixel art editor [Piskel](https://www.piskelapp.com/). If you prefer free vector graphics editors, there is a great tip in the video [How to Draw Pixel Art in Inkscape](https://www.youtube.com/watch?v=Se7WVuyIEnU). Finally, there are hundreds of video tutorials on YouTube to help you learn to draw pixel art, simply search for "pixel art tutorial".
-
 You can find more documentation on the tile options in the [ROT.js documentation for graphical tiles](http://ondras.github.io/rot.js/manual/#tiles). There is also a neat tile colorizing technique you can use in there to get more variation.
 
 Finally, if you want to overlay multiple tiles on each other that's easy too.
@@ -196,9 +196,9 @@ When you are calling the ROT.js `display.draw()` method, simply pass it an array
 
 All of the sound effects in the boilerplate are generated with `jsfxr`. It is both a library for playing sounds and a user interface for creating sounds. You can find an online version of this at [sfxr.me](https://sfxr.me) and you can make new sound effects there. It's pretty fun to play with.
 
-To change the sound effects in the game, or to add new ones, you're going to want to modify the table on line `56` in `main.js`:
+To change the sound effects in the game, or to add new ones, you're going to want to modify the table on line `59` in `main.js`:
 
-``` {.javascript .numberLines startFrom="21"}
+``` {.javascript .numberLines startFrom="59"}
 var sfx = {
   "rubber": "5EoyNVaezhPnpFZjpkcJkF8FNCio...
 ```
@@ -213,7 +213,7 @@ The code on the right hand side comes from pressing the "copy" button on the [sf
 
 ![](doc/sfxr-copy-button.png)
 
-So the workflow is to tinker around on [sfxr.me](https://sfxr.me) until you make a sound you want to use. Then click the "Copy" button to copy the sound's code. Then finally paste the code into the `sfx` table on line `21` of `main.js`, either as a new sound (with a unique key) or replacing an existing sound.
+So the workflow is to tinker around on [sfxr.me](https://sfxr.me) until you make a sound you want to use. Then click the "Copy" button to copy the sound's code. Then finally paste the code into the `sfx` table on line `59` of `main.js`, either as a new sound (with a unique key) or replacing an existing sound.
 
 After that you can play the sound with `sfx[key].play()`.
 
@@ -221,15 +221,15 @@ If you search the source code for `sfx` or `play` you should find all the places
 
 ### Changing the level generator
 
-The default level is created using the `_generateMap()` method in the `Game` object on line `192`. The dungeon layout is generated first using ROT's `Digger` implementation:
+The default level is created using the `_generateMap()` method in the `Game` object on line `196`. The dungeon layout is generated first using ROT's `Digger` implementation:
 
-``` {.javascript .numberLines startFrom="200"}
+``` {.javascript .numberLines startFrom="204"}
 var digger = new ROT.Map.Digger(
     tileOptions.width,
     tileOptions.height);
 ```
 
-``` {.javascript .numberLines startFrom="228"}
+``` {.javascript .numberLines startFrom="232"}
   digger.create(digCallback.bind(this));
 ```
 
@@ -237,7 +237,7 @@ There are several excellent dungeon generators in the ROT library including maze
 
 Next the level generator places 15 items on the map in the `_generateItems()` method. It randomly assigns these to be either pieces of gold or treasure chests. The treasure chests are all empty except for the first one which contains the amulet:
 
-``` {.javascript  .numberLines startFrom="232"}
+``` {.javascript  .numberLines startFrom="267"}
 _generateItems: function(freeCells) {
   for (var i=0; i<15; i++) {
     ...
@@ -245,7 +245,7 @@ _generateItems: function(freeCells) {
 
 You can modify this method to generate your own more complicated types of items with different properties.
 
-After this the `_generateMap()` level generator adds some background scenery (trees and plants) which is purely for looks and mood, using the `_generateShrubberies()` method. A total of 100 background scenery elements are added like this and you can modify that method on line `283` to add your own scenery elements.
+After this the `_generateMap()` level generator adds some background scenery (trees and plants) which is purely for looks and mood, using the `_generateShrubberies()` method. A total of 100 background scenery elements are added like this and you can modify that method on line `287` to add your own scenery elements.
 
 Next the room walls and corners are drawn in `_drawRooms()` and you can customise the way these are drawn too if you need.
 
@@ -293,39 +293,40 @@ In this implementation the item is used up and replaced with a floor tile on the
 
 ### Changing the monster code
 
-The code implementing the monster starts on line `454` of `main.js`:
+The code implementing the monster starts on line `501` of `main.js`:
 
-```{.javascript .numberLines startFrom="454"}
+```{.javascript .numberLines startFrom="501"}
 var Monster = function(x, y) {
   this._x = x;
   this._y = y;
+  this.stats = {"hp": 14};
   this._draw();
 }
 ```
 
 If you want to store other variables or properties of this particular monster you can put them in here. At the moment the only variables passed in are the `x, y` position, but you could add things like hit points, damage, etc. for implementing combat.
 
-On line `465` of `main.js` you can find the code which controls how the monster behaves on each turn in `Monster.prototype.act`. This function gets called every time the ROT scheduler determines that it is the monster's turn to move.
+On line `513` of `main.js` you can find the code which controls how the monster behaves on each turn in `Monster.prototype.act`. This function gets called every time the ROT scheduler determines that it is the monster's turn to move.
 
 At the moment what happens is the monster uses the `astar` algorithm to figure out the fastest way to get to where the player is, and takes one step in that direction. There are lots of more interesting behaviours you could implement including field-of-view and distance from the player, interaction between monsters, monsters that can create items, monsters that talk, fast monsters, slow monsters, monsters that freeze the player, monsters that are friendly, etc. etc. The only limit is your imagination.
 
 ROT.js has some great helpers you can use like the [field-of-view](http://ondras.github.io/rot.js/manual/#fov) algorithm. Check out the [interactive documentation](http://ondras.github.io/rot.js/manual/) for more info.
 
-The monster in the boilerplate is added on line `230` of `main.js` and you can modify the code there to add an array of different monsters with different properties when the level starts, rather than just adding a single monster.
+The monster in the boilerplate is added on line `245` of `main.js` and you can modify the code there to add an array of different monsters with different properties when the level starts, rather than just adding a single monster.
 
 ### Changing the items code
 
-At the moment the treasure chests are very simply implemented as `"*"` characters on the map. They don't carry any more interesting data than their position in the map. You can make more interesting items by creating a data structure to hold item positions and the properties of the items which are there. A good place to add a new datastructure like that would be in the `Game` code around line `127` in `main.js`.
+At the moment the treasure chests are very simply implemented as `"*"` characters on the map. They don't carry any more interesting data than their position in the map. You can make more interesting items by creating a data structure to hold item positions and the properties of the items which are there. A good place to add a new datastructure like that would be in the `Game` code around line `135` in `main.js`.
 
 For example you might have traps which take off varying amounts of HP when the player lands on them, or potions that give the player strength, or food so that players don't starve, or scrolls etc. etc. You can also implement items which can be collected and added to the player's inventory.
 
-The code for detecting when the player steps on an item is on line `416` in `main.js` in the `_checkItem()` method. You can add checks for your other types of items in there and take different action. You can use the "gold" item as an example, which simply increments the player's gold stat, shows a message, and plays a sound.
+The code for detecting when the player steps on an item is on line `422` in `main.js` in the `_checkItem()` method. You can add checks for your other types of items in there and take different action. You can use the "gold" item as an example, which simply increments the player's gold stat, shows a message, and plays a sound.
 
 ### Using the inventory
 
 The inventory user interface is rendered with the `renderinventory()` function and at the moment by default it is rendering the contents of the `Player` object's `inventory` property. It's a simple data structure indicating what to draw in the inventory list. Each row in the inventory structure is an array with the first element being the tile image lookup character and the second element being the words to print next to the image.
 
-When an inventory item is selected the code in the callback starting on line `154` in `main.js` is called. Customise this to make more complicated inventory item selection behaviours such as weilding weapons, drinking potions, reading scrolls, etc.
+When an inventory item is selected the code in the callback starting on line `155` in `main.js` is called. Customise this to make more complicated inventory item selection behaviours such as weilding weapons, drinking potions, reading scrolls, etc.
 
 Eventually you will probably want to store more complex item data structures in the player's inventory and then you will want to pre-process `player.inventory` before passing it into the `renderinventory()` function in the format it expects (e.g. the tile/words pairs described above).
 
@@ -334,15 +335,16 @@ Eventually you will probably want to store more complex item data structures in 
 Combat is initiated in `main.js` either when the player tries to move onto the monster square on line `467`:
 
 ``` {.javascript .numberLines startFrom="467"}
+var m = Game.monster;
 if (m && m._x == x && m._y == y) {
   combat(m);
   return;
 }
 ```
 
-Or when the monster tries to move onto the player square on line `539`:
+Or when the monster tries to move onto the player square on line `538`:
 
-``` {.javascript .numberLines startFrom="539"}
+``` {.javascript .numberLines startFrom="538"}
 if (path.length <= 1) {
   combat(this);
 }
