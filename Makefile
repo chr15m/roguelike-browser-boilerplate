@@ -1,8 +1,8 @@
 name=roguelike-browser-boilerplate
 
-all: $(name).zip $(name)-private-coaching.pdf
+all: $(name).zip $(name)-private-coaching.pdf $(name).pdf $(name)-license.pdf
 
-$(name).zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png $(name).pdf $(name)-license-indie-professional.pdf
+$(name).zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png
 	mkdir -p $(name)
 	cp $? $(name)
 	zip -r $@ $(foreach f, $?, "$(name)/$(f)")
@@ -27,7 +27,7 @@ $(name).pdf: README.md print.css Makefile
 #$(name)-license-student-hobbyist.pdf: license-common.md license-student-hobbyist.md
 #	cat $? | pandoc -f markdown -t latex --highlight-style=tango --css print.css -o $@
 
-$(name)-license-indie-professional.pdf: license-common.md license-indie-professional.md
+$(name)-license.pdf: license-common.md license-indie-professional.md
 	cat $? | pandoc -f markdown -t latex --highlight-style=tango --css print.css -o $@
 
 .PHONY: watch serve browserstack clean
