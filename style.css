@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P');
 
+/* if you have a longer title
+ * make the font size smaller */
+.game-title-text {
+  font-size: 48px;
+}
+
 * {
   box-sizing: border-box;
   touch-action: manipulation;
@@ -148,12 +154,6 @@ a:hover {
   margin-bottom: 100px;
   width: 900px;
   max-width: 98%;
-}
-
-/* if you have a longer title
- * make the font size smaller */
-.game-title-text {
-  font-size: 64px;
 }
 
 .game-title-animation {

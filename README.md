@@ -79,9 +79,9 @@ var gametitle = "My Rogue";
 ```
 
 If your game has a longer title you might find that some letters disappear off the screen.
-You can accommodate a longer title by changing the size of the letters in `style.css` on line `155`:
+You can accommodate a longer title by changing the font size of the title at the top of `style.css`:
 
-``` {.css .numberLines startFrom="155"}
+``` {.css .numberLines startFrom="5"}
 .game-title-text {
   font-size: 64px;
 }
