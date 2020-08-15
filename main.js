@@ -112,12 +112,10 @@ let tapMap = {
 // www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_1
 
 // allow live reloading of the game code
-if (window["Game"]) { Game.destroy(); }
+if (window["Game"]) { destroy(Game); }
 
-// this object is a namespace holding all of the
-// bits of our game together in one place for easy
-// reference
-
+// this Game object holds all of the game state
+// including the map, engine, entites, and items, etc.
 let Game = {
   // this is the ROT.js display handler
   display: null,
@@ -139,65 +137,65 @@ let Game = {
   // as `x,y` so it can be checked against
   // the map keys above
   amulet: null,
-
-  // this gets called by the menu system
-  // to launch the actual game
-  init: function() {
-    // first create a ROT.js display manager
-    this.display = new ROT.Display(tileOptions);
-    resetCanvas(this.display.getContainer());
-
-    // this is where we populate the map data structure
-    // with all of the background tiles, items,
-    // player and the monster positions
-    generateMap(this);
-
-    // let ROT.js schedule the player and monster entities
-    this.scheduler = new ROT.Scheduler.Simple();
-    this.scheduler.add(this.player, true);
-    this.scheduler.add(this.monster, true);
-
-    // render some example items in the inventory
-    renderInventory(this.player.inventory, function(which, ev) {
-      // this function is called when an inventory item is clicked
-      toast(which[1] + " selected");
-      toggleInventory(ev, true);
-    });
-
-    // render the stats hud at the bottom of the screen
-    renderStats(this.player.stats);
-
-    // kick everything off
-    this.engine = new ROT.Engine(this.scheduler);
-    this.engine.start();
-  },
-
-  // this gets called at the end of the game when we want
-  // to exit back out and clean everything up to display
-  // the menu and get ready for next round
-  destroy: function() {
-    // remove all listening event handlers
-    removeListeners();
-
-    // tear everything down and 
-    // reset all our variables back
-    // to null as before init()
-    if (this.engine) {
-      this.engine.lock();
-      this.display = null;
-      this.map = {};
-      this.engine = null;
-      this.scheduler.clear();
-      this.scheduler = null;
-      this.player = null;
-      this.monster = null;
-      this.amulet = null;
-    }
-
-    // close out the game screen and show the title
-    showScreen("title");
-  },
 };
+
+// this gets called by the menu system
+// to launch the actual game
+function init(game) {
+  // first create a ROT.js display manager
+  game.display = new ROT.Display(tileOptions);
+  resetCanvas(game.display.getContainer());
+
+  // this is where we populate the map data structure
+  // with all of the background tiles, items,
+  // player and the monster positions
+  generateMap(game);
+
+  // let ROT.js schedule the player and monster entities
+  game.scheduler = new ROT.Scheduler.Simple();
+  game.scheduler.add(game.player, true);
+  game.scheduler.add(game.monster, true);
+
+  // render some example items in the inventory
+  renderInventory(game.player.inventory, function(which, ev) {
+    // this function is called when an inventory item is clicked
+    toast(which[1] + " selected");
+    toggleInventory(ev, true);
+  });
+
+  // render the stats hud at the bottom of the screen
+  renderStats(game.player.stats);
+
+  // kick everything off
+  game.engine = new ROT.Engine(game.scheduler);
+  game.engine.start();
+}
+
+// this gets called at the end of the game when we want
+// to exit back out and clean everything up to display
+// the menu and get ready for next round
+function destroy(game) {
+  // remove all listening event handlers
+  removeListeners();
+
+  // tear everything down and
+  // reset all our variables back
+  // to null as before init()
+  if (game.engine) {
+    game.engine.lock();
+    game.display = null;
+    game.map = {};
+    game.engine = null;
+    game.scheduler.clear();
+    game.scheduler = null;
+    game.player = null;
+    game.monster = null;
+    game.amulet = null;
+  }
+
+  // close out the game screen and show the title
+  showScreen("title");
+}
 
 // guess what, this generates the game map
 function generateMap(game) {
@@ -373,7 +371,7 @@ function createBeing(what, freeCells) {
  ******************/
 
 
-// this function creates a player object with position, inventory, and stats
+// creates a player object with position, inventory, and stats
 function makePlayer(x, y) {
   return {
     // player's position
@@ -500,34 +498,45 @@ function drawEntity() {
 // basic ROT.js entity with position and stats
 function makeMonster(x, y) {
   return {
+    // monster position
     _x: x,
     _y: y,
+    // which tile to draw the player with
     character: "M",
+    // the monster's stats
     stats: {"hp": 14},
+    // called by the ROT.js scheduler
     act: monsterAct,
+    // draw the monster
     draw: drawEntity,
   }
 }
 
 // the ROT.js scheduler calls this method when it is time
 // for the monster to act
-function monsterAct(monster) {
+function monsterAct() {
+  // reference to the monster itself
+  const m = this;
   // the monster wants to know where the player is
   const p = Game.player;
+  // reference to the game map
+  const map = Game.map;
+  // reference to ROT.js display
+  const display = Game.display;
 
   // in this whole code block we use the ROT.js "astar" path finding
   // algorithm to help the monster figure out the fastest way to get
   // to the player - for implementation details check out the doc:
   // http://ondras.github.io/rot.js/manual/#path
   const passableCallback = function(x, y) {
-    return (walkable.indexOf(Game.map[x + "," + y]) != -1);
+    return (walkable.indexOf(map[x + "," + y]) != -1);
   }
   const astar = new ROT.Path.AStar(p._x, p._y, passableCallback, {topology:4});
   const path = [];
   const pathCallback = function(x, y) {
     path.push([x, y]);
   }
-  astar.compute(this._x, this._y, pathCallback);
+  astar.compute(m._x, m._y, pathCallback);
 
   // we just want the first move on the path from monster to player
   // because this function is called once per monster turn and the
@@ -536,15 +545,15 @@ function monsterAct(monster) {
   // if the distance from the monster to the player is less than one
   // square the player has lost the game
   if (path.length <= 1) {
-    combat(this);
+    combat(m);
   } else {
     // draw whatever was on the last tile the monster was one
-    Game.display.draw(this._x, this._y, Game.map[this._x + "," + this._y]);
+    display.draw(m._x, m._y, map[m._x + "," + m._y]);
     // the player is safe for now so update the monster position
     // and redraw
-    this._x = path[0][0];
-    this._y = path[0][1];
-    this.draw();
+    m._x = path[0][0];
+    m._y = path[0][1];
+    m.draw();
   }
 }
 
@@ -631,7 +640,7 @@ function win() {
     }, 100 * i);
   }
   // tear down the game
-  Game.destroy();
+  destroy(Game);
   // show the blingy "win" screen to the user
   showScreen("win");
 }
@@ -653,7 +662,7 @@ function lose() {
     // remove the ghost animation
     rmel(ghost);
     // tear down the game
-    Game.destroy();
+    destroy(Game);
     // show the "lose" screen to the user
     showScreen("lose");
   }, 2000);
@@ -857,7 +866,7 @@ function handleTouch(ev) {
 function startGame() {
   showScreen("game");
   sfx["rubber"].play();
-  Game.init();
+  init(Game);
 }
 
 // this function gets called when the user selects
