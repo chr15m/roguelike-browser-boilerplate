@@ -27,6 +27,7 @@ Hello and thanks for purchasing the Roguelike Browser Boilerplate. Are you ready
     * [Using the inventory](#using-the-inventory)
     * [Changing the combat system](#changing-the-combat-system)
     * [Changing or adding new screens](#changing-or-adding-new-screens)
+    * [Exercises](#exercises)
 * [Bonus: make an app](#bonus-make-an-app)
 * [Publish your game](#publish-your-game)
 * [More documentation](#more-documentation)
@@ -44,6 +45,8 @@ Once you've done that you're going to want to open `index.html`, `main.js`, and 
 
 If you don't have a text editor you can use the one at [slingcode.net](https://slingcode.net/), just upload `roguelike-browser-boilerplate.zip` in the app there and you can start editing.
 
+If you need some help, head on over to the [Roguelike Browser Boilerplate community](https://chr15m.itch.io/roguelike-browser-boilerplate/community) and ask.
+
 ## The boilerplate
 
 Let's take a look at the files in the boilerplate.
@@ -55,7 +58,12 @@ Let's take a look at the files in the boilerplate.
  * `icon.png`, `bg.png`, and `01coin.gif` are graphical assets used for the browser icon of the game, the background image on the first menu, and a rotating coin animation for the win screen.
 
 Take a look around at each of these files to familiarize yourself.
+Throughout the code in `main.js` you'll see references to [ROT.js](https://ondras.github.io/rot.js/hp/), the "ROguelike Toolkit in JavaScript".
+The boilerplate relies on this library heavily for rendering and to implement a bunch of typical roguelike functionality.
+
 Next up we'll look at changing stuff in these files to make the game look and work the way you want it to.
+
+One final thing to note when editing the boilerplate is that browsers sometimes cache files aggressively. If it seems like changes to your files are not "taking" then try using the key sequence `Ctrl-Shift-Refresh` (or `Cmd-Shift-Refresh` if you're on a Mac) which will ask the browser to ignore the cache.
 
 ### Changing the title and icon
 
@@ -150,7 +158,8 @@ To set everything up with your new tileset you'll need to change `main.js` start
 tileSet.src = "YOUR-NEW-IMAGE-FILE-NAME";
 ```
 
-Next you'll need to tell ROT.js how your tiles are laid out. To do this modify the `tileOptions` data just below that:
+The boilerplate uses the ROT.js library for rendering tiles, so next you'll need to tell ROT.js how your tiles are laid out.
+To do this modify the `tileOptions` data just below that:
 
 ``` {.javascript .numberLines startFrom="21"}
 let tileOptions = {
@@ -283,19 +292,7 @@ function makePlayer(x, y) {
     ],
     // the player's stats
     stats: {"hp": 10, "xp": 1, "gold": 0},
-    // the ROT.js scheduler calls this method when it is time
-    // for the player to act
-    // what this does is lock the engine to take control
-    // and then wait for keyboard input from the user
-    act: () => {
-      Game.engine.lock();
-      window.addEventListener("keydown", keyHandler);
-    },
-    // this is how the player draws itself on the map
-    // using ROT.js display
-    draw: drawEntity,
-  }
-}
+    ...
 ```
 
 Here you can see the player's position is defined from whatever position is passed in at creation time. There is also an inventory of items the player carries, and some character stats (hit points, experience points, and gold). If you want to build more complex player entities you should start by adding to this datastructure, any extra information which you need to store about the player. At the moment if you add or change a stat it will automatically be rendered in the heads-up-display at the bottom of the screen. See the later section for using the basic inventory implementation.
@@ -322,12 +319,7 @@ function makeMonster(x, y) {
     character: "M",
     // the monster's stats
     stats: {"hp": 14},
-    // called by the ROT.js scheduler
-    act: monsterAct,
-    // draw the monster
-    draw: drawEntity,
-  }
-}
+    ...
 ```
 
 If you want to store other variables or properties of this particular monster you can put them in here. At the moment the only variables passed in are the `x, y` position, but you could add things like hit points, damage, etc. for implementing combat.
@@ -403,13 +395,26 @@ The non-game screens defined in the HTML code are:
  * Win game
  * Lose game
 
-You can modify any of these simply by editing the HTML. If you need additional functionality such as adding clickable toggles in the settings screen then you can add new event bindings at the bottom of `main.js` on line `892` where all of the event bindings happen.
+You can modify any of these simply by editing the HTML. If you need additional functionality such as adding clickable toggles in the settings screen then you can add to the event bindings at the bottom of `main.js` on line `892`.
 
 You can add a new screen by cloning one of the existing screens and using the `showScreen()` command to show a particular screen using its `id` like this: `showScreen("myscreen")`. Make sure you give each new screen a unique `id` like this:
 
 ``` {.html}
   <div id="myscreen" class="screen modal">
 ```
+
+### Exercises
+
+Now that you know your way around the code, here are a few exercises you can use to make a fuller roguelike game:
+
+ * Replace the monster sprite with the skeleton or snake tile.
+ * Create a health pickup item type using the `potion` tile, which increases the players `hp` stat when the pick it up.
+ * Create a trap which is invisible until the player steps upon it when it then takes `hp` off and displays a fire tile.
+ * Create a healing spell item which goes into the player inventory but does not do anything until it is clicked, when it increases hp.
+ * Use the "stairs down" tile to make multiple levels using the `init()` function with a `level` property that increments as you go down.
+ * Implement a "hunger clock" by incrementing a new hunger stat on the player until they die, and a new "food" item which resets hunger.
+
+These exercises should get you started on your way to creating a real roguelike game. If you make something cool head over to the community section on the [Roguelike Browser Boilerplate community](https://chr15m.itch.io/roguelike-browser-boilerplate/community).
 
 ## Bonus: make an app
 
@@ -451,6 +456,7 @@ Once you have published you will want to tell people about your game. Some place
 
 ## Resources
 
+ * [Roguelike Browser Boilerplate community](https://chr15m.itch.io/roguelike-browser-boilerplate/community)
  * [Roguelike Radio podcast](http://www.roguelikeradio.com/)
  * [/r/roguelikedev on Reddit](https://www.reddit.com/r/roguelikedev/)
  * [Roguelike tag on Itch.io](https://itch.io/games/tag-roguelike) 
