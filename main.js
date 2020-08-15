@@ -247,28 +247,12 @@ let Game = {
 
     // finally we put the player and the monster on their
     // starting tiles, which must be from the walkable list
-    this.player = this._createBeing(makePlayer, freeCells);
-    this.monster = this._createBeing(makeMonster, freeCells);
+    this.player = createBeing(makePlayer, freeCells);
+    this.monster = createBeing(makeMonster, freeCells);
 
     // here we are re-scaling the background so it is
     // zoomed in and centered on the player tile
     rescale(this.player._x, this.player._y);
-  },
-
-  // both the player and monster initial position is set
-  // by choosing a random freeCell and creating the type
-  // of object (`what`) on that position
-  _createBeing: function(what, freeCells) {
-    const index = Math.floor(
-          ROT.RNG.getUniform() * freeCells.length);
-    // remove from the freeCells array now that it's taken
-    const key = freeCells.splice(index, 1)[0];
-    const parts = key.split(",");
-    const x = parseInt(parts[0]);
-    const y = parseInt(parts[1]);
-    const being = what(x, y);
-    being.draw();
-    return being;
   },
 
   // here we are creating the treasure chest items
@@ -374,6 +358,21 @@ let Game = {
   }
 };
 
+// both the player and monster initial position is set
+// by choosing a random freeCell and creating the type
+// of object (`what`) on that position
+function createBeing(what, freeCells) {
+  const index = Math.floor(
+        ROT.RNG.getUniform() * freeCells.length);
+  // remove from the freeCells array now that it's taken
+  const key = freeCells.splice(index, 1)[0];
+  const parts = key.split(",");
+  const x = parseInt(parts[0]);
+  const y = parseInt(parts[1]);
+  const being = what(x, y);
+  being.draw();
+  return being;
+}
 
 /******************
  *** the player ***
