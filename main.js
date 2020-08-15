@@ -145,7 +145,7 @@ let Game = {
   init: function() {
     // first create a ROT.js display manager
     this.display = new ROT.Display(tileOptions);
-    resetcanvas(this.display.getContainer());
+    resetCanvas(this.display.getContainer());
 
     // this is where we populate the map data structure
     // with all of the background tiles, items,
@@ -158,14 +158,14 @@ let Game = {
     this.scheduler.add(this.monster, true);
 
     // render some example items in the inventory
-    renderinventory(this.player.inventory, function(which, ev) {
+    renderInventory(this.player.inventory, function(which, ev) {
       // this function is called when an inventory item is clicked
       toast(which[1] + " selected");
-      toggleinventory(ev, true);
+      toggleInventory(ev, true);
     });
 
     // render the stats hud at the bottom of the screen
-    renderstats(this.player.stats);
+    renderStats(this.player.stats);
 
     // kick everything off
     this.engine = new ROT.Engine(this.scheduler);
@@ -177,7 +177,7 @@ let Game = {
   // the menu and get ready for next round
   destroy: function() {
     // remove all listening event handlers
-    removelisteners();
+    removeListeners();
 
     // tear everything down and 
     // reset all our variables back
@@ -195,7 +195,7 @@ let Game = {
     }
 
     // close out the game screen and show the title
-    showscreen("title");
+    showScreen("title");
   },
 };
 
@@ -426,7 +426,7 @@ function checkItem(entity) {
     // show a message, re-render the stats
     // then play the pickup/win sound
     Game.player.stats.gold += 1;
-    renderstats(Game.player.stats);
+    renderStats(Game.player.stats);
     toast("You found gold!");
     sfx["win"].play();
   } else if (Game.map[key] == "*") {
@@ -498,7 +498,7 @@ function drawEntity() {
 
 
 // basic ROT.js entity with position and stats
-let makeMonster = function(x, y) {
+function makeMonster(x, y) {
   return {
     _x: x,
     _y: y,
@@ -511,7 +511,7 @@ let makeMonster = function(x, y) {
 
 // the ROT.js scheduler calls this method when it is time
 // for the monster to act
-function monsterAct() {
+function monsterAct(monster) {
   // the monster wants to know where the player is
   const p = Game.player;
 
@@ -596,7 +596,7 @@ function combat(monster) {
       // remove hit points from the player
       Game.player.stats.hp -= roll2;
       // re-render the player's hud stats
-      renderstats(Game.player.stats);
+      renderStats(Game.player.stats);
       // play the hit sound after 1/4 second
       setTimeout(function() {
         sfx["hit"].play();
@@ -633,7 +633,7 @@ function win() {
   // tear down the game
   Game.destroy();
   // show the blingy "win" screen to the user
-  showscreen("win");
+  showScreen("win");
 }
 
 // this gets called when the player loses the game
@@ -645,7 +645,7 @@ function lose() {
   // holding a rising ghost image above the tombstone
   const ghost = createGhost();
   // we stop listening for user input while the ghost animates
-  removelisteners();
+  removeListeners();
   // play the lose sound effect
   sfx["lose"].play();
   // wait 2 seconds for the ghost animation to finish
@@ -655,7 +655,7 @@ function lose() {
     // tear down the game
     Game.destroy();
     // show the "lose" screen to the user
-    showscreen("lose");
+    showScreen("lose");
   }, 2000);
 }
 
@@ -681,11 +681,11 @@ document.querySelectorAll(".game-title-text")
 // this code resets the ROT.js display canvas
 // and sets up the touch and click event handlers
 // when it's called at the start of the game
-function resetcanvas(el) {
+function resetCanvas(el) {
   $("#canvas").innerHTML = "";
   $("#canvas").appendChild(el);
   $("#canvas").addEventListener(clickevt, handleTouch);
-  showscreen("game");
+  showScreen("game");
 }
 
 // this function uses CSS styles to reposition the
@@ -708,7 +708,7 @@ function rescale(x, y) {
 // while showing the lose animation we don't want
 // any event handlers to fire so we remove them
 // and lock the game
-function removelisteners() {
+function removeListeners() {
   Game.engine.lock();
   window.removeEventListener("keydown", keyHandler);
   $("#canvas").removeEventListener(clickevt, handleTouch);
@@ -716,7 +716,7 @@ function removelisteners() {
 }
 
 // hides all screens and shows the requested screen
-function showscreen(which, ev) {
+function showScreen(which, ev) {
   ev && ev.preventDefault();
   document.querySelectorAll(".screen")
   .forEach(function(s) {
@@ -735,7 +735,7 @@ function showscreen(which, ev) {
 // where "C" is the character from the tileset
 // and "Words" are whatever words you want next
 // to it
-function renderinventory(items, callback) {
+function renderInventory(items, callback) {
   const inv = $("#inventory ul");
   inv.innerHTML = "";
   items.forEach(function(i) {
@@ -756,7 +756,7 @@ function renderinventory(items, callback) {
 // pass in an object containing key value pairs where
 // the key is the name of the stat and the value is the
 // number
-function renderstats(stats) {
+function renderStats(stats) {
   const st = $("#hud");
   st.innerHTML = "";
   for (let s in stats) {
@@ -765,7 +765,7 @@ function renderstats(stats) {
 }
 
 // toggles the inventory UI open or closed
-function toggleinventory(ev, force) {
+function toggleInventory(ev, force) {
   const c = ev.target.className;
   if (c != "sprite" && c != "inventory-item" || force) {
     ev.preventDefault();
@@ -854,8 +854,8 @@ function handleTouch(ev) {
 
 // this function gets called from the first screen
 // when the "play" button is clicked.
-function startgame() {
-  showscreen("game");
+function startGame() {
+  showScreen("game");
   sfx["rubber"].play();
   Game.init();
 }
@@ -863,19 +863,19 @@ function startgame() {
 // this function gets called when the user selects
 // a menu item on the front page and shows the 
 // relevant screen
-function handlemenuchange(which, ev) {
+function handleMenuChange(which, ev) {
   ev.preventDefault();
   const choice = which.getAttribute("value");
-  showscreen(choice);
+  showScreen(choice);
   sfx["choice"].play();
 }
 
 // this helper function hides any of the menu
 // screens above, shows the title screen again,
 // and plays a sound as it does so
-function hidemodal(ev) {
+function hideModal(ev) {
   ev.preventDefault();
-  showscreen("title");
+  showScreen("title");
   sfx['hide'].play();
 }
 
@@ -884,23 +884,23 @@ if (!window["rbb-events"]) {
   // listen for the end of the title
   // animation to show the first screen
   $("#plate").addEventListener(
-      "animationend", showscreen.bind(null, 'title'));
+      "animationend", showScreen.bind(null, 'title'));
   // listen for clicks on the front screen menu options
   document.querySelectorAll("#options #menu input")
   .forEach(function(el) {
     el.addEventListener("touchstart",
-        handlemenuchange.bind(null, el));
+        handleMenuChange.bind(null, el));
     el.addEventListener("click",
-        handlemenuchange.bind(null, el));
+        handleMenuChange.bind(null, el));
   });
   // listen for inventory interactions
-  $("#inventory").addEventListener(clickevt, toggleinventory);
+  $("#inventory").addEventListener(clickevt, toggleInventory);
   // listen for the start game button
-  $("#play").addEventListener(clickevt, startgame);
+  $("#play").addEventListener(clickevt, startGame);
   // listen for "close modal" ok buttons
   document.querySelectorAll(".modal button.action")
   .forEach(function(el) {
-    el.addEventListener(clickevt, hidemodal);
+    el.addEventListener(clickevt, hideModal);
   });
   window["rbb-events"] = true;
 }
