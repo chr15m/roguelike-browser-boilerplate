@@ -1,5 +1,5 @@
 // Update this string to set the game title
-var gametitle = "My Rogue";
+let gametitle = "My Rogue";
 
 
 /*****************
@@ -10,7 +10,7 @@ var gametitle = "My Rogue";
 // This tileset is from kenney.nl
 // It's the "microrogue" tileset
 
-var tileSet = document.createElement("img");
+let tileSet = document.createElement("img");
 tileSet.src = "colored_tilemap_packed.png";
 
 // This is where you specify which tile
@@ -18,7 +18,7 @@ tileSet.src = "colored_tilemap_packed.png";
 // where a character can be a background tile
 // or a player, monster, or item tile
 
-var tileOptions = {
+let tileOptions = {
   layout: "tile",
   bg: "transparent",
   tileWidth: 8,
@@ -51,10 +51,10 @@ var tileOptions = {
 }
 
 // these map tiles are walkable
-var walkable = [".", "*", "g"]
+let walkable = [".", "*", "g"]
 
 // these map tiles should not be replaced by room edges
-var noreplace = [".", "*", "g", "M", "╔", "╗", "╚", "╝", "═", "║"];
+let noreplace = [".", "*", "g", "M", "╔", "╗", "╚", "╝", "═", "║"];
 
 // These sound effects are generated using sfxr.me
 //
@@ -62,7 +62,7 @@ var noreplace = [".", "*", "g", "M", "╔", "╗", "╚", "╝", "═", "║"];
 // to get the sound code and paste it here.
 // Play sounds using this code: `sfxr[soundname].play()`
 
-var sfx = {
+let sfx = {
   "rubber": "5EoyNVaezhPnpFZjpkcJkF8FNCioPncLoztbSHU4u9wDQ8W3P7puffRWvGMnrLRdHa61kGcwhZK3RdoDRitmtwn4JjrQsZCZBmDQgkP5uGUGk863wbpRi1xdA",
   "step": "34T6PkwiBPcxMGrK7aegATo5WTMWoP17BTc6pwXbwqRvndwRjGYXx6rG758rLSU5suu35ZTkRCs1K2NAqyrTZbiJUHQmra9qvbBrSdbBbJ7JvmyBFVDo6eiVD",
   "choice": "34T6PkzXyyB6jHiwFztCFWEWsogkzrhzAH3FH2d97BCuFhqmZgfuXG3xtz8YYSKMzn95yyX8xZXJyesKmpcjpEL3dPP5h2e8mt5MmhExAksyqZyqgavBgsWMd",
@@ -77,14 +77,14 @@ var sfx = {
 
 // here we are turning the sfxr sound codes into
 // audio objects that can be played with `sfx[name].play()`
-for (var s in sfx) {
+for (let s in sfx) {
   sfx[s] = (new SoundEffect(sfx[s])).generate().getAudio();
 }
 
 // these are lookup tables mapping keycodes and
 // click/tap directions to game direction vectors
 
-var keyMap = {
+let keyMap = {
   38: 0,
   33: 1,
   39: 2,
@@ -95,7 +95,7 @@ var keyMap = {
   36: 7,
 };
 
-var tapMap = {
+let tapMap = {
   0: 6,
   1: 0,
   2: 2,
@@ -118,7 +118,7 @@ if (window["Game"]) { Game.destroy(); }
 // bits of our game together in one place for easy
 // reference
 
-var Game = {
+let Game = {
   // this is the ROT.js display handler
   display: null,
   // this is our map data
@@ -207,21 +207,21 @@ var Game = {
     // http://ondras.github.io/rot.js/manual/#map/maze
     // http://ondras.github.io/rot.js/manual/#map/cellular
     // http://ondras.github.io/rot.js/manual/#map/dungeon
-    var digger = new ROT.Map.Digger(
-        tileOptions.width,
-        tileOptions.height);
+    const digger = new ROT.Map.Digger(
+          tileOptions.width,
+          tileOptions.height);
     // list of floor tiles that can be walked on
     // but don't have anything on them yet
-    var freeCells = [];
+    const freeCells = [];
     // list of non-floor tiles that can't be traversed
     // which we'll put scenery on
-    var zeroCells = [];
+    const zeroCells = [];
 
     // the way the ROT.js map generators work is they
     // call this callback for every tile generated with
     // the `value` set to the type of space at that point
-    var digCallback = function(x, y, value) {
-      var key = x+","+y;
+    const digCallback = function(x, y, value) {
+      const key = x + "," + y;
       if (value) {
         // store this in the non-walkable cells list
         zeroCells.push(key);
@@ -259,22 +259,22 @@ var Game = {
   // by choosing a random freeCell and creating the type
   // of object (`what`) on that position
   _createBeing: function(what, freeCells) {
-    var index = Math.floor(
-        ROT.RNG.getUniform() * freeCells.length);
+    const index = Math.floor(
+          ROT.RNG.getUniform() * freeCells.length);
     // remove from the freeCells array now that it's taken
-    var key = freeCells.splice(index, 1)[0];
-    var parts = key.split(",");
-    var x = parseInt(parts[0]);
-    var y = parseInt(parts[1]);
+    const key = freeCells.splice(index, 1)[0];
+    const parts = key.split(",");
+    const x = parseInt(parts[0]);
+    const y = parseInt(parts[1]);
     return new what(x, y);
   },
 
   // here we are creating the treasure chest items
   _generateItems: function(freeCells) {
-    for (var i=0; i<15; i++) {
-      var index = Math.floor(
-          ROT.RNG.getUniform() * freeCells.length);
-      var key = freeCells.splice(index, 1)[0];
+    for (let i=0; i<15; i++) {
+      const index = Math.floor(
+            ROT.RNG.getUniform() * freeCells.length);
+      const key = freeCells.splice(index, 1)[0];
       // the first chest contains the amulet
       if (!i) {
         this.amulet = key;
@@ -291,11 +291,11 @@ var Game = {
   // we're just going to play 100 plants randomly
   // in the spaces where there isn't anything already
   _generateShrubberies: function(freeCells) {
-    for (var i=0;i<100;i++) {
+    for (let i=0;i<100;i++) {
       if (freeCells.length) {
-        var index = Math.floor(
-            ROT.RNG.getUniform() * freeCells.length);
-        var key = freeCells.splice(index, 1)[0];
+        const index = Math.floor(
+              ROT.RNG.getUniform() * freeCells.length);
+        const key = freeCells.splice(index, 1)[0];
         this.map[key] = ROT.RNG.getItem("abcde");
       }
     }
@@ -304,14 +304,14 @@ var Game = {
   // to make the map look a bit cooler we'll actually draw
   // walls around the rooms
   _drawRooms: function(mapgen) {
-    var rooms = mapgen.getRooms();
-    for (var rm=0; rm<rooms.length; rm++) {
-      var room = rooms[rm];
+    const rooms = mapgen.getRooms();
+    for (let rm=0; rm<rooms.length; rm++) {
+      const room = rooms[rm];
     
-      var l=room.getLeft() - 1;
-      var r=room.getRight() + 1;
-      var t=room.getTop() - 1;
-      var b=room.getBottom() + 1;
+      const l=room.getLeft() - 1;
+      const r=room.getRight() + 1;
+      const t=room.getTop() - 1;
+      const b=room.getBottom() + 1;
 
       // place the room corner tiles
       this.map[l + "," + t] = "╔";
@@ -327,29 +327,29 @@ var Game = {
       this.map[r + "," + b] = "o";*/
 
       // the next four loops just draw each side of the room
-      for (var i=room.getLeft(); i<=room.getRight(); i++) {
-        var k = i + "," + t;
+      for (let i=room.getLeft(); i<=room.getRight(); i++) {
+        const k = i + "," + t;
         if (noreplace.indexOf(this.map[k]) == -1) {
           this.map[k] = "═";
         }
       }
 
-      for (var i=room.getLeft(); i<=room.getRight(); i++) {
-        var k = i + "," + b;
+      for (let i=room.getLeft(); i<=room.getRight(); i++) {
+        const k = i + "," + b;
         if (noreplace.indexOf(this.map[k]) == -1) {
           this.map[k] = "═";
         }
       }
 
-      for (var i=room.getTop(); i<=room.getBottom(); i++) {
-        var k = l + "," + i;
+      for (let i=room.getTop(); i<=room.getBottom(); i++) {
+        const k = l + "," + i;
         if (noreplace.indexOf(this.map[k]) == -1) {
           this.map[k] = "║";
         }
       }
 
-      for (var i=room.getTop(); i<=room.getBottom(); i++) {
-        var k = r + "," + i;
+      for (let i=room.getTop(); i<=room.getBottom(); i++) {
+        const k = r + "," + i;
         if (noreplace.indexOf(this.map[k]) == -1) {
           this.map[k] = "║";
         }
@@ -363,10 +363,10 @@ var Game = {
 
   // we ask ROT.js to actually draw the map tiles via display
   _drawWholeMap: function() {
-    for (var key in this.map) {
-      var parts = key.split(",");
-      var x = parseInt(parts[0]);
-      var y = parseInt(parts[1]);
+    for (let key in this.map) {
+      const parts = key.split(",");
+      const x = parseInt(parts[0]);
+      const y = parseInt(parts[1]);
       this.display.draw(x, y, this.map[key]);
     }
   }
@@ -379,7 +379,7 @@ var Game = {
 
 
 // basic ROT.js entity with position, inventory, stats
-var Player = function(x, y) {
+let Player = function(x, y) {
   this._x = x;
   this._y = y;
   this.inventory = [
@@ -402,10 +402,10 @@ Player.prototype.act = function() {
 // when keyboard input happens this even handler is called
 // and the position of the player is updated
 Player.prototype.handleEvent = function(e) {
-  var code = e.keyCode;
+  const code = e.keyCode;
   /* one of numpad directions? */
   if (!(code in keyMap)) { return; }
-  var dir = ROT.DIRS[8][keyMap[code]];
+  const dir = ROT.DIRS[8][keyMap[code]];
   moveplayer(dir);
 }
 
@@ -419,7 +419,7 @@ Player.prototype._draw = function() {
 // in order to check whether they hit an empty box
 // or The Amulet
 Player.prototype._checkItem = function() {
-  var key = this._x + "," + this._y;
+  const key = this._x + "," + this._y;
   if (key == Game.amulet) {
     // the amulet is hit initiate the win flow below
     win();
@@ -450,20 +450,20 @@ Player.prototype._checkItem = function() {
 function moveplayer(dir) {
   // get a reference to our global player object
   // this is needed when called from the tap/click handler
-  var p = Game.player;
+  const p = Game.player;
 
   // work out the new position based on direction vector
-  var x = p._x + dir[0];
-  var y = p._y + dir[1];
+  const x = p._x + dir[0];
+  const y = p._y + dir[1];
 
   // map lookup - if we're not moving onto a floor tile
   // or a treasure chest, then we should abort this move
-  var newKey = x + "," + y;
+  const newKey = x + "," + y;
   if (walkable.indexOf(Game.map[newKey]) == -1) { return; }
 
   // check if we've hit the monster
   // and if we have initiate combat
-  var m = Game.monster;
+  const m = Game.monster;
   if (m && m._x == x && m._y == y) {
     combat(m);
     return;
@@ -497,7 +497,7 @@ function moveplayer(dir) {
 
 
 // basic ROT.js entity with position and stats
-var Monster = function(x, y) {
+let Monster = function(x, y) {
   this._x = x;
   this._y = y;
   this.stats = {"hp": 14};
@@ -508,19 +508,18 @@ var Monster = function(x, y) {
 // for the monster to act
 Monster.prototype.act = function() {
   // the monster wants to know where the player is
-  var x = Game.player._x;
-  var y = Game.player._y;
+  const p = Game.player;
 
   // in this whole code block we use the ROT.js "astar" path finding
   // algorithm to help the monster figure out the fastest way to get
   // to the player - for implementation details check out the doc:
   // http://ondras.github.io/rot.js/manual/#path
-  var passableCallback = function(x, y) {
+  const passableCallback = function(x, y) {
     return (walkable.indexOf(Game.map[x + "," + y]) != -1);
   }
-  var astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
-  var path = [];
-  var pathCallback = function(x, y) {
+  const astar = new ROT.Path.AStar(p._x, p._y, passableCallback, {topology:4});
+  const path = [];
+  const pathCallback = function(x, y) {
     path.push([x, y]);
   }
   astar.compute(this._x, this._y, pathCallback);
@@ -534,14 +533,12 @@ Monster.prototype.act = function() {
   if (path.length <= 1) {
     combat(this);
   } else {
-    // the player is safe for now so update the monster position
-    x = path[0][0];
-    y = path[0][1];
     // draw whatever was on the last tile the monster was one
-    Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
-    // update the monster's position and redraw
-    this._x = x;
-    this._y = y;
+    Game.display.draw(this._x, this._y, Game.map[this._x + "," + this._y]);
+    // the player is safe for now so update the monster position
+    // and redraw
+    this._x = path[0][0];
+    this._y = path[0][1];
     this._draw();
   }
 }
@@ -571,15 +568,15 @@ Monster.prototype._checkDeath = function() {
 function combat(monster) {
   // a description of the combat to tell
   // the user what is happening
-  var msg = "";
+  let msg = "";
   // roll a dice to see if the player hits
-  var roll = ROT.RNG.getItem([1,2,3,4,5,6])
+  const roll1 = ROT.RNG.getItem([1,2,3,4,5,6])
   // a hit is a four or more
-  if (roll > 3) {
+  if (roll1 > 3) {
     // add to the combat message
     msg += "You hit the monster. ";
     // remove hitpoints from the monster
-    monster.stats.hp -= roll;
+    monster.stats.hp -= roll1;
     // play the hit sound
     sfx["hit"].play();
     // check if the monster has died
@@ -591,13 +588,13 @@ function combat(monster) {
   // if the monster is alive it hits back
   if (monster.stats.hp > 0) {
     // roll a dice to see if the monster hits
-    var roll = ROT.RNG.getItem([1,2,3,4,5,6])
+    const roll2 = ROT.RNG.getItem([1,2,3,4,5,6])
     // a hit is a four or more
-    if (roll > 3) {
+    if (roll2 > 3) {
       // add to the combat message
       msg += "The monster hit.";
       // remove hit points from the player
-      Game.player.stats.hp -= roll;
+      Game.player.stats.hp -= roll2;
       // re-render the player's hud stats
       renderstats(Game.player.stats);
       // play the hit sound after 1/4 second
@@ -628,7 +625,7 @@ function combat(monster) {
 // this gets called when the player wins the game
 function win() {
   // play the win sound effect a bunch of times
-  for (var i=0; i<5; i++) {
+  for (let i=0; i<5; i++) {
     setTimeout(function() {
       sfx["win"].play();
     }, 100 * i);
@@ -642,12 +639,12 @@ function win() {
 // this gets called when the player loses the game
 function lose() {
   // change the player into a tombstone tile
-  var p = Game.player;
+  const p = Game.player;
   Game.display.draw(p._x, p._y, "T");
   // create an animated div element over the top of the game
   // holding a rising ghost image above the tombstone
-  var ghost = attach($("#game"),
-      el("div", {"className": "sprite ghost free float-up"}));
+  const ghost = attach($("#game"),
+        el("div", {"className": "sprite ghost free float-up"}));
   // we stop listening for user input while the ghost animates
   removelisteners();
   // play the lose sound effect
@@ -669,7 +666,7 @@ function lose() {
  ************************************/
 
 
-var clickevt = !!('ontouchstart' in window) ? "touchstart" : "click";
+let clickevt = !!('ontouchstart' in window) ? "touchstart" : "click";
 
 // handy shortcuts and shims for manipulating the dom
 $ = document.querySelector.bind(document);
@@ -697,7 +694,7 @@ function resetcanvas(el) {
 // it does this using an "ease" animation which
 // gives a sort of camera follow effect.
 function rescale(x, y) {
-  var c = $("canvas");
+  const c = $("canvas");
   if (canvas) {
     // this applies the animation effect
     canvas.style.transition = "all 0.5s ease";
@@ -729,7 +726,7 @@ function showscreen(which, ev) {
   });
   $("#" + which).classList.remove("hide");
   $("#" + which).classList.add("show");
-  var action = $("#" + which + ">.action");
+  const action = $("#" + which + ">.action");
   if (action) { action.focus(); };
 }
 
@@ -740,11 +737,11 @@ function showscreen(which, ev) {
 // and "Words" are whatever words you want next
 // to it
 function renderinventory(items, callback) {
-  var inv = $("#inventory ul");
+  const inv = $("#inventory ul");
   inv.innerHTML = "";
   items.forEach(function(i) {
-    var tile = tileOptions.tileMap[i[0]];
-    var words = i[1];
+    const tile = tileOptions.tileMap[i[0]];
+    const words = i[1];
     attach(inv,
          el("li", {"onclick": callback.bind(null, i),
                    "className": "inventory-item",},
@@ -761,21 +758,21 @@ function renderinventory(items, callback) {
 // the key is the name of the stat and the value is the
 // number
 function renderstats(stats) {
-  var st = $("#hud");
+  const st = $("#hud");
   st.innerHTML = "";
-  for (var s in stats) {
+  for (let s in stats) {
     attach(st, el("span", {}, [s.toUpperCase() + ": " + stats[s]]));
   }
 }
 
 // toggles the inventory UI open or closed
 function toggleinventory(ev, force) {
-  var c = ev.target.className;
+  const c = ev.target.className;
   if (c != "sprite" && c != "inventory-item" || force) {
     ev.preventDefault();
     // toggle the inventory to visible/invisible
-    var b = $("#inventory>span");
-    var d = $("#inventory>div");
+    const b = $("#inventory>span");
+    const d = $("#inventory>div");
     if (b.style.display == "none") {
       b.style.display = "block";
       d.style.display = "none";
@@ -791,7 +788,7 @@ function toggleinventory(ev, force) {
 // of the game screen for the player such as
 // "You have found a sneaky wurzel."
 function toast(message) {
-  var m = $("#message");
+  const m = $("#message");
   m.classList.remove("fade-out");
   m.textContent = message;
   void m.offsetWidth; // trigger CSS reflow
@@ -803,7 +800,7 @@ function toast(message) {
 
 // create an HTML element
 function el(tag, attrs, children) {
-  var node = document.createElement(tag);
+  const node = document.createElement(tag);
   for (a in attrs) { node[a] = attrs[a]; }
   (children || []).forEach(function(c) {
     if (typeof(c) == "string") {
@@ -836,17 +833,17 @@ function rmel(node) {
 // this is where it is caught
 function handletouch(ev) {
   ev.preventDefault();
-  var g = $("#game");
+  const g = $("#game");
   // where on the map the click or touch occurred
-  var cx = (ev["touches"] ? ev.touches[0].clientX : ev.clientX);
-  var cy = (ev["touches"] ? ev.touches[0].clientY : ev.clientY)
-  var x = cx - (g.offsetWidth / 2);
-  var y = cy - (g.offsetHeight / 2);
+  const cx = (ev["touches"] ? ev.touches[0].clientX : ev.clientX);
+  const cy = (ev["touches"] ? ev.touches[0].clientY : ev.clientY)
+  const x = cx - (g.offsetWidth / 2);
+  const y = cy - (g.offsetHeight / 2);
   // figure out which quadrant was clicked relative to the player
-  var qs = Math.ceil((Math.floor(
-          (Math.atan2(y, x) + Math.PI) /
-          (Math.PI / 4.0)) % 7) / 2);
-  var dir = ROT.DIRS[8][tapMap[qs]];
+  const qs = Math.ceil((Math.floor(
+            (Math.atan2(y, x) + Math.PI) /
+            (Math.PI / 4.0)) % 7) / 2);
+  const dir = ROT.DIRS[8][tapMap[qs]];
   // actually move the player in that direction
   moveplayer(dir);
 }
@@ -864,7 +861,7 @@ function startgame() {
 // relevant screen
 function handlemenuchange(which, ev) {
   ev.preventDefault();
-  var choice = which.getAttribute("value");
+  const choice = which.getAttribute("value");
   showscreen(choice);
   sfx["choice"].play();
 }
