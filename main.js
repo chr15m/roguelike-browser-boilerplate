@@ -643,8 +643,7 @@ function lose() {
   Game.display.draw(p._x, p._y, "T");
   // create an animated div element over the top of the game
   // holding a rising ghost image above the tombstone
-  const ghost = attach($("#game"),
-        el("div", {"className": "sprite ghost free float-up"}));
+  const ghost = createGhost();
   // we stop listening for user input while the ghost animates
   removelisteners();
   // play the lose sound effect
@@ -782,6 +781,11 @@ function toggleinventory(ev, force) {
     }
     return false;
   }
+}
+
+function createGhost() {
+  return attach($("#game"),
+      el("div", {"className": "sprite ghost free float-up"}));
 }
 
 // this function displays a message at the top
