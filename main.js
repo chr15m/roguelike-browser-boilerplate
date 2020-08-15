@@ -386,11 +386,6 @@ var Player = function(x, y) {
   this._draw();
 }
 
-// basic ROT.js entity properties
-Player.prototype.getSpeed = function() { return 100; }
-Player.prototype.getX = function() { return this._x; }
-Player.prototype.getY = function() { return this._y; }
-
 // the ROT.js scheduler calls this method when it is time
 // for the player to act
 // what this does is lock the engine to take control
@@ -504,16 +499,13 @@ var Monster = function(x, y) {
   this.stats = {"hp": 14};
   this._draw();
 }
-  
-// basic ROT.js entity properties
-Monster.prototype.getSpeed = function() { return 100; }
 
 // the ROT.js scheduler calls this method when it is time
-// for the player to act
+// for the monster to act
 Monster.prototype.act = function() {
   // the monster wants to know where the player is
-  var x = Game.player.getX();
-  var y = Game.player.getY();
+  var x = Game.player._x;
+  var y = Game.player._y;
 
   // in this whole code block we use the ROT.js "astar" path finding
   // algorithm to help the monster figure out the fastest way to get
