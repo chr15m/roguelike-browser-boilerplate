@@ -248,7 +248,7 @@ let Game = {
     // finally we put the player and the monster on their
     // starting tiles, which must be from the walkable list
     this.player = this._createBeing(makePlayer, freeCells);
-    this.monster = this._createBeing(Monster, freeCells);
+    this.monster = this._createBeing(makeMonster, freeCells);
 
     // here we are re-scaling the background so it is
     // zoomed in and centered on the player tile
@@ -266,7 +266,9 @@ let Game = {
     const parts = key.split(",");
     const x = parseInt(parts[0]);
     const y = parseInt(parts[1]);
-    return what(x, y);
+    const being = what(x, y);
+    being.draw();
+    return being;
   },
 
   // here we are creating the treasure chest items
@@ -373,14 +375,14 @@ let Game = {
 };
 
 
-/*****************************
- *** the player definition ***
- *****************************/
+/******************
+ *** the player ***
+ ******************/
 
 
 // basic ROT.js entity with position, inventory, stats
 function makePlayer(x, y) {
-  const p = {
+  return {
     _x: x,
     _y: y,
     character: "@",
@@ -401,8 +403,6 @@ function makePlayer(x, y) {
     // using ROT.js display
     draw: drawEntity,
   }
-  p.draw();
-  return p;
 }
 
 // when keyboard input happens this even handler is called
@@ -491,27 +491,30 @@ function movePlayer(dir) {
 }
 
 // draw function common to monster and player
-function drawEntity(e) {
+function drawEntity() {
   Game.display.draw(this._x, this._y, this.character);
 }
 
-/*************************
- *** The Monster class ***
- *************************/
+/*******************
+ *** The monster ***
+ *******************/
 
 
 // basic ROT.js entity with position and stats
-let Monster = function(x, y) {
-  if (!(this instanceof Monster)) return new Monster(x, y);
-  this._x = x;
-  this._y = y;
-  this.stats = {"hp": 14};
-  this._draw();
+let makeMonster = function(x, y) {
+  return {
+    _x: x,
+    _y: y,
+    character: "M",
+    stats: {"hp": 14},
+    act: monsterAct,
+    draw: drawEntity,
+  }
 }
 
 // the ROT.js scheduler calls this method when it is time
 // for the monster to act
-Monster.prototype.act = function() {
+function monsterAct() {
   // the monster wants to know where the player is
   const p = Game.player;
 
@@ -544,20 +547,15 @@ Monster.prototype.act = function() {
     // and redraw
     this._x = path[0][0];
     this._y = path[0][1];
-    this._draw();
+    this.draw();
   }
 }
 
-// We draw the monster with an "M" tile
-Monster.prototype._draw = function() {
-  Game.display.draw(this._x, this._y, "M");
-}
-
 // if the monster is dead remove it from the game
-Monster.prototype._checkDeath = function() {
-  if (this.stats.hp < 1) {
-    Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
-    Game.scheduler.remove(this);
+function checkDeath(m) {
+  if (m.stats.hp < 1) {
+    Game.display.draw(m._x, m._y, Game.map[m._x + "," + m._y]);
+    Game.scheduler.remove(m);
     Game.monster = null;
     sfx["kill"].play();
   }
@@ -585,7 +583,7 @@ function combat(monster) {
     // play the hit sound
     sfx["hit"].play();
     // check if the monster has died
-    monster._checkDeath();
+    checkDeath(monster);
   } else {
     sfx["miss"].play();
     msg += "You missed the monster. ";
