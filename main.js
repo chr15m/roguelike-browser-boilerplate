@@ -400,7 +400,6 @@ function makePlayer(x, y) {
     // this is how the player draws itself on the map
     // using ROT.js display
     draw: drawEntity,
-    checkItem: checkItem,
   }
   p.draw();
   return p;
@@ -419,8 +418,8 @@ function keyHandler(ev) {
 // this method gets called by the `movePlayer` function
 // in order to check whether they hit an empty box
 // or The Amulet
-function checkItem() {
-  const key = this._x + "," + this._y;
+function checkItem(entity) {
+  const key = entity._x + "," + entity._y;
   if (key == Game.amulet) {
     // the amulet is hit initiate the win flow below
     win();
@@ -488,7 +487,7 @@ function movePlayer(dir) {
   // play the "step" sound
   sfx["step"].play();
   // check if the player stepped on an item
-  p.checkItem();
+  checkItem(p);
 }
 
 // draw function common to monster and player
