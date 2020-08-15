@@ -315,28 +315,22 @@ function generateRooms(map, mapgen) {
 
     // the next four loops just draw each side of the room
     for (let i=room.getLeft(); i<=room.getRight(); i++) {
-      const k = i + "," + t;
-      if (noreplace.indexOf(map[k]) == -1) {
-        map[k] = "═";
-      }
-    }
-
-    for (let i=room.getLeft(); i<=room.getRight(); i++) {
+      const j = i + "," + t;
       const k = i + "," + b;
+      if (noreplace.indexOf(map[j]) == -1) {
+        map[j] = "═";
+      }
       if (noreplace.indexOf(map[k]) == -1) {
         map[k] = "═";
       }
     }
 
     for (let i=room.getTop(); i<=room.getBottom(); i++) {
-      const k = l + "," + i;
-      if (noreplace.indexOf(map[k]) == -1) {
-        map[k] = "║";
-      }
-    }
-
-    for (let i=room.getTop(); i<=room.getBottom(); i++) {
+      const j = l + "," + i;
       const k = r + "," + i;
+      if (noreplace.indexOf(map[j]) == -1) {
+        map[j] = "║";
+      }
       if (noreplace.indexOf(map[k]) == -1) {
         map[k] = "║";
       }
