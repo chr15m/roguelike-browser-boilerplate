@@ -150,7 +150,7 @@ let Game = {
     // this is where we populate the map data structure
     // with all of the background tiles, items,
     // player and the monster positions
-    this._generateMap();
+    generateMap(this);
 
     // let ROT.js schedule the player and monster entities
     this.scheduler = new ROT.Scheduler.Simple();
@@ -197,166 +197,166 @@ let Game = {
     // close out the game screen and show the title
     showscreen("title");
   },
+};
 
-  // guess what, this generates the game map
-  _generateMap: function() {
-    // we're using the ROT.js Digger tilemap
-    // there are lots of interesting dungeon
-    // generation algorithms here:
-    // http://ondras.github.io/rot.js/manual/#map
-    // http://ondras.github.io/rot.js/manual/#map/maze
-    // http://ondras.github.io/rot.js/manual/#map/cellular
-    // http://ondras.github.io/rot.js/manual/#map/dungeon
-    const digger = new ROT.Map.Digger(
-          tileOptions.width,
-          tileOptions.height);
-    // list of floor tiles that can be walked on
-    // but don't have anything on them yet
-    const freeCells = [];
-    // list of non-floor tiles that can't be traversed
-    // which we'll put scenery on
-    const zeroCells = [];
+// guess what, this generates the game map
+function generateMap(game) {
+  // we're using the ROT.js Digger tilemap
+  // there are lots of interesting dungeon
+  // generation algorithms here:
+  // http://ondras.github.io/rot.js/manual/#map
+  // http://ondras.github.io/rot.js/manual/#map/maze
+  // http://ondras.github.io/rot.js/manual/#map/cellular
+  // http://ondras.github.io/rot.js/manual/#map/dungeon
+  const digger = new ROT.Map.Digger(
+        tileOptions.width,
+        tileOptions.height);
+  // list of floor tiles that can be walked on
+  // but don't have anything on them yet
+  const freeCells = [];
+  // list of non-floor tiles that can't be traversed
+  // which we'll put scenery on
+  const zeroCells = [];
 
-    // the way the ROT.js map generators work is they
-    // call this callback for every tile generated with
-    // the `value` set to the type of space at that point
-    const digCallback = function(x, y, value) {
-      const key = x + "," + y;
-      if (value) {
-        // store this in the non-walkable cells list
-        zeroCells.push(key);
-      } else {
-        // on our map we want to draw a "walkable" tile
-        // here which is represented by a dot
-        this.map[key] = ".";
-        // store this in the walkable cells list
-        freeCells.push(key);
-      }
+  // the way the ROT.js map generators work is they
+  // call this callback for every tile generated with
+  // the `value` set to the type of space at that point
+  const digCallback = function(x, y, value) {
+    const key = x + "," + y;
+    if (value) {
+      // store this in the non-walkable cells list
+      zeroCells.push(key);
+    } else {
+      // on our map we want to draw a "walkable" tile
+      // here which is represented by a dot
+      game.map[key] = ".";
+      // store this in the walkable cells list
+      freeCells.push(key);
     }
-    // kick off the map creation algorithm to build
-    // the basic map shape with rooms and corridors
-    digger.create(digCallback.bind(this));
+  }
+  // kick off the map creation algorithm to build
+  // the basic map shape with rooms and corridors
+  digger.create(digCallback.bind(game));
 
-    // now we spawn generators for populating other stuff
-    // in the map - you can read each of these below
-    this._generateItems(freeCells);
-    this._generateShrubberies(zeroCells);
-    this._drawRooms(digger);
-    // draw the map so far on the screen
-    this._drawWholeMap();
+  // now we spawn generators for populating other stuff
+  // in the map - you can read each of these below
+  generateItems(game, freeCells);
+  generateScenery(game.map, zeroCells);
+  generateRooms(game.map, digger);
+  // draw the map so far on the screen
+  drawWholeMap(game.display, game.map);
 
-    // finally we put the player and the monster on their
-    // starting tiles, which must be from the walkable list
-    this.player = createBeing(makePlayer, freeCells);
-    this.monster = createBeing(makeMonster, freeCells);
+  // finally we put the player and the monster on their
+  // starting tiles, which must be from the walkable list
+  game.player = createBeing(makePlayer, freeCells);
+  game.monster = createBeing(makeMonster, freeCells);
 
-    // here we are re-scaling the background so it is
-    // zoomed in and centered on the player tile
-    rescale(this.player._x, this.player._y);
-  },
+  // here we are re-scaling the background so it is
+  // zoomed in and centered on the player tile
+  rescale(game.player._x, game.player._y);
+}
 
-  // here we are creating the treasure chest items
-  _generateItems: function(freeCells) {
-    for (let i=0; i<15; i++) {
+// here we are creating the treasure chest items
+function generateItems(game, freeCells) {
+  for (let i=0; i<15; i++) {
+    const index = Math.floor(
+          ROT.RNG.getUniform() * freeCells.length);
+    const key = freeCells.splice(index, 1)[0];
+    // the first chest contains the amulet
+    if (!i) {
+      game.amulet = key;
+      game.map[key] = "*";
+    } else {
+      // add either a treasure chest
+      // or a piece of gold to the map
+      game.map[key] = ROT.RNG.getItem(["*", "g"]);
+    }
+  }
+}
+
+// these plant tiles are purely bling
+// we're just going to place 100 plants randomly
+// in the spaces where there isn't anything already
+function generateScenery(map, freeCells) {
+  for (let i=0;i<100;i++) {
+    if (freeCells.length) {
       const index = Math.floor(
             ROT.RNG.getUniform() * freeCells.length);
       const key = freeCells.splice(index, 1)[0];
-      // the first chest contains the amulet
-      if (!i) {
-        this.amulet = key;
-        this.map[key] = "*";
-      } else {
-        // add either a treasure chest
-        // or a piece of gold to the map
-        this.map[key] = ROT.RNG.getItem(["*", "g"]);
-      }
-    }
-  },
-
-  // these plant tiles are purely bling
-  // we're just going to play 100 plants randomly
-  // in the spaces where there isn't anything already
-  _generateShrubberies: function(freeCells) {
-    for (let i=0;i<100;i++) {
-      if (freeCells.length) {
-        const index = Math.floor(
-              ROT.RNG.getUniform() * freeCells.length);
-        const key = freeCells.splice(index, 1)[0];
-        this.map[key] = ROT.RNG.getItem("abcde");
-      }
-    }
-  },
-
-  // to make the map look a bit cooler we'll actually draw
-  // walls around the rooms
-  _drawRooms: function(mapgen) {
-    const rooms = mapgen.getRooms();
-    for (let rm=0; rm<rooms.length; rm++) {
-      const room = rooms[rm];
-    
-      const l=room.getLeft() - 1;
-      const r=room.getRight() + 1;
-      const t=room.getTop() - 1;
-      const b=room.getBottom() + 1;
-
-      // place the room corner tiles
-      this.map[l + "," + t] = "╔";
-      this.map[r + "," + t] = "╗";
-      this.map[l + "," + b] = "╚";
-      this.map[r + "," + b] = "╝";
-
-      // you can also use a single corner tile for every
-      // corner if you prefer that look
-      /*this.map[l + "," + t] = "o";
-      this.map[r + "," + t] = "o";
-      this.map[l + "," + b] = "o";
-      this.map[r + "," + b] = "o";*/
-
-      // the next four loops just draw each side of the room
-      for (let i=room.getLeft(); i<=room.getRight(); i++) {
-        const k = i + "," + t;
-        if (noreplace.indexOf(this.map[k]) == -1) {
-          this.map[k] = "═";
-        }
-      }
-
-      for (let i=room.getLeft(); i<=room.getRight(); i++) {
-        const k = i + "," + b;
-        if (noreplace.indexOf(this.map[k]) == -1) {
-          this.map[k] = "═";
-        }
-      }
-
-      for (let i=room.getTop(); i<=room.getBottom(); i++) {
-        const k = l + "," + i;
-        if (noreplace.indexOf(this.map[k]) == -1) {
-          this.map[k] = "║";
-        }
-      }
-
-      for (let i=room.getTop(); i<=room.getBottom(); i++) {
-        const k = r + "," + i;
-        if (noreplace.indexOf(this.map[k]) == -1) {
-          this.map[k] = "║";
-        }
-      }
-
-      // you can also do something more interesting with
-      // the doors of the room if you want
-      // room.getDoors(console.log);
-    }
-  },
-
-  // we ask ROT.js to actually draw the map tiles via display
-  _drawWholeMap: function() {
-    for (let key in this.map) {
-      const parts = key.split(",");
-      const x = parseInt(parts[0]);
-      const y = parseInt(parts[1]);
-      this.display.draw(x, y, this.map[key]);
+      map[key] = ROT.RNG.getItem("abcde");
     }
   }
-};
+}
+
+// to make the map look a bit cooler we'll actually draw
+// walls around the rooms
+function generateRooms(map, mapgen) {
+  const rooms = mapgen.getRooms();
+  for (let rm=0; rm<rooms.length; rm++) {
+    const room = rooms[rm];
+  
+    const l=room.getLeft() - 1;
+    const r=room.getRight() + 1;
+    const t=room.getTop() - 1;
+    const b=room.getBottom() + 1;
+
+    // place the room corner tiles
+    map[l + "," + t] = "╔";
+    map[r + "," + t] = "╗";
+    map[l + "," + b] = "╚";
+    map[r + "," + b] = "╝";
+
+    // you can also use a single corner tile for every
+    // corner if you prefer that look
+    /*map[l + "," + t] = "o";
+    map[r + "," + t] = "o";
+    map[l + "," + b] = "o";
+    map[r + "," + b] = "o";*/
+
+    // the next four loops just draw each side of the room
+    for (let i=room.getLeft(); i<=room.getRight(); i++) {
+      const k = i + "," + t;
+      if (noreplace.indexOf(map[k]) == -1) {
+        map[k] = "═";
+      }
+    }
+
+    for (let i=room.getLeft(); i<=room.getRight(); i++) {
+      const k = i + "," + b;
+      if (noreplace.indexOf(map[k]) == -1) {
+        map[k] = "═";
+      }
+    }
+
+    for (let i=room.getTop(); i<=room.getBottom(); i++) {
+      const k = l + "," + i;
+      if (noreplace.indexOf(map[k]) == -1) {
+        map[k] = "║";
+      }
+    }
+
+    for (let i=room.getTop(); i<=room.getBottom(); i++) {
+      const k = r + "," + i;
+      if (noreplace.indexOf(map[k]) == -1) {
+        map[k] = "║";
+      }
+    }
+
+    // you can also do something more interesting with
+    // the doors of the room if you want
+    // room.getDoors(console.log);
+  }
+}
+
+// we ask ROT.js to actually draw the map tiles via display
+function drawWholeMap(display, map) {
+  for (let key in map) {
+    const parts = key.split(",");
+    const x = parseInt(parts[0]);
+    const y = parseInt(parts[1]);
+    display.draw(x, y, map[key]);
+  }
+}
 
 // both the player and monster initial position is set
 // by choosing a random freeCell and creating the type
@@ -379,16 +379,20 @@ function createBeing(what, freeCells) {
  ******************/
 
 
-// basic ROT.js entity with position, inventory, stats
+// this function creates a player object with position, inventory, and stats
 function makePlayer(x, y) {
   return {
+    // player's position
     _x: x,
     _y: y,
+    // which tile to draw the player with
     character: "@",
+    // what the player is carrying
     inventory: [
       ["x", "Axe (+5)"],
       ["p", "Potion"]
     ],
+    // the player's stats
     stats: {"hp": 10, "xp": 1, "gold": 0},
     // the ROT.js scheduler calls this method when it is time
     // for the player to act
@@ -445,7 +449,7 @@ function checkItem(entity) {
 // this function moves the player on the tilemap
 // it is called from the keyboard event handler above
 // `keyHandler()`
-// and also from the click/tap handler `handletouch()` below
+// and also from the click/tap handler `handleTouch()` below
 function movePlayer(dir) {
   // get a reference to our global player object
   // this is needed when called from the tap/click handler
@@ -687,7 +691,7 @@ document.querySelectorAll(".game-title-text")
 function resetcanvas(el) {
   $("#canvas").innerHTML = "";
   $("#canvas").appendChild(el);
-  $("#canvas").addEventListener(clickevt, handletouch);
+  $("#canvas").addEventListener(clickevt, handleTouch);
   showscreen("game");
 }
 
@@ -714,7 +718,7 @@ function rescale(x, y) {
 function removelisteners() {
   Game.engine.lock();
   window.removeEventListener("keydown", keyHandler);
-  $("#canvas").removeEventListener(clickevt, handletouch);
+  $("#canvas").removeEventListener(clickevt, handleTouch);
   Game.scheduler.clear();
 }
 
@@ -833,7 +837,7 @@ function rmel(node) {
 
 // when a touch event happens
 // this is where it is caught
-function handletouch(ev) {
+function handleTouch(ev) {
   ev.preventDefault();
   const g = $("#game");
   // where on the map the click or touch occurred
