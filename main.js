@@ -25,30 +25,36 @@ var tileOptions = {
   tileHeight: 8,
   tileSet: tileSet,
   tileMap: {
-    "@": [40, 0],
-    ".": [32, 32],
-    "M": [88, 0],
-    "*": [72, 24],
-    "g": [64, 40],
-    "a": [40, 32],
-    "b": [32, 40],
-    "c": [40, 40],
-    "d": [48, 40],
-    "e": [56, 40],
-    "T": [72, 56],
-    "╔": [0, 72],
-    "╗": [24, 72],
-    "╝": [72, 72],
-    "╚": [48, 72],
-    "═": [8, 72],
-    "║": [32, 72],
-    "o": [40, 72],
-    "x": [56, 32],
-    "p": [56, 64],
+    "@": [40, 0],  // player
+    ".": [32, 32], // floor
+    "M": [88, 0],  // monster
+    "*": [72, 24], // treasure chest
+    "g": [64, 40], // gold
+    "x": [56, 32], // axe
+    "p": [56, 64], // potion
+    "a": [40, 32], // tree 1
+    "b": [32, 40], // tree 2
+    "c": [40, 40], // tree 3
+    "d": [48, 40], // tree 4
+    "e": [56, 40], // tree 5
+    "T": [72, 56], // tombstone
+    "╔": [0, 72],  // room corner
+    "╗": [24, 72], // room corner
+    "╝": [72, 72], // room corner
+    "╚": [48, 72], // room corner
+    "═": [8, 72],  // room edge
+    "║": [32, 72], // room edge
+    "o": [40, 72], // room corner
   },
   width: 25,
   height: 40
 }
+
+// these map tiles are walkable
+var walkable = [".", "*", "g"]
+
+// these map tiles should not be replaced by room edges
+var noreplace = [".", "*", "g", "M", "╔", "╗", "╚", "╝", "═", "║"];
 
 // These sound effects are generated using sfxr.me
 //
@@ -297,10 +303,8 @@ var Game = {
 
   // to make the map look a bit cooler we'll actually draw
   // walls around the rooms
-  _drawRooms: function(map) {
-    // these map tiles should not be replaced by room edges
-    var noreplace = [".", "*", "g", "M", "╔", "╗", "╚", "╝", "═", "║"];
-    var rooms = map.getRooms();
+  _drawRooms: function(mapgen) {
+    var rooms = mapgen.getRooms();
     for (var rm=0; rm<rooms.length; rm++) {
       var room = rooms[rm];
     
@@ -455,7 +459,7 @@ function moveplayer(dir) {
   // map lookup - if we're not moving onto a floor tile
   // or a treasure chest, then we should abort this move
   var newKey = x + "," + y;
-  if ([".", "*", "g"].indexOf(Game.map[newKey]) == -1) { return; }
+  if (walkable.indexOf(Game.map[newKey]) == -1) { return; }
 
   // check if we've hit the monster
   // and if we have initiate combat
@@ -512,7 +516,7 @@ Monster.prototype.act = function() {
   // to the player - for implementation details check out the doc:
   // http://ondras.github.io/rot.js/manual/#path
   var passableCallback = function(x, y) {
-    return ([".", "*", "g"].indexOf(Game.map[x + "," + y]) != -1);
+    return (walkable.indexOf(Game.map[x + "," + y]) != -1);
   }
   var astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
   var path = [];
