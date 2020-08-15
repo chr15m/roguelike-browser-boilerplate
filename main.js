@@ -131,9 +131,9 @@ let Game = {
   engine: null,
   // schedules events in the game for ROT.js
   scheduler: null,
-  // reference to the `Player` class below
+  // reference to the player object
   player: null,
-  // reference to the `Monster` class below
+  // reference to the monster object
   monster: null,
   // the position of the amulet in the map
   // as `x,y` so it can be checked against
@@ -152,7 +152,7 @@ let Game = {
     // player and the monster positions
     this._generateMap();
 
-    // let ROT.js schedule the Player and Monster objects
+    // let ROT.js schedule the player and monster entities
     this.scheduler = new ROT.Scheduler.Simple();
     this.scheduler.add(this.player, true);
     this.scheduler.add(this.monster, true);
@@ -247,7 +247,7 @@ let Game = {
 
     // finally we put the player and the monster on their
     // starting tiles, which must be from the walkable list
-    this.player = this._createBeing(Player, freeCells);
+    this.player = this._createBeing(makePlayer, freeCells);
     this.monster = this._createBeing(Monster, freeCells);
 
     // here we are re-scaling the background so it is
@@ -266,7 +266,7 @@ let Game = {
     const parts = key.split(",");
     const x = parseInt(parts[0]);
     const y = parseInt(parts[1]);
-    return new what(x, y);
+    return what(x, y);
   },
 
   // here we are creating the treasure chest items
@@ -373,52 +373,53 @@ let Game = {
 };
 
 
-/************************
- *** the Player class ***
- ************************/
+/*****************************
+ *** the player definition ***
+ *****************************/
 
 
 // basic ROT.js entity with position, inventory, stats
-let Player = function(x, y) {
-  this._x = x;
-  this._y = y;
-  this.inventory = [
-    ["x", "Axe (+5)"],
-    ["p", "Potion"]
-  ];
-  this.stats = {"hp": 10, "xp": 1, "gold": 0};
-  this._draw();
-}
-
-// the ROT.js scheduler calls this method when it is time
-// for the player to act
-// what this does is lock the engine to take control
-// and then wait for keyboard input from the user
-Player.prototype.act = function() {
-  Game.engine.lock();
-  window.addEventListener("keydown", this);
+function makePlayer(x, y) {
+  const p = {
+    _x: x,
+    _y: y,
+    character: "@",
+    inventory: [
+      ["x", "Axe (+5)"],
+      ["p", "Potion"]
+    ],
+    stats: {"hp": 10, "xp": 1, "gold": 0},
+    // the ROT.js scheduler calls this method when it is time
+    // for the player to act
+    // what this does is lock the engine to take control
+    // and then wait for keyboard input from the user
+    act: () => {
+      Game.engine.lock();
+      window.addEventListener("keydown", keyHandler);
+    },
+    // this is how the player draws itself on the map
+    // using ROT.js display
+    draw: drawEntity,
+    checkItem: checkItem,
+  }
+  p.draw();
+  return p;
 }
 
 // when keyboard input happens this even handler is called
 // and the position of the player is updated
-Player.prototype.handleEvent = function(e) {
-  const code = e.keyCode;
+function keyHandler(ev) {
+  const code = ev.keyCode;
   /* one of numpad directions? */
   if (!(code in keyMap)) { return; }
   const dir = ROT.DIRS[8][keyMap[code]];
-  moveplayer(dir);
+  movePlayer(dir);
 }
 
-// this is how the Player draws itself on the map
-// using ROT.js display
-Player.prototype._draw = function() {
-  Game.display.draw(this._x, this._y, "@", "#ff0");
-}
-
-// this method gets called by the `moveplayer` function
+// this method gets called by the `movePlayer` function
 // in order to check whether they hit an empty box
 // or The Amulet
-Player.prototype._checkItem = function() {
+function checkItem() {
   const key = this._x + "," + this._y;
   if (key == Game.amulet) {
     // the amulet is hit initiate the win flow below
@@ -445,9 +446,9 @@ Player.prototype._checkItem = function() {
 
 // this function moves the player on the tilemap
 // it is called from the keyboard event handler above
-// `Player.prototype.handleEvent()`
+// `keyHandler()`
 // and also from the click/tap handler `handletouch()` below
-function moveplayer(dir) {
+function movePlayer(dir) {
   // get a reference to our global player object
   // this is needed when called from the tap/click handler
   const p = Game.player;
@@ -478,18 +479,22 @@ function moveplayer(dir) {
   p._y = y;
 
   // re-draw the player
-  p._draw();
+  p.draw();
   // re-locate the game screen to center the player
   rescale(x, y);
   // remove the keyboard event listener and unlock the scheduler
-  window.removeEventListener("keydown", p);
+  window.removeEventListener("keydown", keyHandler);
   Game.engine.unlock();
   // play the "step" sound
   sfx["step"].play();
   // check if the player stepped on an item
-  p._checkItem();
+  p.checkItem();
 }
 
+// draw function common to monster and player
+function drawEntity(e) {
+  Game.display.draw(this._x, this._y, this.character);
+}
 
 /*************************
  *** The Monster class ***
@@ -498,6 +503,7 @@ function moveplayer(dir) {
 
 // basic ROT.js entity with position and stats
 let Monster = function(x, y) {
+  if (!(this instanceof Monster)) return new Monster(x, y);
   this._x = x;
   this._y = y;
   this.stats = {"hp": 14};
@@ -711,7 +717,7 @@ function rescale(x, y) {
 // and lock the game
 function removelisteners() {
   Game.engine.lock();
-  window.removeEventListener("keydown", Game.player);
+  window.removeEventListener("keydown", keyHandler);
   $("#canvas").removeEventListener(clickevt, handletouch);
   Game.scheduler.clear();
 }
@@ -845,7 +851,7 @@ function handletouch(ev) {
             (Math.PI / 4.0)) % 7) / 2);
   const dir = ROT.DIRS[8][tapMap[qs]];
   // actually move the player in that direction
-  moveplayer(dir);
+  movePlayer(dir);
 }
 
 // this function gets called from the first screen
