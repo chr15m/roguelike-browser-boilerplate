@@ -463,6 +463,7 @@ Once you have published you will want to tell people about your game. Some place
  * [Roguebasin Wiki](http://www.roguebasin.com/index.php?title=Main_Page)
  * [7 Day Roguelike challenge](https://7drl.com/)
  * [BSD Rogue v5.4.4 source code](https://github.com/Davidslv/rogue)
+ * [Josh Ge's "How To Make A Roguelike" article](https://www.gamasutra.com/blogs/JoshGe/20181029/329512/How_to_Make_a_Roguelike.php)
 
 ## Credits
 
