@@ -52,6 +52,11 @@
     height: 40
   }
 
+  // should we pay attention to click/touch events on the map
+  // and should we show arrow buttons on touch screens?
+  const usePointer = true;
+  const useArrows = true;
+
   // these map tiles are walkable
   const walkable = [".", "*", "g"]
 
@@ -700,8 +705,8 @@
   function resetCanvas(el) {
     $("#canvas").innerHTML = "";
     $("#canvas").appendChild(el);
-    $("#canvas").addEventListener(clickevt, handlePointing);
-    $("#arrows").addEventListener(clickevt, handleArrows);
+    if (usePointer) { $("#canvas").addEventListener(clickevt, handlePointing); };
+    if (useArrows) { $("#arrows").addEventListener(clickevt, handleArrows); };
     showScreen("game");
   }
 
@@ -730,8 +735,8 @@
       game.engine.lock();
       game.scheduler.clear();
       window.removeEventListener("keydown", keyHandler);
-      $("#canvas").removeEventListener(clickevt, handlePointing);
-      $("#arrows").removeEventListener(clickevt, handleArrows);
+      if (usePointer) { $("#canvas").removeEventListener(clickevt, handlePointing); };
+      if (useArrows) { $("#arrows").removeEventListener(clickevt, handleArrows); };
     }
   }
 
