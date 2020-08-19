@@ -914,6 +914,7 @@
 
   // when the on-screen arrow buttons are clicked
   function handleArrows(ev) {
+    ev.preventDefault();
     const dir = ROT.DIRS[8][arrowMap[ev.target["id"]]];
     // actually move the player in that direction
     movePlayer(dir);
