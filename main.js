@@ -56,6 +56,7 @@
   // and should we show arrow buttons on touch screens?
   const usePointer = true;
   const useArrows = true;
+  const touchOffsetY = -20; // move the center by this much
 
   // these map tiles are walkable
   const walkable = [".", "*", "g"]
@@ -454,18 +455,20 @@
     Game.map[key] = ".";
   }
 
-  // this function moves the player on the tilemap
-  // it is called from the keyboard event handler above
+  // move the player according to a direction vector
+  // called from the keyboard event handler above
   // `keyHandler()`
   // and also from the click/tap handler `handlePointing()` below
   function movePlayer(dir) {
+    const p = Game.player;
+    return movePlayerTo(p._x + dir[0], p._y + dir[1]);
+  }
+
+  // move the player on the tilemap to a particular position
+  function movePlayerTo(x, y) {
     // get a reference to our global player object
     // this is needed when called from the tap/click handler
     const p = Game.player;
-
-    // work out the new position based on direction vector
-    const x = p._x + dir[0];
-    const y = p._y + dir[1];
 
     // map lookup - if we're not moving onto a floor tile
     // or a treasure chest, then we should abort this move
@@ -562,7 +565,7 @@
     // player will have moved on the next round
     path.shift();
     // if the distance from the monster to the player is less than one
-    // square the player has lost the game
+    // square then initiate combat
     if (path.length <= 1) {
       combat(m);
     } else {
@@ -722,8 +725,8 @@
       // this sets the scale and position to focus on the player
       canvas.style.transform =
         "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
-        "translate3d(" + ((x * -8) + (tileOptions.width * 8 / 2) + -4 + 0.5) +
-        "px," + ((y * -8) + (tileOptions.height * 8 / 2) + (game.touchScreen ? -20 : 0) + 0.5) + "px,0px)";
+        "translate3d(" + ((x * -8) + (tileOptions.width * 8 / 2) + -4) +
+        "px," + ((y * -8) + (tileOptions.height * 8 / 2) + (game.touchScreen ? touchOffsetY : 0)) + "px,0px)";
     }
   }
 
@@ -902,7 +905,7 @@
     const cx = (ev["touches"] ? ev.touches[0].clientX : ev.clientX);
     const cy = (ev["touches"] ? ev.touches[0].clientY : ev.clientY)
     const x = cx - (g.offsetWidth / 2);
-    const y = cy - (g.offsetHeight / 2);
+    const y = cy - (g.offsetHeight / 2) - touchOffsetY * window.devicePixelRatio;
     // figure out which quadrant was clicked relative to the player
     const qs = Math.ceil((Math.floor(
               (Math.atan2(y, x) + Math.PI) /
@@ -915,6 +918,7 @@
   // when the on-screen arrow buttons are clicked
   function handleArrows(ev) {
     ev.preventDefault();
+    // translate the button to the direction
     const dir = ROT.DIRS[8][arrowMap[ev.target["id"]]];
     // actually move the player in that direction
     movePlayer(dir);
