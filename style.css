@@ -27,7 +27,7 @@ body {
   user-select: none;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px), (max-height: 820px) {
  body {
    font-size: 0.75em;
  }
@@ -137,7 +137,7 @@ a:hover {
   margin-right: 0px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px), (max-height: 820px) {
   #plate > div {
     flex-direction: column;
     text-align: center;
@@ -154,6 +154,15 @@ a:hover {
   margin-bottom: 100px;
   width: 900px;
   max-width: 98%;
+}
+
+@media (min-width: 700px) and (max-height: 820px) {
+  #game-title {
+    width: 900px;
+    max-width: 98%;
+    max-height: 35vh;
+    margin-bottom: 0px;
+  }
 }
 
 .game-title-animation {
@@ -203,6 +212,12 @@ a:hover {
   width: 400px;
   margin: 50px;
   text-align: center;
+}
+
+@media (max-width: 700px), (max-height: 820px) {
+  .modal > * {
+    margin: 10px;
+  }
 }
 
 #instructions div > p {
@@ -332,9 +347,13 @@ a:hover {
   left: 0px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 750px) {
   #inventory {
     bottom: 72px;
+  }
+
+  #hud {
+    width: 100%;
   }
 }
 

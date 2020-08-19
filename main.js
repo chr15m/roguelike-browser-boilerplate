@@ -729,15 +729,18 @@
   // hides all screens and shows the requested screen
   function showScreen(which, ev) {
     ev && ev.preventDefault();
+    const el = $("#" + which);
+    const actionbutton = $("#" + which + ">.action");
     document.querySelectorAll(".screen")
     .forEach(function(s) {
       s.classList.remove("show");
       s.classList.add("hide");
     });
-    $("#" + which).classList.remove("hide");
-    $("#" + which).classList.add("show");
-    const action = $("#" + which + ">.action");
-    if (action) { action.focus(); };
+    el.classList.remove("hide");
+    el.classList.remove("show");
+    void(el.offsetHeight); // trigger CSS reflow
+    el.classList.add("show");
+    if (actionbutton) { actionbutton.focus(); };
   }
 
   // updates the contents of the inventory UI
