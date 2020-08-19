@@ -318,6 +318,14 @@ a:hover {
   top: 24px;
 }
 
+#message .hit {
+  color: #C01256;
+}
+
+#message .miss {
+  color: #FFB570;
+}
+
 #inventory {
   position: absolute;
   bottom: 0px;

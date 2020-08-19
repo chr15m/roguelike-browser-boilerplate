@@ -195,6 +195,8 @@
       game.amulet = null;
     }
 
+    // hide the toast message
+    hideToast(true);
     // close out the game screen and show the title
     showScreen("title");
   }
@@ -478,6 +480,8 @@
     p.draw();
     // re-locate the game screen to center the player
     rescale(x, y);
+    // hide the toast message between turns
+    hideToast();
     // remove the keyboard event listener and unlock the scheduler
     window.removeEventListener("keydown", keyHandler);
     Game.engine.unlock();
@@ -580,13 +584,13 @@
   function combat(monster) {
     // a description of the combat to tell
     // the user what is happening
-    let msg = "";
+    let msg = [];
     // roll a dice to see if the player hits
-    const roll1 = ROT.RNG.getItem([1,2,3,4,5,6])
+    const roll1 = ROT.RNG.getItem([1,2,3,4,5,6]);
     // a hit is a four or more
     if (roll1 > 3) {
       // add to the combat message
-      msg += "You hit the monster. ";
+      msg.push("You hit the monster.");
       // remove hitpoints from the monster
       monster.stats.hp -= roll1;
       // play the hit sound
@@ -595,7 +599,7 @@
       checkDeath(monster);
     } else {
       sfx["miss"].play();
-      msg += "You missed the monster. ";
+      msg.push("You missed the monster.");
     }
     // if the monster is alive it hits back
     if (monster.stats.hp > 0) {
@@ -604,7 +608,7 @@
       // a hit is a four or more
       if (roll2 > 3) {
         // add to the combat message
-        msg += "The monster hit.";
+        msg.push("The monster hit.");
         // remove hit points from the player
         Game.player.stats.hp -= roll2;
         // re-render the player's hud stats
@@ -621,7 +625,7 @@
         }
       } else {
         // if the monster missed add to message
-        msg += "The monster missed.";
+        msg.push("The monster missed.");
         // then play the miss sound after 1/4 second
         setTimeout(function() {
           sfx["miss"].play();
@@ -630,7 +634,7 @@
     }
     // if there is a message to display do so
     if (msg) {
-      toast(msg);
+      toast(battleMessage(msg));
     }
   }
 
@@ -733,7 +737,7 @@
     $("#" + which).classList.remove("hide");
     $("#" + which).classList.add("show");
     const action = $("#" + which + ">.action");
-    if (action) { action.focus(); };
+    if (action) { action.focus(); console.log(action); };
   }
 
   // updates the contents of the inventory UI
@@ -790,9 +794,25 @@
     }
   }
 
+  // creates the ghost sprite when the player dies
   function createGhost() {
     return attach($("#game"),
         el("div", {"className": "sprite ghost free float-up"}));
+  }
+
+  // creates a battle message with highlighted outcomes
+  // pass it an array of strings like:
+  // ["Something missed something.", "Something hit something."]
+  // it will highlight the word "miss" and "hit"
+  // by giving them a CSS class
+  function battleMessage(messages) {
+    const components = messages.reduce(function(msgs, m) {
+      return msgs.concat(m.split(" ").map(function(p) {
+        const match = p.match(/hit|miss/);
+        return el("span", {"className": match ? match[0] : ""}, [p, " "]);
+      })).concat(el("br", {}));
+    }, []);
+    return el("span", {}, components);
   }
 
   // this function displays a message at the top
@@ -801,12 +821,28 @@
   function toast(message) {
     const m = $("#message");
     m.classList.remove("fade-out");
-    m.textContent = message;
-    void m.offsetWidth; // trigger CSS reflow
-    m.classList.add("fade-out");
-    m.onanimationend = function() {
-      m.classList.remove("fade-out");
-    };
+    m.classList.add("show");
+    if (typeof(message) == "string") {
+      m.textContent = message;
+    } else {
+      m.innerHTML = "";
+      m.appendChild(message);
+    }
+  }
+
+  // hide the toast message
+  function hideToast(instant) {
+    const m = $("#message");
+    if (instant) {
+      m.classList.remove("show");
+      m.classList.remove("fade-out")
+    } else if (m.className.match("show")) {
+      m.classList.remove("show");
+      m.classList.add("fade-out");
+      m.onanimationend = function() {
+        m.classList.remove("fade-out");
+      };
+    }
   }
 
   // create an HTML element
