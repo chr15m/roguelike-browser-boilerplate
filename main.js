@@ -737,7 +737,7 @@
     $("#" + which).classList.remove("hide");
     $("#" + which).classList.add("show");
     const action = $("#" + which + ">.action");
-    if (action) { action.focus(); console.log(action); };
+    if (action) { action.focus(); };
   }
 
   // updates the contents of the inventory UI
