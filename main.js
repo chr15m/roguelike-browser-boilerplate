@@ -718,12 +718,12 @@
     const c = $("canvas");
     if (canvas) {
       // this applies the animation effect
-      canvas.style.transition = "all 0.5s ease";
+      canvas.style.transition = "transform 0.5s ease-out 0s";
       // this sets the scale and position to focus on the player
       canvas.style.transform =
         "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
-        "translate(" + ((x * -8) + (tileOptions.width * 8 / 2) + -4) +
-        "px," + ((y * -8) + (tileOptions.height * 8 / 2) + (game.touchScreen ? -20 : 0)) + "px)";
+        "translate3d(" + ((x * -8) + (tileOptions.width * 8 / 2) + -4 + 0.5) +
+        "px," + ((y * -8) + (tileOptions.height * 8 / 2) + (game.touchScreen ? -20 : 0) + 0.5) + "px,0px)";
     }
   }
 
@@ -924,12 +924,12 @@
   function startGame(ev) {
     showScreen("game");
     sfx["rubber"].play();
-    init(Game);
     // if this was a touch event show the arrows buttons
     if (ev["touches"]) {
       $("#arrows").style.display = "block";
       Game.touchScreen = true;
     }
+    init(Game);
   }
 
   // this function gets called when the user selects
