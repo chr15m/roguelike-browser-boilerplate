@@ -441,6 +441,7 @@ A great place to publish your game is on Itch.io, and it's very easy. You can pu
 
 Once you have published you will want to tell people about your game. Some places you can announce your game:
 
+ * Announce your game in the [Roguelike Browser Boilerplate community](https://itch.io/t/934173/games-made-with-rbb).
  * Tag your game with #roguelike when you upload it to Itch.io.
  * [reddit.com/r/roguelikedev](https://reddit.com/r/roguelikedev) (please read the rules before posting).
  * The #advertise-releases channel on the Roguelikes Discord channel.
