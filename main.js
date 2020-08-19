@@ -104,6 +104,13 @@
     3: 4,
   };
 
+  const arrowMap = {
+    "btn-left": 6,
+    "btn-right": 2,
+    "btn-up": 0,
+    "btn-down": 4,
+  };
+
 
   /*****************
    *** game code ***
@@ -445,7 +452,7 @@
   // this function moves the player on the tilemap
   // it is called from the keyboard event handler above
   // `keyHandler()`
-  // and also from the click/tap handler `handleTouch()` below
+  // and also from the click/tap handler `handlePointing()` below
   function movePlayer(dir) {
     // get a reference to our global player object
     // this is needed when called from the tap/click handler
@@ -693,7 +700,8 @@
   function resetCanvas(el) {
     $("#canvas").innerHTML = "";
     $("#canvas").appendChild(el);
-    $("#canvas").addEventListener(clickevt, handleTouch);
+    $("#canvas").addEventListener(clickevt, handlePointing);
+    $("#arrows").addEventListener(clickevt, handleArrows);
     showScreen("game");
   }
 
@@ -722,7 +730,8 @@
       game.engine.lock();
       game.scheduler.clear();
       window.removeEventListener("keydown", keyHandler);
-      $("#canvas").removeEventListener(clickevt, handleTouch);
+      $("#canvas").removeEventListener(clickevt, handlePointing);
+      $("#arrows").removeEventListener(clickevt, handleArrows);
     }
   }
 
@@ -881,7 +890,7 @@
 
   // when a touch event happens
   // this is where it is caught
-  function handleTouch(ev) {
+  function handlePointing(ev) {
     ev.preventDefault();
     const g = $("#game");
     // where on the map the click or touch occurred
@@ -898,12 +907,24 @@
     movePlayer(dir);
   }
 
+  // when the arrow buttons are clicked
+  function handleArrows(ev) {
+    console.log(ev.target["id"]);
+    const dir = ROT.DIRS[8][arrowMap[ev.target["id"]]];
+    // actually move the player in that direction
+    movePlayer(dir);
+  }
+
   // this function gets called from the first screen
   // when the "play" button is clicked.
-  function startGame() {
+  function startGame(ev) {
     showScreen("game");
     sfx["rubber"].play();
     init(Game);
+    // if this was a touch event show the arrows buttons
+    if (ev["touches"]) {
+      $("#arrows").style.display = "block";
+    }
   }
 
   // this function gets called when the user selects

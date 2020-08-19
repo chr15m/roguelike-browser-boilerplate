@@ -347,16 +347,6 @@ a:hover {
   left: 0px;
 }
 
-@media (max-width: 750px) {
-  #inventory {
-    bottom: 72px;
-  }
-
-  #hud {
-    width: 100%;
-  }
-}
-
 #inventory .sprite {
   transform: scale(3);
   display: inline-block;
@@ -376,6 +366,58 @@ a:hover {
 
 #inventory > div {
   display: none;
+}
+
+@media (max-width: 750px) {
+  #inventory {
+    bottom: 72px;
+  }
+
+  #hud {
+    width: 100%;
+  }
+}
+
+#arrows {
+  display: none;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+}
+
+#arrows > * {
+  float: left;
+  font-size: 24px;
+  bottom: 0px;
+}
+
+#btn-left {
+  position: absolute;
+  right: 6.5em;
+}
+
+#btn-right {
+  position: absolute;
+  right: 0em;
+}
+
+#btn-up {
+  transform: rotate(90deg);
+  position: absolute;
+  right: 3.25em;
+  margin-bottom: 3.5em;
+}
+
+#btn-down {
+  transform: rotate(90deg);
+  position: absolute;
+  right: 3.25em;
+}
+
+@media (max-width: 1024px) {
+   #arrows > * {
+     bottom: 72px;
+   }
 }
 
 /*** CSS animations ***/
