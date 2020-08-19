@@ -262,7 +262,7 @@
 
     // here we are re-scaling the background so it is
     // zoomed in and centered on the player tile
-    rescale(game.player._x, game.player._y);
+    rescale(game.player._x, game.player._y, game);
   }
 
   // here we are creating the treasure chest items
@@ -486,7 +486,7 @@
     // re-draw the player
     p.draw();
     // re-locate the game screen to center the player
-    rescale(x, y);
+    rescale(x, y, Game);
     // hide the toast message between turns
     hideToast();
     // remove the keyboard event listener and unlock the scheduler
@@ -709,7 +709,7 @@
   // canvas so that the player is centered.
   // it does this using an "ease" animation which
   // gives a sort of camera follow effect.
-  function rescale(x, y) {
+  function rescale(x, y, game) {
     const c = $("canvas");
     if (canvas) {
       // this applies the animation effect
@@ -718,7 +718,7 @@
       canvas.style.transform =
         "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
         "translate(" + ((x * -8) + (tileOptions.width * 8 / 2) + -4) +
-        "px," + ((y * -8) + (tileOptions.height * 8 / 2)) + "px)";
+        "px," + ((y * -8) + (tileOptions.height * 8 / 2) + (game.touchScreen ? -20 : 0)) + "px)";
     }
   }
 
@@ -907,9 +907,8 @@
     movePlayer(dir);
   }
 
-  // when the arrow buttons are clicked
+  // when the on-screen arrow buttons are clicked
   function handleArrows(ev) {
-    console.log(ev.target["id"]);
     const dir = ROT.DIRS[8][arrowMap[ev.target["id"]]];
     // actually move the player in that direction
     movePlayer(dir);
@@ -924,6 +923,7 @@
     // if this was a touch event show the arrows buttons
     if (ev["touches"]) {
       $("#arrows").style.display = "block";
+      Game.touchScreen = true;
     }
   }
 

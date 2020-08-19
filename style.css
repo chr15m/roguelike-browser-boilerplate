@@ -158,6 +158,12 @@ a:hover {
   max-width: 98%;
 }
 
+@media (max-width: 600px) {
+  #game-title {
+    margin-bottom: 40px;
+  }
+}
+
 @media (min-width: 700px) and (max-height: 820px) {
   #game-title {
     width: 900px;
@@ -389,13 +395,22 @@ a:hover {
 
 #arrows > * {
   float: left;
-  font-size: 24px;
+  font-size: 16px;
   bottom: 0px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#arrows > * > span {
+  pointer-events: none;
 }
 
 #btn-left {
   position: absolute;
-  right: 6.5em;
+  right: 7em;
 }
 
 #btn-right {
@@ -406,14 +421,14 @@ a:hover {
 #btn-up {
   transform: rotate(90deg);
   position: absolute;
-  right: 3.25em;
-  margin-bottom: 3.5em;
+  right: 3.5em;
+  margin-bottom: 3.75em;
 }
 
 #btn-down {
   transform: rotate(90deg);
   position: absolute;
-  right: 3.25em;
+  right: 3.5em;
 }
 
 @media (max-width: 1024px) {
