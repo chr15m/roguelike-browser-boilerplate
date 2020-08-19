@@ -9,6 +9,9 @@
 * {
   box-sizing: border-box;
   touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 html {
@@ -24,7 +27,6 @@ body {
   font-size: 1.5em;
   background-color: #222323;
   color: #eee;
-  user-select: none;
 }
 
 @media (max-width: 700px), (max-height: 820px) {
