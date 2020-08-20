@@ -903,6 +903,7 @@
   // this is where it is caught
   function handlePointing(ev) {
     ev.preventDefault();
+    if (Game.touchScreen) { return; }
     const g = $("#game");
     // where on the map the click or touch occurred
     const cx = (ev["touches"] ? ev.touches[0].clientX : ev.clientX);
