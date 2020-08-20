@@ -57,6 +57,8 @@
   const usePointer = true;
   const useArrows = true;
   const touchOffsetY = -20; // move the center by this much
+  const scaleMobile = 4; // scale mobile screens by this much
+  const scaleMonitor = 6; // scale computer screens by this much
 
   // these map tiles are walkable
   const walkable = [".", "*", "g"]
@@ -719,17 +721,20 @@
   // gives a sort of camera follow effect.
   function rescale(x, y, game) {
     const c = $("canvas");
-    const scale = (window.innerWidth < 600 ? 4 : 6);
+    const scale = (window.innerWidth < 600 ? scaleMobile : scaleMonitor);
+    const offset = (game.touchScreen ? touchOffsetY : 0);
+    const tw = ((x * -tileOptions.tileWidth) +
+                (tileOptions.width * tileOptions.tileWidth / 2) + -4);
+    const th = ((y * -tileOptions.tileHeight) +
+                (tileOptions.height * tileOptions.tileHeight / 2) + offset);
     if (canvas) {
       // this applies the animation effect
       canvas.style.transition = "transform 0.5s ease-out 0s";
       game.display.getContainer().getContext('2d').imageSmoothingEnabled = false;
       // this sets the scale and position to focus on the player
       canvas.style.transform =
-        "scale(" + scale + ") " +
-        "translate3d(" + Math.floor(((x * -8) + (tileOptions.width * 8 / 2) + -4)) +
-        "px," + Math.floor(((y * -8) + (tileOptions.height * 8 / 2) +
-              (game.touchScreen ? touchOffsetY : 0))) + "px,0px)";
+        "scale(" + scale + ") " + "translate3d(" + Math.floor(tw) +
+        "px," + Math.floor(th) + "px,0px)";
     }
   }
 
@@ -909,7 +914,8 @@
     const cx = (ev["touches"] ? ev.touches[0].clientX : ev.clientX);
     const cy = (ev["touches"] ? ev.touches[0].clientY : ev.clientY)
     const x = cx - (g.offsetWidth / 2);
-    const y = cy - (g.offsetHeight / 2) - (game.touchScreen ? touchOffsetY : 0) * window.devicePixelRatio;
+    const y = cy - (g.offsetHeight / 2) -
+          (game.touchScreen ? touchOffsetY : 0) * window.devicePixelRatio;
     // figure out which quadrant was clicked relative to the player
     const qs = Math.ceil((Math.floor(
               (Math.atan2(y, x) + Math.PI) /
