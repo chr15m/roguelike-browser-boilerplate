@@ -178,7 +178,7 @@ The `tileWidth` and `tileHeight` keys specify how many pixels wide and high each
 
 Next you will want to modify the `tileMap` to specify how to draw each character. It's a lookup table from the character type to the position in the tilemap for that character's graphic.
 
-For example in the default `tileMap` the player (`"@"` symbol) is represented by a little adventurer who is at position `[40,0]` pixels in the `colored_tilemap_packed.png` tilemap. Try position `[32,0]` instead to use a different adventurer sprite.
+For example in the default `tileMap` the player (`"@"` symbol) is represented by a little adventurer who is at position `[40, 0]` pixels in the `colored_tilemap_packed.png` tilemap. Try position `[32, 0]` instead to use a different adventurer sprite.
 
 If you add more character types to your game this is how you specify the corresponding graphic to draw, just create new entries for each character type:
 
@@ -395,7 +395,7 @@ The non-game screens defined in the HTML code are:
  * Win game
  * Lose game
 
-You can modify any of these simply by editing the HTML. If you need additional functionality such as adding clickable toggles in the settings screen then you can add to the event bindings at the bottom of `main.js` on line `984`.
+You can modify any of these simply by editing the HTML. If you need additional functionality such as adding clickable toggles in the settings screen then you can add to the event bindings at the bottom of `main.js` on line `990`.
 
 You can add a new screen by cloning one of the existing screens and using the `showScreen()` command to show a particular screen using its `id` like this: `showScreen("myscreen")`. Make sure you give each new screen a unique `id` like this:
 
