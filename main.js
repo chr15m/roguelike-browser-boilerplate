@@ -725,8 +725,8 @@
       // this sets the scale and position to focus on the player
       canvas.style.transform =
         "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
-        "translate3d(" + ((x * -8) + (tileOptions.width * 8 / 2) + -4) +
-        "px," + ((y * -8) + (tileOptions.height * 8 / 2) + (game.touchScreen ? touchOffsetY : 0)) + "px,0px)";
+        "translate3d(" + Math.floor(((x * -8) + (tileOptions.width * 8 / 2) + -4)) +
+        "px," + Math.floor(((y * -8) + (tileOptions.height * 8 / 2) + (game.touchScreen ? touchOffsetY : 0))) + "px,0px)";
     }
   }
 
