@@ -905,7 +905,7 @@
     const cx = (ev["touches"] ? ev.touches[0].clientX : ev.clientX);
     const cy = (ev["touches"] ? ev.touches[0].clientY : ev.clientY)
     const x = cx - (g.offsetWidth / 2);
-    const y = cy - (g.offsetHeight / 2) - touchOffsetY * window.devicePixelRatio;
+    const y = cy - (g.offsetHeight / 2) - (game.touchScreen ? touchOffsetY : 0) * window.devicePixelRatio;
     // figure out which quadrant was clicked relative to the player
     const qs = Math.ceil((Math.floor(
               (Math.atan2(y, x) + Math.PI) /
