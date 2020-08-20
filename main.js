@@ -719,14 +719,17 @@
   // gives a sort of camera follow effect.
   function rescale(x, y, game) {
     const c = $("canvas");
+    const scale = (window.innerWidth < 600 ? 4 : 6);
     if (canvas) {
       // this applies the animation effect
       canvas.style.transition = "transform 0.5s ease-out 0s";
+      game.display.getContainer().getContext('2d').imageSmoothingEnabled = false;
       // this sets the scale and position to focus on the player
       canvas.style.transform =
-        "scale(" + (window.innerWidth < 600 ? "4" : "6") + ") " +
+        "scale(" + scale + ") " +
         "translate3d(" + Math.floor(((x * -8) + (tileOptions.width * 8 / 2) + -4)) +
-        "px," + Math.floor(((y * -8) + (tileOptions.height * 8 / 2) + (game.touchScreen ? touchOffsetY : 0))) + "px,0px)";
+        "px," + Math.floor(((y * -8) + (tileOptions.height * 8 / 2) +
+              (game.touchScreen ? touchOffsetY : 0))) + "px,0px)";
     }
   }
 
