@@ -36,8 +36,6 @@ body {
 }
 
 canvas {
-  -webkit-filter: blur(0px);
-  filter: blur(0px);
   image-rendering: optimizeSpeed;
   image-rendering: crisp-edges;
   image-rendering: -moz-crisp-edges;
