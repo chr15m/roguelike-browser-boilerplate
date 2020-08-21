@@ -205,9 +205,9 @@ When you are calling the ROT.js `display.draw()` method, simply pass it an array
 
 All of the sound effects in the boilerplate are generated with `jsfxr`. It is both a library for playing sounds and a user interface for creating sounds. You can find an online version of this at [sfxr.me](https://sfxr.me) and you can make new sound effects there. It's pretty fun to play with.
 
-To change the sound effects in the game, or to add new ones, you're going to want to modify the table on line `73` in `main.js`:
+To change the sound effects in the game, or to add new ones, you're going to want to modify the table on line `75` in `main.js`:
 
-``` {.javascript .numberLines startFrom="73"}
+``` {.javascript .numberLines startFrom="75"}
 const sfx = {
   "rubber": "5EoyNVaezhPnpFZjpkcJkF8FNCio...
 ```
@@ -222,7 +222,7 @@ The code on the right hand side comes from pressing the "copy" button on the [sf
 
 ![](doc/sfxr-copy-button.png)
 
-So the workflow is to tinker around on [sfxr.me](https://sfxr.me) until you make a sound you want to use. Then click the "Copy" button to copy the sound's code. Then finally paste the code into the `sfx` table on line `59` of `main.js`, either as a new sound (with a unique key) or replacing an existing sound.
+So the workflow is to tinker around on [sfxr.me](https://sfxr.me) until you make a sound you want to use. Then click the "Copy" button to copy the sound's code. Then finally paste the code into the `sfx` table on line `75` of `main.js`, either as a new sound (with a unique key) or replacing an existing sound.
 
 After that you can play the sound with `sfx[key].play()`.
 
@@ -230,15 +230,15 @@ If you search the source code for `sfx` or `play` you should find all the places
 
 ### Changing the level generator
 
-The default level is created using the `generateMap()` function on line `218`. The dungeon layout is generated first using ROT's `Digger` implementation:
+The default level is created using the `generateMap()` function on line `220`. The dungeon layout is generated first using ROT's `Digger` implementation:
 
-``` {.javascript .numberLines startFrom="226"}
+``` {.javascript .numberLines startFrom="228"}
 const digger = new ROT.Map.Digger(
       tileOptions.width,
       tileOptions.height);
 ```
 
-``` {.javascript .numberLines startFrom="254"}
+``` {.javascript .numberLines startFrom="256"}
   digger.create(digCallback.bind(this));
 ```
 
@@ -246,7 +246,7 @@ There are several excellent dungeon generators in the ROT library including maze
 
 Next the level generator places 15 items on the map in the `generateItems()` function. It randomly assigns these to be either pieces of gold or treasure chests. The treasure chests are all empty except for the first one which contains the amulet:
 
-``` {.javascript  .numberLines startFrom="275"}
+``` {.javascript  .numberLines startFrom="277"}
 function generateItems(game, freeCells) {
   for (var i=0; i<15; i++) {
     ...
@@ -254,7 +254,7 @@ function generateItems(game, freeCells) {
 
 You can modify this method to generate your own more complicated types of items with different properties.
 
-After this the `generateMap()` level generator adds some background scenery (trees and plants) which is purely for looks and mood, using the `generateScenery()` method. A total of 100 background scenery elements are added like this and you can modify that method on line `295` to add your own scenery elements.
+After this the `generateMap()` level generator adds some background scenery (trees and plants) which is purely for looks and mood, using the `generateScenery()` method. A total of 100 background scenery elements are added like this and you can modify that method on line `297` to add your own scenery elements.
 
 Next the room walls and corners are drawn in `generateRooms()` and you can customise the way these are drawn too if you need.
 
@@ -275,9 +275,9 @@ Implementing more complex field-of-view lookups is also possible and again the R
 ### Changing the player code
 
 There are three main parts to the player code.
-First up is the basic definition of the player object starting on line `392` of `main.js`:
+First up is the basic definition of the player object starting on line `394` of `main.js`:
 
-``` {.javascript .numberLines startFrom="392"}
+``` {.javascript .numberLines startFrom="394"}
 function makePlayer(x, y) {
   return {
     // player's position
@@ -297,19 +297,19 @@ function makePlayer(x, y) {
 
 Here you can see the player's position is defined from whatever position is passed in at creation time. There is also an inventory of items the player carries, and some character stats (hit points, experience points, and gold). If you want to build more complex player entities you should start by adding to this datastructure, any extra information which you need to store about the player. At the moment if you add or change a stat it will automatically be rendered in the heads-up-display at the bottom of the screen. See the later section for using the basic inventory implementation.
 
-The next interesting bit of code is what happens when a key press event comes in. This behaviour is defined on line `422` in the `keyHandler()` function. Basically a lookup is done to see which direction corresponds to the key pressed, and then the `movePlayer()` function on line `462` is called with the direction vector. The reason the `movePlayer()` function is broken out is because is also used later in the click/touch even code so that the game is playable with a touch device or mouse. If you want to implement interesting movement mechanics such as drunken walk or freezing, this is the place to do it. This is also the place where you would implement a traditional roguelike hunger clock, with the hunger increasing every X steps until food is found for example. You'd keep track of the hunger stat in the `Game.player` object too.
+The next interesting bit of code is what happens when a key press event comes in. This behaviour is defined on line `424` in the `keyHandler()` function. Basically a lookup is done to see which direction corresponds to the key pressed, and then the `movePlayer()` function on line `464` is called with the direction vector. The reason the `movePlayer()` function is broken out is because is also used later in the click/touch even code so that the game is playable with a touch device or mouse. If you want to implement interesting movement mechanics such as drunken walk or freezing, this is the place to do it. This is also the place where you would implement a traditional roguelike hunger clock, with the hunger increasing every X steps until food is found for example. You'd keep track of the hunger stat in the `Game.player` object too.
 
 In the `movePlayer()` function we can also see checks for what kind of tile is being stepped on. Only floor tiles and items are allowed to be stepped on in this implementation. If a monster is moved onto then the `combat()` function is initiated. Near the end of this function the "step" sound is played and the `checkItem()` function is called.
 
-The `checkItem()` function on line `433` is the final important part of the player code. Three checks are performed against the tile the player has stepped into. If the amulet has been stepped on the `win()` function is called, displaying that win condition UI flow. If the player has picked up gold their stat is incremented and a sound is played. Finally, if the player has stepped on a chest it must be empty because the amulet was checked for already, so a message is shown to the user.
+The `checkItem()` function on line `435` is the final important part of the player code. Three checks are performed against the tile the player has stepped into. If the amulet has been stepped on the `win()` function is called, displaying that win condition UI flow. If the player has picked up gold their stat is incremented and a sound is played. Finally, if the player has stepped on a chest it must be empty because the amulet was checked for already, so a message is shown to the user.
 
 In this implementation the item is used up and replaced with a floor tile on the last line of that function, but you could just as easily do something different. For example if a trap has been discovered then you would draw the trap in the map datastructure at this point.
 
 ### Changing the monster code
 
-The code implementing the monster starts on line `521` of `main.js` in the makeMonster function:
+The code implementing the monster starts on line `523` of `main.js` in the makeMonster function:
 
-```{.javascript .numberLines startFrom="521"}
+```{.javascript .numberLines startFrom="523"}
 function makeMonster(x, y) {
   return {
     // monster position
@@ -324,35 +324,35 @@ function makeMonster(x, y) {
 
 If you want to store other variables or properties of this particular monster you can put them in here. At the moment the only variables passed in are the `x, y` position, but you could add things like hit points, damage, etc. for implementing combat.
 
-On line `539` of `main.js` you can find the code which controls how the monster behaves on each turn in `monsterAct`. This function gets called every time the ROT scheduler determines that it is the monster's turn to move.
+On line `541` of `main.js` you can find the code which controls how the monster behaves on each turn in `monsterAct`. This function gets called every time the ROT scheduler determines that it is the monster's turn to move.
 
 At the moment what happens is the monster uses the `astar` algorithm to figure out the fastest way to get to where the player is, and takes one step in that direction. There are lots of more interesting behaviours you could implement including field-of-view and distance from the player, interaction between monsters, monsters that can create items, monsters that talk, fast monsters, slow monsters, monsters that freeze the player, monsters that are friendly, etc. etc. The only limit is your imagination.
 
 ROT.js has some great helpers you can use like the [field-of-view](http://ondras.github.io/rot.js/manual/#fov) algorithm. Check out the [interactive documentation](http://ondras.github.io/rot.js/manual/) for more info.
 
-The monster in the boilerplate is added on line `267` of `main.js` and you can modify the code there to add an array of different monsters with different properties when the level starts, rather than just adding a single monster.
+The monster in the boilerplate is added on line `269` of `main.js` and you can modify the code there to add an array of different monsters with different properties when the level starts, rather than just adding a single monster.
 
 ### Changing the items code
 
-At the moment the treasure chests are very simply implemented as `"*"` characters on the map. They don't carry any more interesting data than their position in the map. You can make more interesting items by creating a data structure to hold item positions and the properties of the items which are there. A good place to add a new datastructure like that would be in the `Game` object around line `139` in `main.js` and then initialize it in the `init()` function on line `159`.
+At the moment the treasure chests are very simply implemented as `"*"` characters on the map. They don't carry any more interesting data than their position in the map. You can make more interesting items by creating a data structure to hold item positions and the properties of the items which are there. A good place to add a new datastructure like that would be in the `Game` object around line `140` in `main.js` and then initialize it in the `init()` function on line `161`.
 
 For example you might have traps which take off varying amounts of HP when the player lands on them, or potions that give the player strength, or food so that players don't starve, or scrolls etc. etc. You can also implement items which can be collected and added to the player's inventory.
 
-The code for detecting when the player steps on an item is on line `433` in `main.js` in the `checkItem()` function. You can add checks for your other types of items in there and take different action. You can use the "gold" item as an example, which simply increments the player's gold stat, shows a message, and plays a sound.
+The code for detecting when the player steps on an item is on line `435` in `main.js` in the `checkItem()` function. You can add checks for your other types of items in there and take different action. You can use the "gold" item as an example, which simply increments the player's gold stat, shows a message, and plays a sound.
 
 ### Using the inventory
 
 The inventory user interface is rendered with the `renderInventory()` function and at the moment by default it is rendering the contents of the `player` object's `inventory` property. It's a simple data structure indicating what to draw in the inventory list. Each row in the inventory structure is an array with the first element being the tile image lookup character and the second element being the words to print next to the image.
 
-When an inventory item is selected the code in the callback starting on line `175` in `main.js` is called. Customise this to make more complicated inventory item selection behaviours such as weilding weapons, drinking potions, reading scrolls, etc.
+When an inventory item is selected the code in the callback starting on line `177` in `main.js` is called. Customise this to make more complicated inventory item selection behaviours such as weilding weapons, drinking potions, reading scrolls, etc.
 
 Eventually you will probably want to store more complex item data structures in the player's inventory and then you will want to pre-process `player.inventory` before passing it into the `renderInventory()` function in the format it expects (e.g. the tile/words pairs described above).
 
 ### Changing the combat system
 
-Combat is initiated in `main.js` either when the player tries to move onto the monster square on line `480`:
+Combat is initiated in `main.js` either when the player tries to move onto the monster square on line `482`:
 
-``` {.javascript .numberLines startFrom="461"}
+``` {.javascript .numberLines startFrom="482"}
 const m = Game.monster;
 if (m && m._x == x && m._y == y) {
   combat(m);
@@ -360,15 +360,15 @@ if (m && m._x == x && m._y == y) {
 }
 ```
 
-Or when the monster tries to move onto the player square on line `569`:
+Or when the monster tries to move onto the player square on line `571`:
 
-``` {.javascript .numberLines startFrom="569"}
+``` {.javascript .numberLines startFrom="571"}
 if (path.length <= 1) {
   combat(this);
 } else {
 ```
 
-Both of these events will run the `combat()` function on line `599`. The combat function itself is fairly simple and easy to modify to make it more interesting. At the moment a dice roll is simulated for the player and if they roll above a 3 they take that many HP off the monster's health. Then if the monster is not dead the same happens in reverse with the monster rolling a dice and trying for a number above 3. If the monster HP are depleted completely the monster dies and is taken out of the game. If the player's HP are depleted the `lose()` function is called to initiate the lose condition UI.
+Both of these events will run the `combat()` function on line `601`. The combat function itself is fairly simple and easy to modify to make it more interesting. At the moment a dice roll is simulated for the player and if they roll above a 3 they take that many HP off the monster's health. Then if the monster is not dead the same happens in reverse with the monster rolling a dice and trying for a number above 3. If the monster HP are depleted completely the monster dies and is taken out of the game. If the player's HP are depleted the `lose()` function is called to initiate the lose condition UI.
 
 Here are some different ways you could build on this to make the combat more interesting:
 
@@ -395,7 +395,7 @@ The non-game screens defined in the HTML code are:
  * Win game
  * Lose game
 
-You can modify any of these simply by editing the HTML. If you need additional functionality such as adding clickable toggles in the settings screen then you can add to the event bindings at the bottom of `main.js` on line `990`.
+You can modify any of these simply by editing the HTML. If you need additional functionality such as adding clickable toggles in the settings screen then you can add to the event bindings at the bottom of `main.js` on line `994`.
 
 You can add a new screen by cloning one of the existing screens and using the `showScreen()` command to show a particular screen using its `id` like this: `showScreen("myscreen")`. Make sure you give each new screen a unique `id` like this:
 
