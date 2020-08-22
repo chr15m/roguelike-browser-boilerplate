@@ -64,7 +64,7 @@
   const walkable = [".", "*", "g"]
 
   // these map tiles should not be replaced by room edges
-  const noreplace = [".", "*", "g", "M", "╔", "╗", "╚", "╝", "═", "║"];
+  const noreplace = walkable.concat(["M", "╔", "╗", "╚", "╝", "═", "║"]);
 
   // These sound effects are generated using sfxr.me
   //
@@ -446,15 +446,19 @@
       renderStats(Game.player.stats);
       toast("You found gold!");
       sfx["win"].play();
+      collected = true;
     } else if (Game.map[key] == "*") {
       // if an empty box is opened
       // by replacing with a floor tile, show the user
       // a message, and play the "empty" sound effect
       toast("This chest is empty.");
       sfx["empty"].play();
+      collected = true;
     }
-    // make the item disappear by replacing with floor
-    Game.map[key] = ".";
+    if (collected) {
+      // make the item disappear by replacing with floor
+      Game.map[key] = ".";
+    }
   }
 
   // move the player according to a direction vector
