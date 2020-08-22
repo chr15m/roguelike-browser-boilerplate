@@ -466,3 +466,26 @@ a:hover {
 @keyframes fade-out {
   from{opacity:1; display: flex;} 50%{opacity:1; display: flex;} to{opacity:0; display: none;}
 }
+
+/* link to the boilerplate */
+
+#link-out {
+  position: absolute;
+  top: 2.5em;
+  animation: show-link 3s forwards;
+  opacity: 0;
+  background-color: rgba(255,255,255,0.125);
+  border-radius: 10px;
+  padding: 1em 2em;
+  font-size: 0.66em;
+  border: 2px solid white;
+}
+
+@keyframes show-link {
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
