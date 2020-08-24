@@ -472,7 +472,7 @@ a:hover {
 #link-out {
   position: absolute;
   top: 2.5em;
-  animation: show-link 3s forwards;
+  animation: show-link 1s forwards;
   opacity: 0;
   background-color: rgba(255,255,255,0.125);
   border-radius: 10px;
