@@ -159,6 +159,7 @@
   // this gets called by the menu system
   // to launch the actual game
   function init(game) {
+    game.map = {};
     // first create a ROT.js display manager
     game.display = new ROT.Display(tileOptions);
     resetCanvas(game.display.getContainer());
