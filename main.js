@@ -423,6 +423,7 @@
   // when keyboard input happens this even handler is called
   // and the position of the player is updated
   function keyHandler(ev) {
+    ev.preventDefault();
     const code = ev.keyCode;
     /* one of numpad directions? */
     if (!(code in keyMap)) { return; }
