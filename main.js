@@ -566,9 +566,7 @@
     }
     astar.compute(m._x, m._y, pathCallback);
 
-    // we just want the first move on the path from monster to player
-    // because this function is called once per monster turn and the
-    // player will have moved on the next round
+    // ignore the first move on the path as it is the starting point
     path.shift();
     // if the distance from the monster to the player is less than one
     // square then initiate combat
@@ -578,7 +576,7 @@
       // draw whatever was on the last tile the monster was one
       display.draw(m._x, m._y, map[m._x + "," + m._y]);
       // the player is safe for now so update the monster position
-      // and redraw
+      // to the first step on the path and redraw
       m._x = path[0][0];
       m._y = path[0][1];
       m.draw();
