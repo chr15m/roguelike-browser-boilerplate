@@ -277,9 +277,7 @@
   // here we are creating the treasure chest items
   function generateItems(game, freeCells) {
     for (let i=0; i<15; i++) {
-      const index = Math.floor(
-            ROT.RNG.getUniform() * freeCells.length);
-      const key = freeCells.splice(index, 1)[0];
+      const key = takeFreeCell(freeCells);
       // the first chest contains the amulet
       if (!i) {
         game.amulet = key;
@@ -292,15 +290,31 @@
     }
   }
 
+  // randomly choose one cell from the freeCells array
+  // remove it from the array and return it
+  function takeFreeCell(freeCells) {
+    const index = Math.floor(
+      ROT.RNG.getUniform() * freeCells.length);
+    const key = freeCells.splice(index, 1)[0];
+    return key;
+  }
+
+  // parse a string "x,y" key and return the
+  // actual x, y values
+  function posFromKey(key) {
+    const parts = key.split(",");
+    const x = parseInt(parts[0]);
+    const y = parseInt(parts[1]);
+    return [x, y];
+  }
+
   // these plant tiles are purely bling
   // we're just going to place 100 plants randomly
   // in the spaces where there isn't anything already
   function generateScenery(map, freeCells) {
     for (let i=0;i<100;i++) {
       if (freeCells.length) {
-        const index = Math.floor(
-              ROT.RNG.getUniform() * freeCells.length);
-        const key = freeCells.splice(index, 1)[0];
+        const key = takeFreeCell(freeCells);
         map[key] = ROT.RNG.getItem("abcde");
       }
     }
@@ -363,10 +377,8 @@
   // we ask ROT.js to actually draw the map tiles via display
   function drawWholeMap(display, map) {
     for (let key in map) {
-      const parts = key.split(",");
-      const x = parseInt(parts[0]);
-      const y = parseInt(parts[1]);
-      display.draw(x, y, map[key]);
+      const pos = posFromKey(key);
+      display.draw(pos[0], pos[1], map[key]);
     }
   }
 
@@ -374,14 +386,9 @@
   // by choosing a random freeCell and creating the type
   // of object (`what`) on that position
   function createBeing(what, freeCells) {
-    const index = Math.floor(
-          ROT.RNG.getUniform() * freeCells.length);
-    // remove from the freeCells array now that it's taken
-    const key = freeCells.splice(index, 1)[0];
-    const parts = key.split(",");
-    const x = parseInt(parts[0]);
-    const y = parseInt(parts[1]);
-    const being = what(x, y);
+    const key = takeFreeCell(freeCells);
+    const pos = posFromKey(key);
+    const being = what(pos[0], pos[1]);
     being.draw();
     return being;
   }
