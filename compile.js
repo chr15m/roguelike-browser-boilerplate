@@ -13,9 +13,7 @@ const linkouthtmlfragment = `
 const linkoutstylefragment = `
 #link-out {
     position: absolute;
-    bottom: 2em;
-    animation: show-link 1s forwards;
-    opacity: 0;
+    bottom: 3em;
     border-radius: 10px;
     padding: 0px;
     font-size: .66em;
