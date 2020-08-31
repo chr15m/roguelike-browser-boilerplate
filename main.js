@@ -175,7 +175,7 @@
     game.scheduler.add(game.monster, true);
 
     // render some example items in the inventory
-    renderInventory(game.player.inventory, function(which, ev) {
+    renderInventory(game.player.inventory, function(which, index, ev) {
       // this function is called when an inventory item is clicked
       toast(which[1] + " selected");
       toggleInventory(ev, true);
@@ -789,11 +789,11 @@
   function renderInventory(items, callback) {
     const inv = $("#inventory ul");
     inv.innerHTML = "";
-    items.forEach(function(i) {
+    items.forEach(function(i, idx) {
       const tile = tileOptions.tileMap[i[0]];
       const words = i[1];
       attach(inv,
-           el("li", {"onclick": callback.bind(null, i),
+           el("li", {"onclick": callback.bind(null, i, idx),
                      "className": "inventory-item",},
               [el("div", {
                 "className": "sprite",
