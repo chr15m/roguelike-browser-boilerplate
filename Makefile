@@ -30,6 +30,18 @@ $(name).pdf: README.md print.css Makefile
 $(name)-license.pdf: license-common.md license-indie-professional.md
 	cat $? | pandoc -f markdown -t latex --highlight-style=tango --css print.css -o $@
 
+### gh-pages build ###
+
+docs: docs/index.html docs/icon.png docs/colored_tilemap_packed.png docs/bg.png
+
+docs/%.png: %.png
+	mkdir -p docs
+	cp $< $@
+
+docs/index.html: index.html style.css main.js compile.js
+	mkdir -p docs
+	node compile.js > $@
+
 .PHONY: watch serve browserstack clean
 
 watch:
