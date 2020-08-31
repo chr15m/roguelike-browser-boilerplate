@@ -436,6 +436,7 @@
   // or The Amulet
   function checkItem(entity) {
     const key = entity._x + "," + entity._y;
+    let collected = false;
     if (key == Game.amulet) {
       // the amulet is hit initiate the win flow below
       win();
