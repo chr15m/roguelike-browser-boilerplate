@@ -154,15 +154,9 @@ a:hover {
 }
 
 #game-title {
-  margin-bottom: 100px;
+  margin-bottom: 0px;
   width: 900px;
   max-width: 98%;
-}
-
-@media (max-width: 600px) {
-  #game-title {
-    margin-bottom: 40px;
-  }
 }
 
 @media (min-width: 700px) and (max-height: 820px) {
@@ -170,7 +164,12 @@ a:hover {
     width: 900px;
     max-width: 98%;
     max-height: 35vh;
-    margin-bottom: 0px;
+  }
+}
+
+@media (max-height: 600px) {
+  #game-title {
+    width: 500px;
   }
 }
 
