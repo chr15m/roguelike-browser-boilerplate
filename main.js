@@ -138,6 +138,8 @@
     // where "character" can any one of:
     // background, item, player, or monster
     map: {},
+    // map of all items
+    items: {},
     // reference to the ROT.js engine which
     // manages stuff like scheduling
     engine: null,
@@ -145,8 +147,8 @@
     scheduler: null,
     // reference to the player object
     player: null,
-    // reference to the monster object
-    monster: null,
+    // reference to the game monsters array
+    monsters: null,
     // the position of the amulet in the map
     // as `x,y` so it can be checked against
     // the map keys above
@@ -160,6 +162,7 @@
   // to launch the actual game
   function init(game) {
     game.map = {};
+    game.items = {};
     // first create a ROT.js display manager
     game.display = new ROT.Display(tileOptions);
     resetCanvas(game.display.getContainer());
@@ -172,7 +175,7 @@
     // let ROT.js schedule the player and monster entities
     game.scheduler = new ROT.Scheduler.Simple();
     game.scheduler.add(game.player, true);
-    game.scheduler.add(game.monster, true);
+    game.monsters.map((m) => game.scheduler.add(m, true));
 
     // render some example items in the inventory
     renderInventory(game.player.inventory);
@@ -199,11 +202,12 @@
       game.engine.lock();
       game.display = null;
       game.map = {};
+      game.items = {};
       game.engine = null;
       game.scheduler.clear();
       game.scheduler = null;
       game.player = null;
-      game.monster = null;
+      game.monsters = null;
       game.amulet = null;
     }
 
@@ -257,13 +261,16 @@
     generateItems(game, freeCells);
     generateScenery(game.map, zeroCells);
     generateRooms(game.map, digger);
-    // draw the map so far on the screen
-    drawWholeMap(game.display, game.map);
 
-    // finally we put the player and the monster on their
+    // finally we put the player and one monster on their
     // starting tiles, which must be from the walkable list
     game.player = createBeing(makePlayer, freeCells);
-    game.monster = createBeing(makeMonster, freeCells);
+    game.monsters = [createBeing(makeMonster, freeCells)];
+
+    // draw the map and items
+    for (let key in game.map) {
+      drawTile(game, key);
+    }
 
     // here we are re-scaling the background so it is
     // zoomed in and centered on the player tile
@@ -277,11 +284,11 @@
       // the first chest contains the amulet
       if (!i) {
         game.amulet = key;
-        game.map[key] = "*";
+        game.items[key] = "*";
       } else {
         // add either a treasure chest
         // or a piece of gold to the map
-        game.map[key] = ROT.RNG.getItem(["*", "g"]);
+        game.items[key] = ROT.RNG.getItem(["*", "g"]);
       }
     }
   }
@@ -316,7 +323,7 @@
     }
   }
 
-  // to make the map look a bit cooler we'll actually draw
+  // to make the map look a bit cooler we'll generate
   // walls around the rooms
   function generateRooms(map, mapgen) {
     const rooms = mapgen.getRooms();
@@ -341,7 +348,7 @@
       map[l + "," + b] = "o";
       map[r + "," + b] = "o";*/
 
-      // the next four loops just draw each side of the room
+      // the next four loops just generate each side of the room
       for (let i=room.getLeft(); i<=room.getRight(); i++) {
         const j = i + "," + t;
         const k = i + "," + b;
@@ -370,11 +377,18 @@
     }
   }
 
-  // we ask ROT.js to actually draw the map tiles via display
-  function drawWholeMap(display, map) {
-    for (let key in map) {
-      const pos = posFromKey(key);
-      display.draw(pos[0], pos[1], map[key]);
+  function drawTile(game, key, ignore) {
+    const map = game.map;
+    if (map[key]) {
+      const parts = posFromKey(key);
+      const monster = monsterAt(parts[0], parts[1]);
+      const player = playerAt(parts[0], parts[1]);
+      const display = game.display;
+      const items = game.items;
+      const draw = [map[key], items[key]];
+      draw.push(monster && monster != ignore ? monster.character : null);
+      draw.push(player && player != ignore ? player.character : null);
+      display.draw(parts[0], parts[1], draw.filter(i=>i));
     }
   }
 
@@ -385,7 +399,6 @@
     const key = takeFreeCell(freeCells);
     const pos = posFromKey(key);
     const being = what(pos[0], pos[1]);
-    being.draw();
     return being;
   }
 
@@ -417,9 +430,6 @@
         Game.engine.lock();
         window.addEventListener("keydown", keyHandler);
       },
-      // this is how the player draws itself on the map
-      // using ROT.js display
-      draw: drawEntity,
     }
   }
 
@@ -439,11 +449,10 @@
   // or The Amulet
   function checkItem(entity) {
     const key = entity._x + "," + entity._y;
-    let collected = false;
     if (key == Game.amulet) {
       // the amulet is hit initiate the win flow below
       win();
-    } else if (Game.map[key] == "g") {
+    } else if (Game.items[key] == "g") {
       // if the player stepped on gold
       // increment their gold stat,
       // show a message, re-render the stats
@@ -452,19 +461,16 @@
       renderStats(Game.player.stats);
       toast("You found gold!");
       sfx["win"].play();
-      collected = true;
-    } else if (Game.map[key] == "*") {
+      delete Game.items[key];
+    } else if (Game.items[key] == "*") {
       // if an empty box is opened
       // by replacing with a floor tile, show the user
       // a message, and play the "empty" sound effect
       toast("This chest is empty.");
       sfx["empty"].play();
-      collected = true;
+      delete Game.items[key];
     }
-    if (collected) {
-      // make the item disappear by replacing with floor
-      Game.map[key] = ".";
-    }
+    drawTile(Game, key);
   }
 
   // move the player according to a direction vector
@@ -489,22 +495,24 @@
 
     // check if we've hit the monster
     // and if we have initiate combat
-    const m = Game.monster;
-    if (m && m._x == x && m._y == y) {
-      combat(m);
+    const hitMonster = monsterAt(x, y);
+    if (hitMonster) {
+      combat(hitMonster);
       return;
-    }
+    };
 
     // update the old tile to whatever was there before
     // (e.g. "." floor tile)
-    Game.display.draw(p._x, p._y, Game.map[p._x + "," + p._y]);
+    drawTile(Game, p._x + "," + p._y, p);
 
     // update the player's coordinates
     p._x = x;
     p._y = y;
 
     // re-draw the player
-    p.draw();
+    for (let key in Game.map) {
+      drawTile(Game, key);
+    }
     // re-locate the game screen to center the player
     rescale(x, y, Game);
     // hide the toast message between turns
@@ -516,11 +524,6 @@
     sfx["step"].play();
     // check if the player stepped on an item
     checkItem(p);
-  }
-
-  // draw function common to monster and player
-  function drawEntity() {
-    Game.display.draw(this._x, this._y, this.character);
   }
 
 
@@ -541,8 +544,6 @@
       stats: {"hp": 14},
       // called by the ROT.js scheduler
       act: monsterAct,
-      // draw the monster
-      draw: drawEntity,
     }
   }
 
@@ -580,23 +581,46 @@
       combat(m);
     } else {
       // draw whatever was on the last tile the monster was one
-      display.draw(m._x, m._y, map[m._x + "," + m._y]);
+      drawTile(Game, m._x + "," + m._y, m);
       // the player is safe for now so update the monster position
       // to the first step on the path and redraw
       m._x = path[0][0];
       m._y = path[0][1];
-      m.draw();
+      drawTile(Game, m._x + "," + m._y);
     }
+  }
+
+  function monsterAt(x, y) {
+    if (Game.monsters && Game.monsters.length) {
+      for (let mi=0; mi<Game.monsters.length; mi++) {
+        const m = Game.monsters[mi];
+        if (m && m._x == x && m._y == y) {
+          return m;
+        }
+      }
+    }
+  }
+
+  function playerAt(x, y) {
+    return Game.player && Game.player._x == x && Game.player._y == y ? Game.player : null;
   }
 
   // if the monster is dead remove it from the game
   function checkDeath(m) {
     if (m.stats.hp < 1) {
-      Game.display.draw(m._x, m._y, Game.map[m._x + "," + m._y]);
-      Game.scheduler.remove(m);
-      Game.monster = null;
+      const key = m._x + "," + m._y;
+      removeMonster(m);
       sfx["kill"].play();
+      return true;
     }
+  }
+
+  // remove a monster from the game
+  function removeMonster(m) {
+    const key = m._x + "," + m._y;
+    Game.scheduler.remove(m);
+    Game.monsters = Game.monsters.filter(mx=>mx!=m);
+    drawTile(Game, key);
   }
 
 
@@ -681,7 +705,8 @@
   function lose() {
     // change the player into a tombstone tile
     const p = Game.player;
-    Game.display.draw(p._x, p._y, "T");
+    p.character = "T";
+    drawTile(Game, p._x + "," + p._y);
     // create an animated div element over the top of the game
     // holding a rising ghost image above the tombstone
     const ghost = createGhost();
