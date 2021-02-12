@@ -789,7 +789,7 @@
       const tile = tileOptions.tileMap[i[0]];
       const words = i[1];
       attach(inv,
-           el("li", {"onclick": selectedInventory.bind(null, i, idx),
+           el("li", {"onclick": selectedInventory.bind(null, i, idx, items),
                      "className": "inventory-item",},
               [el("div", {
                 "className": "sprite",
@@ -800,11 +800,20 @@
   }
 
   // called when an inventory item is selected
-  function selectedInventory(which, index, ev) {
-      // this function is called when an inventory item is clicked
-      toast(which[1] + " selected");
-      toggleInventory(ev, true);
-    }
+  function selectedInventory(which, index, items, ev) {
+    // this function is called when an inventory item is clicked
+    toast(which[1] + " selected");
+    toggleInventory(ev, true);
+    // if you want to remove an item from the inventory
+    // inventoryRemove(items, which);
+  }
+
+  // call this to remove an item from the inventory
+  function inventoryRemove(items, which) {
+    const idx = items.indexOf(which);
+    items.splice(idx, 1);
+    renderInventory(items);
+  }
 
   // updates the stats listed at the bottom of the screen
   // pass in an object containing key value pairs where
