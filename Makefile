@@ -44,11 +44,14 @@ docs/index.html: index.html style.css main.js compile.js
 
 .PHONY: watch serve browserstack clean
 
-watch:
+watcher:
 	while true; do $(MAKE) -q || $(MAKE); sleep 0.5; done
 
-serve:
-	php -S 0.0.0.0:8000
+serve: node_modules
+	npx live-server --no-browser --port=8000
+
+watch:
+	make -j 2 serve watcher
 
 browserstack:
 	BrowserStackLocal --key 9pLHVRg5npQmv96R5QEx
