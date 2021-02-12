@@ -175,11 +175,7 @@
     game.scheduler.add(game.monster, true);
 
     // render some example items in the inventory
-    renderInventory(game.player.inventory, function(which, index, ev) {
-      // this function is called when an inventory item is clicked
-      toast(which[1] + " selected");
-      toggleInventory(ev, true);
-    });
+    renderInventory(game.player.inventory);
 
     // render the stats hud at the bottom of the screen
     renderStats(game.player.stats);
@@ -786,14 +782,14 @@
   // where "C" is the character from the tileset
   // and "Words" are whatever words you want next
   // to it
-  function renderInventory(items, callback) {
+  function renderInventory(items) {
     const inv = $("#inventory ul");
     inv.innerHTML = "";
     items.forEach(function(i, idx) {
       const tile = tileOptions.tileMap[i[0]];
       const words = i[1];
       attach(inv,
-           el("li", {"onclick": callback.bind(null, i, idx),
+           el("li", {"onclick": selectedInventory.bind(null, i, idx),
                      "className": "inventory-item",},
               [el("div", {
                 "className": "sprite",
@@ -802,6 +798,13 @@
               }), words]));
     });
   }
+
+  // called when an inventory item is selected
+  function selectedInventory(which, index, ev) {
+      // this function is called when an inventory item is clicked
+      toast(which[1] + " selected");
+      toggleInventory(ev, true);
+    }
 
   // updates the stats listed at the bottom of the screen
   // pass in an object containing key value pairs where
