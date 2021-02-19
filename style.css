@@ -432,6 +432,13 @@ a:hover {
   right: 3.5em;
 }
 
+#btn-skip {
+  position: absolute;
+  right: 0em;
+  margin-bottom: 3.75em;
+  padding: 0px;
+}
+
 @media (max-width: 1024px) {
    #arrows > * {
      bottom: 72px;
