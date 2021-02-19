@@ -897,12 +897,18 @@
   // "You have found a sneaky wurzel."
   function toast(message) {
     const m = $("#message");
+    // if current scheduler act is player
+    // then clear our messages first
+    // or if we're hiding the messages anyway
+    if (Game.scheduler._current == Game.player ||
+        m.className.indexOf("show") == -1) {
+      m.innerHTML = "";
+    }
     m.classList.remove("fade-out");
     m.classList.add("show");
     if (typeof(message) == "string") {
-      m.textContent = message;
+      m.appendChild(el("span", {}, [message]));
     } else {
-      m.innerHTML = "";
       m.appendChild(message);
     }
   }
@@ -913,11 +919,13 @@
     if (instant) {
       m.classList.remove("show");
       m.classList.remove("fade-out")
+      m.innerHTML = "";
     } else if (m.className.match("show")) {
       m.classList.remove("show");
       m.classList.add("fade-out");
       m.onanimationend = function() {
         m.classList.remove("fade-out");
+        m.innerHTML = "";
       };
     }
   }

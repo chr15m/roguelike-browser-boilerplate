@@ -339,6 +339,7 @@ a:hover {
 #message {
   position: absolute;
   top: 24px;
+  flex-direction: column;
 }
 
 #message .hit {
