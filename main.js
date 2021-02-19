@@ -59,6 +59,7 @@
   const touchOffsetY = -20; // move the center by this much
   const scaleMobile = 4; // scale mobile screens by this much
   const scaleMonitor = 6; // scale computer screens by this much
+  const turnLengthMS = 200; // shortest time between turns
 
   // these map tiles are walkable
   const walkable = [".", "*", "g"]
@@ -153,6 +154,10 @@
     // as `x,y` so it can be checked against
     // the map keys above
     amulet: null,
+    // arrow handler
+    lastArrow: null, // arrow keys held
+    arrowInterval: null, // arrow key repeat
+    arrowListener: null, // registered listener for arrow event
     // clean up this game instance
     // we keep a reference for live-reloading
     cleanup: cleanup,
@@ -430,20 +435,12 @@
       // and then wait for keyboard input from the user
       act: () => {
         Game.engine.lock();
-        window.addEventListener("keydown", keyHandler);
+        if (!Game["arrowListener"]) {
+          document.addEventListener("arrow", arrowEventHandler);
+          Game.arrowListener = true;
+        }
       },
     }
-  }
-
-  // when keyboard input happens this even handler is called
-  // and the position of the player is updated
-  function keyHandler(ev) {
-    ev.preventDefault();
-    const code = ev.keyCode;
-    /* one of numpad directions? */
-    if (!(code in keyMap)) { return; }
-    const dir = ROT.DIRS[8][keyMap[code]];
-    movePlayer(dir);
   }
 
   // this method gets called by the `movePlayer` function
@@ -476,7 +473,7 @@
   }
 
   // move the player according to a direction vector
-  // called from the keyboard event handler above
+  // called from the keyboard event handler below
   // `keyHandler()`
   // and also from the click/tap handler `handlePointing()` below
   function movePlayer(dir) {
@@ -525,8 +522,8 @@
       }
       // re-locate the game screen to center the player
       rescale(x, y, Game);
-      // remove the keyboard event listener and unlock the scheduler
-      window.removeEventListener("keydown", keyHandler);
+      // remove the arrow event listener
+      window.removeEventListener("arrow", arrowEventHandler);
       Game.engine.unlock();
       // play the "step" sound
       sfx["step"].play();
@@ -736,8 +733,13 @@
   function resetCanvas(el) {
     $("#canvas").innerHTML = "";
     $("#canvas").appendChild(el);
+    window.onkeydown = keyHandler;
+    window.onkeyup = arrowStop;
     if (usePointer) { $("#canvas").addEventListener(clickevt, handlePointing); };
-    if (useArrows) { $("#arrows").addEventListener(clickevt, handleArrows); };
+    if (useArrows) {
+      document.ontouchstart = handleArrowTouch;
+      document.ontouchend = arrowStop;
+    };
     showScreen("game");
   }
 
@@ -769,11 +771,20 @@
   // and lock the game
   function removeListeners(game) {
     if (game.engine) {
+      game.lastArrow = null;
+      clearInterval(game.arrowInterval);
+      game.arrowInterval = null;
       game.engine.lock();
       game.scheduler.clear();
-      window.removeEventListener("keydown", keyHandler);
+      window.removeEventListener("arrow", arrowEventHandler);
+      game.arrowListener = false;
+      window.onkeydown = null;
+      window.onkeyup = null;
       if (usePointer) { $("#canvas").removeEventListener(clickevt, handlePointing); };
-      if (useArrows) { $("#arrows").removeEventListener(clickevt, handleArrows); };
+      if (useArrows) {
+        document.ontouchstart = null;
+        document.ontouchend = null;
+      };
     }
   }
 
@@ -982,13 +993,73 @@
     movePlayer(dir);
   }
 
+  // when keyboard input happens this even handler is called
+  // and the position of the player is updated
+  function keyHandler(ev) {
+    const code = ev.keyCode;
+    // prevent zoom
+    if (code == 187 || code == 189) {
+      ev.preventDefault();
+      return;
+    }
+    // full screen
+    if (code == 70 && ev.altKey && ev.ctrlKey && ev.shiftKey) {
+      document.body.requestFullscreen();
+      console.log("Full screen pressed.");
+      return;
+    }
+    if (code == 73) { toggleInventory(ev, true); return; }
+    // if (code == 27) { toggleInventory(ev, true, true); return; } ; escape button should only close
+    if (code == 190) { Game.engine.unlock(); return; } // skip turn
+    /* one of numpad directions? */
+    if (!(code in keyMap)) { return; }
+    const dir = ROT.DIRS[8][keyMap[code]];
+    if (Game.display) {
+      ev.preventDefault();
+    }
+    arrowStart(dir);
+  }
+
+
   // when the on-screen arrow buttons are clicked
-  function handleArrows(ev) {
+  function handleArrowTouch(ev) {
     ev.preventDefault();
+    if (ev.target["id"] == "btn-skip") {
+      Game.engine.unlock(); return;
+    }
     // translate the button to the direction
     const dir = ROT.DIRS[8][arrowMap[ev.target["id"]]];
     // actually move the player in that direction
-    movePlayer(dir);
+    arrowStart(dir);
+  }
+
+  // handle an on-screen or keyboard arrow
+  function arrowStart(dir) {
+    const last = Game.lastArrow;
+    Game.lastArrow = dir;
+    if (!last) {
+      document.dispatchEvent(new Event("arrow"));
+      if (Game.arrowInterval) { clearInterval(Game.arrowInterval); };
+      Game.arrowInterval = setInterval(function() {
+        document.dispatchEvent(new Event("arrow"));
+      }, turnLengthMS);
+    }
+  }
+
+  // when the fingers have been lifted
+  function arrowStop(ev) {
+    clearInterval(Game.arrowInterval);
+    Game.arrowInterval = null;
+    Game.lastArrow = null;
+  }
+
+  // actually move the player when an arrow is pressed
+  function arrowEventHandler() {
+    if (Game.lastArrow) {
+      movePlayer(Game.lastArrow);
+    } else {
+      arrowStop();
+    }
   }
 
   // this function gets called from the first screen
