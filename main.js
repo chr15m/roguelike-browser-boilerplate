@@ -415,6 +415,8 @@
       _y: y,
       // which tile to draw the player with
       character: "@",
+      // the name to display in combat
+      name: "you",
       // what the player is carrying
       inventory: [
         ["x", "Axe (+5)"],
@@ -497,33 +499,40 @@
     // and if we have initiate combat
     const hitMonster = monsterAt(x, y);
     if (hitMonster) {
-      combat(hitMonster);
-      return;
-    };
+      // we enter a combat situation
+      combat(p, hitMonster);
+      // pass the turn on to the next entity
+      setTimeout(function() {
+        Game.engine.unlock();
+      }, 250);
+    } else {
+      // we're taking a step
 
-    // update the old tile to whatever was there before
-    // (e.g. "." floor tile)
-    drawTile(Game, p._x + "," + p._y, p);
+      // hide the toast message when the player moves
+      hideToast();
 
-    // update the player's coordinates
-    p._x = x;
-    p._y = y;
+      // update the old tile to whatever was there before
+      // (e.g. "." floor tile)
+      drawTile(Game, p._x + "," + p._y, p);
 
-    // re-draw the player
-    for (let key in Game.map) {
-      drawTile(Game, key);
+      // update the player's coordinates
+      p._x = x;
+      p._y = y;
+
+      // re-draw the player
+      for (let key in Game.map) {
+        drawTile(Game, key);
+      }
+      // re-locate the game screen to center the player
+      rescale(x, y, Game);
+      // remove the keyboard event listener and unlock the scheduler
+      window.removeEventListener("keydown", keyHandler);
+      Game.engine.unlock();
+      // play the "step" sound
+      sfx["step"].play();
+      // check if the player stepped on an item
+      checkItem(p);
     }
-    // re-locate the game screen to center the player
-    rescale(x, y, Game);
-    // hide the toast message between turns
-    hideToast();
-    // remove the keyboard event listener and unlock the scheduler
-    window.removeEventListener("keydown", keyHandler);
-    Game.engine.unlock();
-    // play the "step" sound
-    sfx["step"].play();
-    // check if the player stepped on an item
-    checkItem(p);
   }
 
 
@@ -540,6 +549,8 @@
       _y: y,
       // which tile to draw the player with
       character: "M",
+      // the name to display in combat
+      name: "the monster",
       // the monster's stats
       stats: {"hp": 14},
       // called by the ROT.js scheduler
@@ -578,7 +589,7 @@
     // if the distance from the monster to the player is less than one
     // square then initiate combat
     if (path.length <= 1) {
-      combat(m);
+      combat(m, p);
     } else {
       // draw whatever was on the last tile the monster was one
       drawTile(Game, m._x + "," + m._y, m);
@@ -608,10 +619,15 @@
   // if the monster is dead remove it from the game
   function checkDeath(m) {
     if (m.stats.hp < 1) {
-      const key = m._x + "," + m._y;
-      removeMonster(m);
-      sfx["kill"].play();
-      return true;
+      if (m == Game.player) {
+        toast("You died!");
+        lose();
+      } else {
+        const key = m._x + "," + m._y;
+        removeMonster(m);
+        sfx["kill"].play();
+        return true;
+      }
     }
   }
 
@@ -630,7 +646,8 @@
 
 
   // this is how the player fights a monster
-  function combat(monster) {
+  function combat(hitter, receiver) {
+    const names = ["you", "the monster"];
     // a description of the combat to tell
     // the user what is happening
     let msg = [];
@@ -639,56 +656,26 @@
     // a hit is a four or more
     if (roll1 > 3) {
       // add to the combat message
-      msg.push("You hit the monster.");
-      // remove hitpoints from the monster
-      monster.stats.hp -= roll1;
+      msg.push(hitter.name + " hit " + receiver.name + ".");
+      // remove hitpoints from the receiver
+      receiver.stats.hp -= roll1;
       // play the hit sound
       sfx["hit"].play();
-      // check if the monster has died
-      checkDeath(monster);
     } else {
       sfx["miss"].play();
-      msg.push("You missed the monster.");
-    }
-    // if the monster is alive it hits back
-    if (monster.stats.hp > 0) {
-      // roll a dice to see if the monster hits
-      const roll2 = ROT.RNG.getItem([1,2,3,4,5,6])
-      // a hit is a four or more
-      if (roll2 > 3) {
-        // add to the combat message
-        msg.push("The monster hit.");
-        // remove hit points from the player
-        Game.player.stats.hp -= roll2;
-        // re-render the player's hud stats
-        renderStats(Game.player.stats);
-        // play the hit sound after 1/4 second
-        setTimeout(function() {
-          sfx["hit"].play();
-        }, 250);
-        // check if the player has died
-        if (Game.player.stats.hp < 1) {
-          // player hitpoints are completely expended
-          // trigger the `lose()` UI flow below
-          lose();
-        }
-      } else {
-        // if the monster missed add to message
-        msg.push("The monster missed.");
-        // then play the miss sound after 1/4 second
-        setTimeout(function() {
-          sfx["miss"].play();
-        }, 250);
-      }
+      msg.push(hitter.name + " missed " + receiver.name + ".");
     }
     // if there is a message to display do so
     if (msg) {
       toast(battleMessage(msg));
     }
+    // check if the receiver has died
+    checkDeath(receiver);
   }
 
   // this gets called when the player wins the game
   function win() {
+    Game.engine.lock();
     // play the win sound effect a bunch of times
     for (let i=0; i<5; i++) {
       setTimeout(function() {
