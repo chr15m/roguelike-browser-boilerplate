@@ -682,6 +682,8 @@
         sfx["win"].play();
       }, 100 * i);
     }
+    // set our stats for the end screen
+    setEndScreenValues(Game.player.stats.xp, Game.player.stats.gold);
     // tear down the game
     destroy(Game);
     // show the blingy "win" screen to the user
@@ -690,6 +692,7 @@
 
   // this gets called when the player loses the game
   function lose() {
+    Game.engine.lock();
     // change the player into a tombstone tile
     const p = Game.player;
     p.character = "T";
@@ -705,6 +708,8 @@
     setTimeout(function() {
       // remove the ghost animation
       rmel(ghost);
+      // set our stats for the end screen
+      setEndScreenValues(Game.player.stats.xp, Game.player.stats.gold);
       // tear down the game
       destroy(Game);
       // show the "lose" screen to the user
@@ -722,6 +727,7 @@
 
   // handy shortcuts and shims for manipulating the dom
   const $ = document.querySelector.bind(document);
+  const $$ = document.querySelectorAll.bind(document);
   NodeList.prototype.forEach = Array.prototype.forEach
 
   // this code resets the ROT.js display canvas
@@ -786,6 +792,13 @@
     void(el.offsetHeight); // trigger CSS reflow
     el.classList.add("show");
     if (actionbutton) { actionbutton.focus(); };
+  }
+
+  // set the end-screen message to show
+  // how well the player did
+  function setEndScreenValues(xp, gold) {
+    $$(".xp-stat").forEach(el=>el.textContent = Math.floor(xp));
+    $$(".gold-stat").forEach(el=>el.textContent = gold);
   }
 
   // updates the contents of the inventory UI
