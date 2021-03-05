@@ -758,7 +758,9 @@
     if (canvas) {
       // this applies the animation effect
       canvas.style.transition = "transform 0.5s ease-out 0s";
-      game.display.getContainer().getContext('2d').imageSmoothingEnabled = false;
+      if (game.display) {
+        game.display.getContainer().getContext('2d').imageSmoothingEnabled = false;
+      }
       // this sets the scale and position to focus on the player
       canvas.style.transform =
         "scale(" + scale + ") " + "translate3d(" + Math.floor(tw) +
