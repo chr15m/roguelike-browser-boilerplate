@@ -57,8 +57,15 @@ a:hover {
 
 /*** NES.css overrides ***/
 
-.nes-container.is-dark {
-  background-color: #222323;
+.nes-container.is-rounded.is-dark {
+  border-image-slice: 9 9 9 9 fill;
+  border-image-source: url('border.png');
+  background-color: transparent;
+  border-image-repeat: stretch;
+}
+
+.nes-container.is-fake-rounded.is-dark::after {
+  background: none;
 }
 
 /*** screens ***/
