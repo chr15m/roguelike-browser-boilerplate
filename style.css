@@ -43,7 +43,6 @@ canvas {
   image-rendering: -webkit-optimize-contrast;
   -ms-interpolation-mode: nearest-neighbor;
   image-rendering: pixelated;
-  margin: 200px;
 }
 
 a {
@@ -256,6 +255,7 @@ a:hover {
 }
 
 .sprite {
+  display: block;
   width: 8px;
   height: 8px;
   image-rendering: optimizeSpeed;
@@ -272,6 +272,7 @@ a:hover {
 
 .free {
   position: absolute;
+  transform: none;
 }
 
 .amulet {
@@ -292,16 +293,16 @@ a:hover {
 }
 
 .float-up {
-  animation: float-up 2s linear;
+  animation: float-up 2s linear forwards;
 }
 
 @keyframes float-up {
   from {
-    transform: scale(8) translate(0px, 0px);
+    transform: scale(1) translate(0px, 0px);
     opacity: 1;
   }
   to {
-    transform: scale(16) translate(0px, -20px);
+    transform: scale(3) translate(0px, -20px);
     opacity: 0;
   }
 }

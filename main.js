@@ -432,7 +432,7 @@
       // the ROT.js scheduler calls this method when it is time
       // for the player to act
       // what this does is lock the engine to take control
-      // and then wait for keyboard input from the user
+      // and then wait for input from the user
       act: () => {
         Game.engine.lock();
         if (!Game["arrowListener"]) {
@@ -696,15 +696,13 @@
     drawTile(Game, p._x + "," + p._y);
     // create an animated div element over the top of the game
     // holding a rising ghost image above the tombstone
-    const ghost = createGhost();
+    const ghost = createGhost([p._x, p._y]);
     // we stop listening for user input while the ghost animates
     removeListeners(Game);
     // play the lose sound effect
     sfx["lose"].play();
     // wait 2 seconds for the ghost animation to finish
     setTimeout(function() {
-      // remove the ghost animation
-      rmel(ghost);
       // set our stats for the end screen
       setEndScreenValues(Game.player.stats.xp, Game.player.stats.gold);
       // tear down the game
@@ -885,9 +883,16 @@
   }
 
   // creates the ghost sprite when the player dies
-  function createGhost() {
-    return attach($("#game"),
-        el("div", {"className": "sprite ghost free float-up"}));
+  // use this template to overlay effects on the game canvas
+  function createGhost(pos) {
+    const tw = tileOptions.tileWidth;
+    const th = tileOptions.tileHeight;
+    // place the ghost on the map at the player's position
+    const left = "left:" + (pos[0] * tw) + "px;";
+    const top = "top:" + (pos[1] * th) + "px;";
+    const ghost = el("div", {"className": "sprite ghost free float-up", "style": left + top});
+    ghost.onanimationend = function() { rmel(ghost); };
+    return attach($("#canvas"), ghost);
   }
 
   // creates a battle message with highlighted outcomes
