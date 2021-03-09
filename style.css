@@ -58,7 +58,7 @@ a:hover {
 
 .nes-container.is-rounded.is-dark {
   border-image-slice: 9 9 9 9 fill;
-  border-image-source: url('border.png');
+  border-image-source: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAphgAAKYYBIuzfjAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABgSURBVEiJY2AYBQQAIzGK/v///x+rZkZGgvqZSHURqYDmFrDgkkAOFikpZYJqcAXX0A8iFG8REyy4wLNndxGGIgXX0A+iUQsIApxlCTEpClfKQQbDOIiQwcgurkcBQQAARlMedugABy8AAAAASUVORK5CYII=');
   background-color: transparent;
   border-image-repeat: stretch;
 }
