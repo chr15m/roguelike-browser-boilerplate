@@ -791,6 +791,7 @@
   // hides all screens and shows the requested screen
   function showScreen(which, ev) {
     ev && ev.preventDefault();
+    history.pushState(null, which, "#" + which);
     const el = $("#" + which);
     const actionbutton = $("#" + which + ">.action");
     document.querySelectorAll(".screen")
@@ -1015,6 +1016,7 @@
       console.log("Full screen pressed.");
       return;
     }
+    if (code == 81) { destroy(Game); return; }
     if (code == 73) { toggleInventory(ev, true); return; }
     // if (code == 27) { toggleInventory(ev, true, true); return; } ; escape button should only close
     if (code == 190) { Game.engine.unlock(); return; } // skip turn
@@ -1145,6 +1147,15 @@
     .forEach(function(el) {
       el.addEventListener(clickevt, hideModal);
     });
+    // listen for back button navigation
+    window.onpopstate = function(ev) {
+      //console.log("location: " + document.location + ", state: " + JSON.stringify(event.state));
+      if (Game.engine) {
+        destroy(Game);
+      } else {
+        hideModal(ev);
+      }
+    };
   }
 
   w["rbb"] = Game;
