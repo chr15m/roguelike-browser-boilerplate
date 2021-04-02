@@ -120,6 +120,8 @@
     "btn-down": 4,
   };
 
+  const gamepadState = {}; // last known state of gamepad buttons
+  var gamepadPoller = null; // poller checking for gamepad events
 
   /*****************
    *** game code ***
@@ -738,6 +740,8 @@
       document.ontouchstart = handleArrowTouch;
       document.ontouchend = arrowStop;
     };
+    clearInterval(gamepadPoller);
+    gamepadPoller = setInterval(pollGamepads, 25);
     showScreen("game");
   }
 
@@ -785,6 +789,7 @@
         document.ontouchstart = null;
         document.ontouchend = null;
       };
+      clearInterval(gamepadPoller);
     }
   }
 
@@ -1071,6 +1076,40 @@
     }
   }
 
+  // trigger arrow events from gamepad changes
+  function pollGamepads() {
+    const gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
+    for (var i = 0; i < gamepads.length; i++) {
+      var gp = gamepads[i];
+      if (gp) {
+        const newstate = {
+          "h": Math.round(gp.axes[6]),
+          "v": Math.round(gp.axes[7]),
+          "b": [0,1,3,4].map(i=>gp.buttons[i].pressed),
+        }
+        const oldstate = gamepadState[gp.id];
+        if (oldstate) {
+          [["btn-left", "h", "btn-right"], ["btn-up", "v", "btn-down"]].map(tr => {
+            if (newstate[tr[1]] != oldstate[tr[1]]) {
+              if (newstate[tr[1]] == 0) {
+                arrowStop();
+              } else {
+                arrowStart(ROT.DIRS[8][arrowMap[tr[newstate[tr[1]] + 1]]]);
+              }
+            }
+          });
+        }
+        gamepadState[gp.id] = newstate;
+        //console.log(newstate);
+        //console.log(gp.index, gp.id, gp.buttons, gp.axes);
+        //console.log("Gamepad connected at index " + gp.index + ": " + gp.id +
+        //  ". It has " + gp.buttons.length + " buttons and " + gp.axes.length + " axes.");
+        //gameLoop();
+        //clearInterval(interval);
+      }
+    }
+  }
+
   // this function gets called from the first screen
   // when the "play" button is clicked.
   function startGame(ev) {
@@ -1123,6 +1162,11 @@
 
   // listen for the start game button
   $("#play").addEventListener(clickevt, startGame);
+
+  // listen for gamepads to make them readable
+  window.addEventListener("gamepadconnected", function(e) {
+    console.log("Gamepad connected:", e);
+  });
 
   // allow live reloading of the game code
   if (w["rbb"]) {
