@@ -271,8 +271,8 @@
 
     // finally we put the player and one monster on their
     // starting tiles, which must be from the walkable list
-    game.player = createBeing(makePlayer, freeCells);
-    game.monsters = [createBeing(makeMonster, freeCells)];
+    game.player = makePlayer(takeFreeCell(freeCells));
+    game.monsters = [makeMonster(takeFreeCell(freeCells))];
 
     // draw the map and items
     for (let key in game.map) {
@@ -302,11 +302,10 @@
 
   // randomly choose one cell from the freeCells array
   // remove it from the array and return it
-  function takeFreeCell(freeCells) {
-    const index = Math.floor(
-      ROT.RNG.getUniform() * freeCells.length);
-    const key = freeCells.splice(index, 1)[0];
-    return key;
+  function takeFreeCell(freeCells, subset) {
+    const freeCellsSubset = subset || freeCells;
+    const key = ROT.RNG.getItem(freeCellsSubset);
+    return freeCells.splice(freeCells.indexOf(key), 1)[0];
   }
 
   // parse a string "x,y" key and return the
@@ -399,27 +398,18 @@
     }
   }
 
-  // both the player and monster initial position is set
-  // by choosing a random freeCell and creating the type
-  // of object (`what`) on that position
-  function createBeing(what, freeCells) {
-    const key = takeFreeCell(freeCells);
-    const pos = posFromKey(key);
-    const being = what(pos[0], pos[1]);
-    return being;
-  }
-
   /******************
    *** the player ***
    ******************/
 
 
   // creates a player object with position, inventory, and stats
-  function makePlayer(x, y) {
+  function makePlayer(key) {
+    const pos = posFromKey(key);
     return {
       // player's position
-      _x: x,
-      _y: y,
+      _x: pos[0],
+      _y: pos[1],
       // which tile to draw the player with
       character: "@",
       // the name to display in combat
@@ -541,11 +531,12 @@
 
 
   // basic ROT.js entity with position and stats
-  function makeMonster(x, y) {
+  function makeMonster(key) {
+    const pos = posFromKey(key);
     return {
       // monster position
-      _x: x,
-      _y: y,
+      _x: pos[0],
+      _y: pos[1],
       // which tile to draw the player with
       character: "M",
       // the name to display in combat
