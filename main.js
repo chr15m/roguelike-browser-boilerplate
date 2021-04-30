@@ -642,9 +642,9 @@
     // the user what is happening
     let msg = [];
     // roll a dice to see if the player hits
-    const roll1 = ROT.RNG.getItem([1,2,3,4,5,6]);
+    const roll = ROT.RNG.getItem([1,2,3,4,5,6]);
     // a hit is a four or more
-    if (roll1 > 3) {
+    if (roll > 3) {
       // add to the combat message
       msg.push(hitter.name + " hit " + receiver.name + ".");
       // remove hitpoints from the receiver
