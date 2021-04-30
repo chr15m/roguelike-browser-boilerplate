@@ -689,7 +689,7 @@
     drawTile(Game, p._x + "," + p._y);
     // create an animated div element over the top of the game
     // holding a rising ghost image above the tombstone
-    const ghost = createGhost([p._x, p._y]);
+    const ghost = createJuiceSprite([p._x, p._y], "T", "float-up");
     // we stop listening for user input while the ghost animates
     removeListeners(Game);
     // play the lose sound effect
@@ -741,7 +741,7 @@
   // it does this using an "ease" animation which
   // gives a sort of camera follow effect.
   function rescale(x, y, game) {
-    const c = $("canvas");
+    const c = $("#canvas");
     const scale = (window.innerWidth < 600 ? scaleMobile : scaleMonitor);
     const offset = (game.touchScreen ? touchOffsetY : 0);
     const tw = ((x * -tileOptions.tileWidth) +
@@ -879,17 +879,30 @@
     }
   }
 
-  // creates the ghost sprite when the player dies
-  // use this template to overlay effects on the game canvas
-  function createGhost(pos) {
+  // creates a sprite overlaying the screen
+  function createSprite(pos, character) {
+    const tile = tileOptions.tileMap[character];
     const tw = tileOptions.tileWidth;
     const th = tileOptions.tileHeight;
-    // place the ghost on the map at the player's position
-    const left = "left:" + (pos[0] * tw) + "px;";
-    const top = "top:" + (pos[1] * th) + "px;";
-    const ghost = el("div", {"className": "sprite ghost free float-up", "style": left + top});
-    ghost.onanimationend = function() { rmel(ghost); };
-    return attach($("#canvas"), ghost);
+    const left = "left:" + ((pos[0]) * tw) + "px;";
+    const top = "top:" + ((pos[1] - 1.25) * th) + "px;";
+    const tileoffset = "background-position: -" + tile[0] + "px -" + tile[1] + "px;";
+    const sprite = el("div", {
+      "className": "sprite free " + character + "-sprite",
+      "style": tileoffset + left + top,
+    });
+    sprite.style.width = tileOptions.tileWidth + "px";
+    sprite.style.height = tileOptions.tileHeight + "px";
+    return attach($("#canvas"), sprite);
+  }
+
+  // create a sprite for some juice animation that
+  // disappears once the animation is done
+  function createJuiceSprite(pos, character, animation) {
+    const sprite = createSprite(pos, character);
+    sprite.onanimationend = function() { rmel(sprite); };
+    sprite.classList.add(animation);
+    return sprite;
   }
 
   // creates a battle message with highlighted outcomes
