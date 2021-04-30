@@ -659,6 +659,8 @@
     if (msg) {
       toast(battleMessage(msg));
     }
+    // update the player's stats
+    renderStats(Game.player.stats);
     // check if the receiver has died
     checkDeath(receiver);
   }
