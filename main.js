@@ -931,7 +931,7 @@
     // then clear our messages first
     // or if we're hiding the messages anyway
     if (Game.scheduler._current == Game.player ||
-        m.className.indexOf("show") == -1) {
+      m.className.indexOf("show") == -1) {
       m.innerHTML = "";
     }
     m.classList.remove("fade-out");
