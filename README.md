@@ -11,6 +11,8 @@ Roguelike Browser Boilerplate is fully open source and **MIT licensed**.
 
 Yes, that means **you can use it for commercial projects**, no problem.
 
+# [Play the demo game](https://chr15m.github.io/roguelike-browser-boilerplate/)
+
 # Documentation
 
 Check out the [documentation](./Documentation.md) for detailed instructions on **getting started** and how to customise the boilerplate.
