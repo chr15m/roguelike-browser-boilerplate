@@ -1,4 +1,4 @@
-![](header.png)
+![Rogulike Browser Boilerplate header](header.png)
 
 # Hello!
 
@@ -8,9 +8,10 @@ Hello and thanks for purchasing the Roguelike Browser Boilerplate. Are you ready
 
 > © 2020 Chris McCormick
 > 
-> All rights reserved, including the right to reproduce this document or portions thereof in any form whatsoever. For information, or permission requests, write to the author at <chris+rogue@mccormick.cx>.
+> Licensed under the terms of the MIT License.
+> See the file "LICENSE.txt" for details.
 
-![](screenshots/game-2.png)
+![RBB Screenshot](screenshots/game-2.png)
 
 ## Contents
 
@@ -477,16 +478,11 @@ The following third party properties are also bundled or linked with the boilerp
  * [sfxr.me](https://sfxr.me) (Public domain)
  * [Pixel coin image](https://opengameart.org/content/spinning-pixel-coin-0) (CC-BY 3.0 license)
 
-Please see the attached license PDF for licensing terms.
-
 ## Thanks!
 
 Thank you very much for your purchase and best of luck with your games.
 
 If you have feedback or suggestions please do get in touch at [chris+rogue@mccormick.cx](mailto:chris+rogue@mccormick.cx)!
 
-To find out about more games and games tech join the Infinite Lives mailing list:
+To find out when I make more stuff you can [sign up to my mailing list](https://mccormick.cx).
 
-<https://infinitelives.github.io>
-
-![](./doc/infinitelivesLogo.png)

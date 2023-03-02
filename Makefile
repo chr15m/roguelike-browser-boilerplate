@@ -1,8 +1,8 @@
 name=roguelike-browser-boilerplate
 
-all: $(name).zip $(name)-private-coaching.pdf $(name).pdf $(name)-license.pdf
+all: $(name).zip $(name)-private-coaching.pdf $(name).pdf # $(name)-license.pdf
 
-$(name).zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png
+$(name).zip: index.html main.js style.css icon.png colored_tilemap_packed.png 01coin.gif bg.png LICENSE.txt
 	mkdir -p $(name)
 	cp $? $(name)
 	zip -r $@ $(foreach f, $?, "$(name)/$(f)")
@@ -19,7 +19,7 @@ $(name)-private-coaching.pdf: private-coaching.md print.css Makefile
 	chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf-no-header --print-to-pdf="$@" "$(@:.pdf=.html)" --virtual-time-budget=10000
 	rm -f "$(@:.pdf=.html)"
 
-$(name).pdf: README.md print.css Makefile
+$(name).pdf: Documentation.md print.css Makefile
 	pandoc -f markdown --highlight-style=tango --css print.css $< -o "$(@:.pdf=.html)"
 	chromium-browser --headless --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf-no-header --print-to-pdf="$@" "$(@:.pdf=.html)" --virtual-time-budget=10000
 	rm -f "$(@:.pdf=.html)"
@@ -27,8 +27,8 @@ $(name).pdf: README.md print.css Makefile
 #$(name)-license-student-hobbyist.pdf: license-common.md license-student-hobbyist.md
 #	cat $? | pandoc -f markdown -t latex --highlight-style=tango --css print.css -o $@
 
-$(name)-license.pdf: license-common.md license-indie-professional.md
-	cat $? | pandoc -f markdown -t latex --highlight-style=tango --css print.css -o $@
+#$(name)-license.pdf: license-common.md license-indie-professional.md
+#	cat $? | pandoc -f markdown -t latex --highlight-style=tango --css print.css -o $@
 
 ### gh-pages build ###
 
