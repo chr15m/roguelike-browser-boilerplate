@@ -256,8 +256,6 @@ a:hover {
 
 .sprite {
   display: block;
-  width: 8px;
-  height: 8px;
   image-rendering: optimizeSpeed;
   image-rendering: crisp-edges;
   image-rendering: -moz-crisp-edges;
@@ -265,7 +263,6 @@ a:hover {
   image-rendering: -webkit-optimize-contrast;
   -ms-interpolation-mode: nearest-neighbor;
   image-rendering: pixelated;
-  transform: scale(8);
   background-image: url("colored_tilemap_packed.png");
   margin: 80px auto;
 }
@@ -302,7 +299,7 @@ a:hover {
     opacity: 1;
   }
   to {
-    transform: scale(3) translate(0px, -20px);
+    transform: scale(3) translate(0px, -64px);
     opacity: 0;
   }
 }

@@ -271,8 +271,8 @@
 
     // finally we put the player and one monster on their
     // starting tiles, which must be from the walkable list
-    game.player = createBeing(makePlayer, freeCells);
-    game.monsters = [createBeing(makeMonster, freeCells)];
+    game.player = makePlayer(takeFreeCell(freeCells));
+    game.monsters = [makeMonster(takeFreeCell(freeCells))];
 
     // draw the map and items
     for (let key in game.map) {
@@ -302,11 +302,10 @@
 
   // randomly choose one cell from the freeCells array
   // remove it from the array and return it
-  function takeFreeCell(freeCells) {
-    const index = Math.floor(
-      ROT.RNG.getUniform() * freeCells.length);
-    const key = freeCells.splice(index, 1)[0];
-    return key;
+  function takeFreeCell(freeCells, subset) {
+    const freeCellsSubset = subset || freeCells;
+    const key = ROT.RNG.getItem(freeCellsSubset);
+    return freeCells.splice(freeCells.indexOf(key), 1)[0];
   }
 
   // parse a string "x,y" key and return the
@@ -399,27 +398,18 @@
     }
   }
 
-  // both the player and monster initial position is set
-  // by choosing a random freeCell and creating the type
-  // of object (`what`) on that position
-  function createBeing(what, freeCells) {
-    const key = takeFreeCell(freeCells);
-    const pos = posFromKey(key);
-    const being = what(pos[0], pos[1]);
-    return being;
-  }
-
   /******************
    *** the player ***
    ******************/
 
 
   // creates a player object with position, inventory, and stats
-  function makePlayer(x, y) {
+  function makePlayer(key) {
+    const pos = posFromKey(key);
     return {
       // player's position
-      _x: x,
-      _y: y,
+      _x: pos[0],
+      _y: pos[1],
       // which tile to draw the player with
       character: "@",
       // the name to display in combat
@@ -541,11 +531,12 @@
 
 
   // basic ROT.js entity with position and stats
-  function makeMonster(x, y) {
+  function makeMonster(key) {
+    const pos = posFromKey(key);
     return {
       // monster position
-      _x: x,
-      _y: y,
+      _x: pos[0],
+      _y: pos[1],
       // which tile to draw the player with
       character: "M",
       // the name to display in combat
@@ -651,9 +642,9 @@
     // the user what is happening
     let msg = [];
     // roll a dice to see if the player hits
-    const roll1 = ROT.RNG.getItem([1,2,3,4,5,6]);
+    const roll = ROT.RNG.getItem([1,2,3,4,5,6]);
     // a hit is a four or more
-    if (roll1 > 3) {
+    if (roll > 3) {
       // add to the combat message
       msg.push(hitter.name + " hit " + receiver.name + ".");
       // remove hitpoints from the receiver
@@ -668,6 +659,8 @@
     if (msg) {
       toast(battleMessage(msg));
     }
+    // update the player's stats
+    renderStats(Game.player.stats);
     // check if the receiver has died
     checkDeath(receiver);
   }
@@ -698,7 +691,7 @@
     drawTile(Game, p._x + "," + p._y);
     // create an animated div element over the top of the game
     // holding a rising ghost image above the tombstone
-    const ghost = createGhost([p._x, p._y]);
+    const ghost = createJuiceSprite([p._x, p._y], "T", "float-up");
     // we stop listening for user input while the ghost animates
     removeListeners(Game);
     // play the lose sound effect
@@ -750,7 +743,7 @@
   // it does this using an "ease" animation which
   // gives a sort of camera follow effect.
   function rescale(x, y, game) {
-    const c = $("canvas");
+    const c = $("#canvas");
     const scale = (window.innerWidth < 600 ? scaleMobile : scaleMonitor);
     const offset = (game.touchScreen ? touchOffsetY : 0);
     const tw = ((x * -tileOptions.tileWidth) +
@@ -888,17 +881,30 @@
     }
   }
 
-  // creates the ghost sprite when the player dies
-  // use this template to overlay effects on the game canvas
-  function createGhost(pos) {
+  // creates a sprite overlaying the screen
+  function createSprite(pos, character) {
+    const tile = tileOptions.tileMap[character];
     const tw = tileOptions.tileWidth;
     const th = tileOptions.tileHeight;
-    // place the ghost on the map at the player's position
-    const left = "left:" + (pos[0] * tw) + "px;";
-    const top = "top:" + (pos[1] * th) + "px;";
-    const ghost = el("div", {"className": "sprite ghost free float-up", "style": left + top});
-    ghost.onanimationend = function() { rmel(ghost); };
-    return attach($("#canvas"), ghost);
+    const left = "left:" + ((pos[0]) * tw) + "px;";
+    const top = "top:" + ((pos[1] - 1.25) * th) + "px;";
+    const tileoffset = "background-position: -" + tile[0] + "px -" + tile[1] + "px;";
+    const sprite = el("div", {
+      "className": "sprite free " + character + "-sprite",
+      "style": tileoffset + left + top,
+    });
+    sprite.style.width = tileOptions.tileWidth + "px";
+    sprite.style.height = tileOptions.tileHeight + "px";
+    return attach($("#canvas"), sprite);
+  }
+
+  // create a sprite for some juice animation that
+  // disappears once the animation is done
+  function createJuiceSprite(pos, character, animation) {
+    const sprite = createSprite(pos, character);
+    sprite.onanimationend = function() { rmel(sprite); };
+    sprite.classList.add(animation);
+    return sprite;
   }
 
   // creates a battle message with highlighted outcomes
@@ -925,7 +931,7 @@
     // then clear our messages first
     // or if we're hiding the messages anyway
     if (Game.scheduler._current == Game.player ||
-        m.className.indexOf("show") == -1) {
+      m.className.indexOf("show") == -1) {
       m.innerHTML = "";
     }
     m.classList.remove("fade-out");
