@@ -15,6 +15,19 @@ Yes, that means **you can use it for commercial projects**, no problem.
 
 Check out the [documentation](./Documentation.md) for detailed instructions on **getting started** and how to customise the boilerplate.
 
+# Video tutorials
+
+You can check out this [YouTube playlist of tutorial screencasts explaining how to use the boilerplate](https://www.youtube.com/playlist?list=PL5dyN9XHelZOl2yTZQu9IA4SQFcA3giac) to make your own Roguelike game in a step-by-step way. Here's a list of the episodes included:
+
+### Episodes
+
+- [Introduction](https://www.youtube.com/watch?v=28dvHfd4fIU&list=PL5dyN9XHelZOl2yTZQu9IA4SQFcA3giac&index=2&t=0s)
+- [A first look at the default game](https://www.youtube.com/watch?v=d1zhoXwOdtQ&list=PL5dyN9XHelZOl2yTZQu9IA4SQFcA3giac&index=3&t=0s)
+- [Customising the title and user interface](https://www.youtube.com/watch?v=U4rfM3ksF9c&list=PL5dyN9XHelZOl2yTZQu9IA4SQFcA3giac&index=4&t=0s)
+- [Customising the graphics and tileset](https://www.youtube.com/watch?v=kto78PSTMkw&list=PL5dyN9XHelZOl2yTZQu9IA4SQFcA3giac&index=5&t=0s)
+- [Adding 8-bit sound effects](https://www.youtube.com/watch?v=JYr7LkKlzK0&list=PL5dyN9XHelZOl2yTZQu9IA4SQFcA3giac&index=5)
+- [Making your own maps](https://www.youtube.com/watch?v=m62UM2SRHUA&list=PL5dyN9XHelZOl2yTZQu9IA4SQFcA3giac&index=6)
+
 # How to support RBB
 
 Buy the [itch.io zip file package of the boilerplate](https://chr15m.itch.io/roguelike-browser-boilerplate):
@@ -45,7 +58,17 @@ To get your game listed here just send me a PR.
 
 # Roguelike Celebration talk
 
-Building Juicy Minimal Roguelikes in the Browser
-https://www.youtube.com/watch?v=dJbUmDsyJRw
+[Building Juicy Minimal Roguelikes in the Browser](https://www.youtube.com/watch?v=dJbUmDsyJRw).
 
+[![Roguelike Celebration Video thumbnail](./screenshots/roguelike-celebration-video-thumbnail.png)](https://www.youtube.com/watch?v=dJbUmDsyJRw)
+
+# Credits
+
+The following third party properties are used in the boilerplate:
+
+ * [ROT.js](https://ondras.github.io/rot.js/hp/) (BSD license)
+ * [kenney.nl Micro Rogue tileset](https://kenney.nl/assets/micro-roguelike) (CC0 1.0 Universal license)
+ * [NES.css](https://nostalgic-css.github.io/NES.css/) (MIT License)
+ * [sfxr.me](https://sfxr.me) (Public domain)
+ * [Pixel coin image](https://opengameart.org/content/spinning-pixel-coin-0) (CC-BY 3.0 license)
 
