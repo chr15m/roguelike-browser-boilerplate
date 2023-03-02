@@ -6,7 +6,7 @@ Hello and thanks for purchasing the Roguelike Browser Boilerplate. Are you ready
 
 [chr15m.itch.io/roguelike-browser-boilerplate](https://chr15m.itch.io/roguelike-browser-boilerplate)
 
-> © 2020 Chris McCormick
+> © 2020-2023 Chris McCormick
 > 
 > Licensed under the terms of the MIT License.
 > See the file "LICENSE.txt" for details.
