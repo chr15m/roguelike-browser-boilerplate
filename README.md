@@ -32,7 +32,7 @@ You can check out this [YouTube playlist of tutorial screencasts explaining how 
 
 Buy the [itch.io zip file package of the boilerplate](https://chr15m.itch.io/roguelike-browser-boilerplate):
 
-[![Roguelike Browser Boilerplate itch page](./itch-embed.png)](https://chr15m.itch.io/roguelike-browser-boilerplate)
+[![Roguelike Browser Boilerplate itch page](./screenshots/itch-embed.png)](https://chr15m.itch.io/roguelike-browser-boilerplate)
 
 The [itch.io package](https://chr15m.itch.io/roguelike-browser-boilerplatae) also comes with a nice 47 page PDF guide:
 
