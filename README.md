@@ -7,11 +7,13 @@ Roguelike Browser Boilerplate helps you get your web based roguelike up and runn
 The boilerplate takes care of the boring stuff so you can focus on the fun part: making the game.
 It includes **level generation, rooms, scenery, item boxes, inventory, an example monster implementation, splash screen, start screen, credits screen, instructions screen, settings screen, menus, pixel styled UI, win/lose condition screens, sound effects, juicy CSS game animations**. It works on **mobile and desktop** with a custom touch-screen interface.
 
-Roguelike Browser Boilerplate is fully open source and MIT licsensed. Yes, that means **you can use it for commercial projects**, no problem.
+Roguelike Browser Boilerplate is fully open source and **MIT licensed**.
+
+Yes, that means **you can use it for commercial projects**, no problem.
 
 # Documentation
 
-Check out the [documentation](./Documentation.md) for detailed instructions on how to customise the boilerplate.
+Check out the [documentation](./Documentation.md) for detailed instructions on **getting started** and how to customise the boilerplate.
 
 # How to support RBB
 
