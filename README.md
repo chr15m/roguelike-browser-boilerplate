@@ -50,11 +50,11 @@ Thanks!
 
 [Asterogue, a sci fi roguelike](https://asterogue.space) set in the interior caverns of an asteroid.
 
-[<img src="https://img.itch.zone/aW1hZ2UvNzYwMDkxLzQ0ODg4MTMuZ2lm/347x500/aTDwJZ.gif" width="200"/>](https://chr15m.itch.io/asterogue)
+[<img src="https://img.itch.zone/aW1hZ2UvNzYwMDkxLzQ0ODg4MTMuZ2lm/347x500/aTDwJZ.gif" width="350"/>](https://chr15m.itch.io/asterogue)
 
 [Smallest Quest](https://thepunkcollective.itch.io/smallest-quest) is a simple kid-friendly hand drawn roguelike.
 
-[<img src="https://img.itch.zone/aW1hZ2UvMTA2NjE3MS82ODkwMDM4LmdpZg==/347x500/XdzY%2BJ.gif" width="200"/>](https://thepunkcollective.itch.io/smallest-quest)
+[<img src="https://img.itch.zone/aW1hZ2UvMTA2NjE3MS82ODkwMDM4LmdpZg==/347x500/XdzY%2BJ.gif" width="350"/>](https://thepunkcollective.itch.io/smallest-quest)
 
 To get your game listed here just send me a PR.
 
