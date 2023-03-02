@@ -48,7 +48,7 @@ watcher:
 	while true; do $(MAKE) -q || $(MAKE); sleep 0.5; done
 
 serve: node_modules
-	npx live-server --no-browser --port=8000
+	npx live-server --no-browser --host=0.0.0.0 --port=8000
 
 watch:
 	make -j 2 serve watcher
