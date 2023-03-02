@@ -5,22 +5,23 @@
 Roguelike Browser Boilerplate helps you get your web based roguelike up and running fast.
 
 The boilerplate takes care of the boring stuff so you can focus on the fun part: making the game.
-It includes level generation, rooms, scenery, item boxes, inventory, an example monster implementation, splash screen, start screen, credits screen, instructions screen, settings screen, menus, pixel styled UI, win/lose condition screens, sound effects, juicy CSS game animations. It works on mobile and desktop with a custom touch-screen interface.
+It includes **level generation, rooms, scenery, item boxes, inventory, an example monster implementation, splash screen, start screen, credits screen, instructions screen, settings screen, menus, pixel styled UI, win/lose condition screens, sound effects, juicy CSS game animations**. It works on **mobile and desktop** with a custom touch-screen interface.
 
-> © 2020-2023 Chris McCormick
-> 
-> Licensed under the terms of the MIT License.
-> See the file "LICENSE.txt" for details.
+Roguelike Browser Boilerplate is fully open source and MIT licsensed. Yes, that means **you can use it for commercial projects**, no problem.
 
-Yes, that means **you can use it for commercial projects**, no problem.
+# Documentation
 
 Check out the [documentation](./Documentation.md) for detailed instructions on how to customise the boilerplate.
 
 # How to support RBB
 
-The itch.io version also comes with a nice 47 page PDF guide:
+Buy the [itch.io zip file package of the boilerplate](https://chr15m.itch.io/roguelike-browser-boilerplate):
 
-![PDF Guide thumbnail](./screenshots/PDF.png) [![Roguelike Browser Boilerplate itch page](./itch-embed.png)](https://chr15m.itch.io/roguelike-browser-boilerplate)
+[![Roguelike Browser Boilerplate itch page](./itch-embed.png)](https://chr15m.itch.io/roguelike-browser-boilerplate)
+
+The [itch.io package](https://chr15m.itch.io/roguelike-browser-boilerplatae) also comes with a nice 47 page PDF guide:
+
+![PDF Guide thumbnail](./screenshots/PDF.png)
 
 ## Contributing
 
